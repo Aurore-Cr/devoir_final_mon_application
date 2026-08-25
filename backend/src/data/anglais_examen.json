@@ -1,0 +1,328 @@
+[
+  {
+    "id": "ex_001",
+    "category": "Architecture Web",
+    "difficulty": "B2",
+    "title": "REST API Design Principles",
+    "intro": "Read the following excerpt from a software architecture documentation. Translate it faithfully into French, then answer the comprehension questions.",
+    "text": "A RESTful API (Representational State Transfer) is an architectural style for building web services that communicate over HTTP. Unlike SOAP, which relies on rigid XML-based contracts, REST leverages the existing semantics of HTTP verbs: GET retrieves a resource without side effects, POST creates a new resource, PUT replaces an existing resource entirely, and PATCH applies a partial update. A fundamental constraint of REST is statelessness: each request from a client must contain all the information the server needs to fulfil it, meaning no session state is stored on the server between requests. This design decision dramatically improves scalability, since any server instance can handle any request independently. Resources are identified by URIs (Uniform Resource Identifiers), and their representations — typically JSON or XML — are decoupled from the resource itself, allowing a single endpoint to serve multiple content types via content negotiation using the Accept header.",
+    "code": null,
+    "language": null,
+    "translation_challenge": "Translate the full paragraph above into accurate French. Pay special attention to technical terms: do not translate proper nouns such as 'REST', 'HTTP', 'URI', 'JSON'. Translate concepts like 'statelessness', 'side effects', 'content negotiation', and 'scalability' using their French technical equivalents.",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "According to the text, what is the fundamental difference between REST and SOAP in terms of contract format?"
+      },
+      {
+        "id": "q2",
+        "question": "What does 'statelessness' mean in a RESTful context, and what architectural benefit does it provide?"
+      },
+      {
+        "id": "q3",
+        "question": "How does content negotiation work in REST, and which HTTP header is involved?"
+      }
+    ],
+    "model_translation": "Une API RESTful (Transfert d'État Représentationnel) est un style architectural pour la construction de services web qui communiquent via HTTP. Contrairement à SOAP, qui repose sur des contrats rigides basés sur XML, REST exploite la sémantique existante des verbes HTTP : GET récupère une ressource sans effets de bord, POST crée une nouvelle ressource, PUT remplace entièrement une ressource existante, et PATCH applique une mise à jour partielle. Une contrainte fondamentale de REST est l'absence d'état (statelessness) : chaque requête d'un client doit contenir toutes les informations dont le serveur a besoin pour la traiter, ce qui signifie qu'aucun état de session n'est stocké côté serveur entre les requêtes. Cette décision de conception améliore considérablement la scalabilité, car n'importe quelle instance de serveur peut traiter n'importe quelle requête de façon indépendante. Les ressources sont identifiées par des URI (Identificateurs Uniformes de Ressources), et leurs représentations — généralement JSON ou XML — sont découplées de la ressource elle-même, permettant à un seul point de terminaison de servir plusieurs types de contenu via la négociation de contenu grâce à l'en-tête Accept.",
+    "model_answers": [
+      "SOAP relies on rigid, XML-based contracts to define the interface between client and server. REST, by contrast, does not use a separate contract format but instead leverages the existing, well-understood semantics of HTTP verbs (GET, POST, PUT, PATCH), making it simpler and more flexible.",
+      "Statelessness means that each HTTP request must be self-contained — it must carry all necessary information (authentication, parameters, context) because the server does not store any session state between requests. The architectural benefit is dramatically improved scalability: since no session is tied to a specific server, any instance in a load-balanced cluster can handle any incoming request independently.",
+      "Content negotiation allows a single URI endpoint to return different data formats depending on what the client can handle. The client sends an 'Accept' HTTP header specifying its preferred content type (e.g., 'Accept: application/json' or 'Accept: application/xml'), and the server responds with the most appropriate representation."
+    ],
+    "lexicon": [
+      { "term": "statelessness", "french": "absence d'état / apatridie", "definition": "Each request is independent; the server retains no memory of previous interactions." },
+      { "term": "side effects", "french": "effets de bord", "definition": "Unintended changes to system state caused by an operation. GET should have none." },
+      { "term": "content negotiation", "french": "négociation de contenu", "definition": "The mechanism by which client and server agree on the format of the data exchanged." },
+      { "term": "scalability", "french": "scalabilité / montée en charge", "definition": "The ability of a system to handle growing amounts of work gracefully." },
+      { "term": "endpoint", "french": "point de terminaison", "definition": "A specific URL at which an API resource can be accessed." },
+      { "term": "decoupled", "french": "découplé", "definition": "Components that are independent and do not depend on each other's internal implementation." }
+    ]
+  },
+
+  {
+    "id": "ex_002",
+    "category": "JavaScript Avancé",
+    "difficulty": "C1",
+    "title": "JavaScript Promises & the Event Loop",
+    "intro": "The following text is extracted from an advanced JavaScript developer guide. Translate it into French, then answer the questions.",
+    "text": "JavaScript is single-threaded, meaning it can only execute one piece of code at a time on the call stack. Asynchronous operations — such as network requests or file I/O — are offloaded to the browser's Web APIs, which run concurrently outside the main thread. When these operations complete, their callbacks are pushed onto the callback queue (or microtask queue for Promises). The event loop continuously monitors the call stack: when it is empty, it dequeues the next callback and pushes it onto the stack for execution. Promises represent the eventual completion or failure of an asynchronous operation and return an object that can be in one of three states: pending, fulfilled, or rejected. Unlike callbacks, Promises can be chained using .then() and .catch(), which significantly reduces so-called 'callback hell' — deeply nested, hard-to-read asynchronous code. The async/await syntax, introduced in ES2017, is syntactic sugar over Promises that allows asynchronous code to be written in a synchronous style, improving readability without sacrificing non-blocking behaviour.",
+    "code": "async function fetchUserData(userId) {\n  try {\n    const response = await fetch(`/api/users/${userId}`);\n    if (!response.ok) {\n      throw new Error(`HTTP error — status: ${response.status}`);\n    }\n    const data = await response.json();\n    return data;\n  } catch (error) {\n    console.error('Failed to fetch user:', error);\n    throw error; // re-throw so the caller can handle it\n  }\n}",
+    "language": "javascript",
+    "translation_challenge": "Translate the main paragraph (not the code) into French. Technical terms such as 'call stack', 'event loop', 'callback queue', 'microtask queue', 'Promise', and 'async/await' should be kept in English or given their standard French equivalent used in French-language documentation.",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "Why is JavaScript described as 'single-threaded', and how does it handle asynchronous operations despite this limitation?"
+      },
+      {
+        "id": "q2",
+        "question": "What are the three possible states of a Promise, and what is the practical advantage of using Promises over traditional callbacks?"
+      },
+      {
+        "id": "q3",
+        "question": "In the code example, what happens if 'response.ok' is false? Trace the execution path through the try/catch block."
+      }
+    ],
+    "model_translation": "JavaScript est mono-thread (single-threaded), ce qui signifie qu'il ne peut exécuter qu'une seule portion de code à la fois sur la pile d'appels (call stack). Les opérations asynchrones — telles que les requêtes réseau ou les entrées/sorties de fichiers — sont déléguées aux API Web du navigateur, qui s'exécutent de manière concurrente en dehors du thread principal. Lorsque ces opérations se terminent, leurs fonctions de rappel (callbacks) sont placées dans la file d'attente des callbacks (ou dans la file des microtâches pour les Promises). La boucle d'événements (event loop) surveille en permanence la pile d'appels : lorsqu'elle est vide, elle extrait le prochain callback et le place sur la pile pour exécution. Les Promises représentent la complétion éventuelle ou l'échec d'une opération asynchrone, et retournent un objet pouvant se trouver dans l'un de ces trois états : en attente (pending), résolue (fulfilled) ou rejetée (rejected). Contrairement aux callbacks, les Promises peuvent être chaînées via .then() et .catch(), ce qui réduit considérablement le phénomène dit de 'callback hell' — un code asynchrone profondément imbriqué et difficile à lire. La syntaxe async/await, introduite avec ES2017, est un sucre syntaxique au-dessus des Promises qui permet d'écrire du code asynchrone dans un style synchrone, améliorant la lisibilité sans sacrifier le comportement non bloquant.",
+    "model_answers": [
+      "JavaScript is 'single-threaded' because it has only one call stack, meaning it can process only one task at a time. It handles asynchronous operations by offloading them to the browser's Web APIs (which run in parallel outside the main thread). Once complete, their results are queued in the callback queue or microtask queue, and the event loop pushes them back onto the call stack only when it is empty.",
+      "A Promise can be in one of three states: 'pending' (the operation is still in progress), 'fulfilled' (the operation completed successfully), or 'rejected' (the operation failed). The key advantage over callbacks is chainability: .then() and .catch() allow sequential asynchronous steps to be written linearly, eliminating deeply nested 'callback hell' and making error handling centralised and readable.",
+      "If 'response.ok' is false (meaning the HTTP status code indicates an error, e.g. 404 or 500), the code inside the if-block executes and throws a new Error with the status code. This error is immediately caught by the catch block. Inside catch, the error is logged to the console via console.error(), and then re-thrown with 'throw error', propagating the exception to the caller of fetchUserData() so it can implement its own error-handling logic."
+    ],
+    "lexicon": [
+      { "term": "single-threaded", "french": "mono-thread", "definition": "Only one sequence of instructions executes at a time, on a single call stack." },
+      { "term": "call stack", "french": "pile d'appels", "definition": "A data structure tracking which functions are currently being executed." },
+      { "term": "event loop", "french": "boucle d'événements", "definition": "Mechanism that continuously checks if the call stack is empty before pushing queued tasks." },
+      { "term": "callback hell", "french": "pyramide du destin / enfer des callbacks", "definition": "Deeply nested callback functions that make code hard to read and maintain." },
+      { "term": "syntactic sugar", "french": "sucre syntaxique", "definition": "Syntax that makes code easier to write/read without adding new functionality." },
+      { "term": "non-blocking", "french": "non bloquant", "definition": "Code that does not halt the execution thread while waiting for an operation to complete." },
+      { "term": "re-throw", "french": "relancer / propager (une exception)", "definition": "Catching an error then throwing it again so the calling code can also handle it." }
+    ]
+  },
+
+  {
+    "id": "ex_003",
+    "category": "Sécurité Web",
+    "difficulty": "C1",
+    "title": "JSON Web Tokens (JWT) Authentication",
+    "intro": "The following excerpt is from a web security technical guide. Read carefully, translate faithfully, and answer the questions in English.",
+    "text": "JSON Web Tokens (JWTs) are a compact, URL-safe means of representing claims to be transferred between two parties. A JWT consists of three Base64URL-encoded segments separated by dots: the header, the payload, and the signature. The header specifies the token type and the signing algorithm (e.g., HS256 or RS256). The payload contains claims — statements about an entity, typically the authenticated user — such as 'sub' (subject), 'iat' (issued at), and 'exp' (expiration time). The signature is computed by encoding the header and payload, then signing the result with a secret key (for symmetric algorithms) or a private key (for asymmetric algorithms). This allows the recipient to verify that the token has not been tampered with. A critical security consideration is that JWTs are signed, not encrypted by default: the payload is merely Base64-encoded and can be decoded by anyone who intercepts the token. Sensitive data should therefore never be placed in a JWT payload unless the token is additionally encrypted (JWE). Furthermore, short expiration times and token rotation strategies — such as refresh tokens — are essential to mitigate the risk of token theft.",
+    "code": "// Server-side JWT verification (Node.js / jsonwebtoken)\nconst jwt = require('jsonwebtoken');\n\nfunction verifyToken(req, res, next) {\n  const authHeader = req.headers['authorization'];\n  const token = authHeader && authHeader.split(' ')[1]; // Bearer <token>\n\n  if (!token) {\n    return res.status(401).json({ error: 'Access token missing' });\n  }\n\n  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {\n    if (err) {\n      // Token expired or signature invalid\n      return res.status(403).json({ error: 'Token invalid or expired' });\n    }\n    req.user = decoded; // Attach decoded payload to request\n    next();\n  });\n}",
+    "language": "javascript",
+    "translation_challenge": "Translate the main paragraph into French. Be precise with security terminology: 'claims', 'signed', 'encrypted', 'tampered with', 'token rotation', and 'refresh tokens' must be rendered with their correct French equivalents used in cybersecurity literature.",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "What are the three structural components of a JWT, and what is the role of each one?"
+      },
+      {
+        "id": "q2",
+        "question": "The text states that JWTs are 'signed, not encrypted by default'. What are the security implications of this distinction?"
+      },
+      {
+        "id": "q3",
+        "question": "In the code, what HTTP status codes are returned and under what conditions? Why are these specific codes semantically appropriate?"
+      }
+    ],
+    "model_translation": "Les JSON Web Tokens (JWT) sont un moyen compact et sûr pour les URL de représenter des revendications (claims) à transférer entre deux parties. Un JWT se compose de trois segments encodés en Base64URL séparés par des points : l'en-tête (header), la charge utile (payload) et la signature. L'en-tête spécifie le type de jeton et l'algorithme de signature (par exemple, HS256 ou RS256). La charge utile contient des revendications — des affirmations concernant une entité, généralement l'utilisateur authentifié — telles que 'sub' (sujet), 'iat' (date d'émission) et 'exp' (date d'expiration). La signature est calculée en encodant l'en-tête et la charge utile, puis en signant le résultat avec une clé secrète (pour les algorithmes symétriques) ou une clé privée (pour les algorithmes asymétriques). Cela permet au destinataire de vérifier que le jeton n'a pas été altéré. Un élément de sécurité crucial est que les JWT sont signés, mais pas chiffrés par défaut : la charge utile est simplement encodée en Base64 et peut être décodée par quiconque intercepte le jeton. Les données sensibles ne doivent donc jamais être placées dans la charge utile d'un JWT, à moins que le jeton ne soit également chiffré (JWE). De plus, des durées d'expiration courtes et des stratégies de rotation de jetons — telles que les jetons de rafraîchissement (refresh tokens) — sont essentielles pour atténuer le risque de vol de jetons.",
+    "model_answers": [
+      "A JWT has three components: (1) The Header, which contains the token type ('JWT') and the algorithm used to sign it (e.g., HS256 for HMAC-SHA256, or RS256 for RSA). (2) The Payload, which holds the 'claims' — structured data about the user or session, such as the subject ('sub'), issue time ('iat'), and expiry ('exp'). (3) The Signature, which is a cryptographic hash of the encoded header and payload, signed with a secret or private key, allowing the receiver to verify integrity and authenticity.",
+      "Because JWTs are signed but not encrypted by default, the payload is only Base64URL-encoded — not hidden. Anyone who intercepts or steals the token can decode and read its contents without any key. This means sensitive information (passwords, personal data, bank details) must never be stored in the payload. The signature guarantees that the token has not been modified in transit (integrity), but it does not provide confidentiality. JWE (JSON Web Encryption) must be used if the payload must remain secret.",
+      "The code returns HTTP 401 ('Access token missing') when no Authorization header or token is provided — 401 Unauthorized is semantically correct because the request lacks authentication credentials entirely. It returns HTTP 403 ('Token invalid or expired') when a token is present but fails verification (wrong signature or expired) — 403 Forbidden is appropriate because the server understood the request and identified the caller, but refuses access due to an invalid credential."
+    ],
+    "lexicon": [
+      { "term": "claims", "french": "revendications / assertions", "definition": "Statements encoded in the JWT payload, e.g. user identity, roles, expiry." },
+      { "term": "signed", "french": "signé", "definition": "The token carries a cryptographic signature guaranteeing it has not been altered." },
+      { "term": "encrypted", "french": "chiffré", "definition": "The content is transformed so it cannot be read without the decryption key." },
+      { "term": "tampered with", "french": "altéré / falsifié", "definition": "Maliciously modified after being issued." },
+      { "term": "token rotation", "french": "rotation de jetons", "definition": "Strategy of issuing new tokens periodically to limit the damage of theft." },
+      { "term": "refresh token", "french": "jeton de rafraîchissement", "definition": "A long-lived token used to obtain a new short-lived access token without re-authentication." },
+      { "term": "asymmetric algorithm", "french": "algorithme asymétrique", "definition": "Uses a key pair (public + private). Private key signs; public key verifies." }
+    ]
+  },
+
+  {
+    "id": "ex_004",
+    "category": "Algorithmique",
+    "difficulty": "C1",
+    "title": "Big O Notation & Algorithm Complexity",
+    "intro": "The following is an extract from a computer science textbook chapter on algorithm analysis. Translate into French and answer the questions.",
+    "text": "Algorithm complexity analysis quantifies how the runtime or memory usage of an algorithm scales as the input size grows. Big O notation expresses the upper bound of this growth rate, describing the worst-case scenario. An O(1) algorithm executes in constant time regardless of input size — accessing an element in an array by index is a classic example. O(log n) algorithms, such as binary search, halve the search space with each step, making them extremely efficient for large datasets. O(n) algorithms — linear time — iterate over every element once, as in a sequential search. O(n log n) is the theoretical lower bound for comparison-based sorting algorithms; merge sort and heap sort achieve this complexity. O(n²) algorithms, such as bubble sort or selection sort, involve nested iterations over the data and become impractical for large inputs. Crucially, Big O describes asymptotic behaviour: constants and lower-order terms are dropped, because as n approaches infinity, they become negligible. A function that executes 5n + 1000 operations is still O(n), since the linear term dominates.",
+    "code": "// Comparing two algorithms solving the same problem\n// Find if two numbers in an array sum to a target\n\n// Approach 1 — O(n²): nested loops\nfunction hasPairSumNaive(arr, target) {\n  for (let i = 0; i < arr.length; i++) {\n    for (let j = i + 1; j < arr.length; j++) {\n      if (arr[i] + arr[j] === target) return true;\n    }\n  }\n  return false;\n}\n\n// Approach 2 — O(n): hash set lookup\nfunction hasPairSumOptimal(arr, target) {\n  const seen = new Set();\n  for (const num of arr) {\n    if (seen.has(target - num)) return true;\n    seen.add(num);\n  }\n  return false;\n}",
+    "language": "javascript",
+    "translation_challenge": "Translate the main paragraph into French. 'Big O notation', 'upper bound', 'worst-case scenario', 'asymptotic behaviour', 'lower bound' and 'negligible' must be rendered with their precise mathematical/CS French equivalents.",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "Explain in your own words what 'asymptotic behaviour' means in the context of Big O notation, and why constants are dropped."
+      },
+      {
+        "id": "q2",
+        "question": "Why is O(n log n) described as the 'theoretical lower bound for comparison-based sorting'? What does this imply about algorithms like bubble sort?"
+      },
+      {
+        "id": "q3",
+        "question": "Analyse both code functions. Explain why hasPairSumOptimal is O(n) despite iterating through the array, and identify the data structure that makes this possible."
+      }
+    ],
+    "model_translation": "L'analyse de la complexité des algorithmes quantifie la manière dont le temps d'exécution ou l'utilisation de la mémoire d'un algorithme évolue à mesure que la taille des données d'entrée augmente. La notation Big O exprime la borne supérieure de ce taux de croissance, décrivant le scénario le plus défavorable (worst case). Un algorithme O(1) s'exécute en temps constant quelle que soit la taille des données — l'accès à un élément d'un tableau par son index en est un exemple classique. Les algorithmes O(log n), comme la recherche binaire, divisent l'espace de recherche par deux à chaque étape, ce qui les rend extrêmement efficaces pour les grands ensembles de données. Les algorithmes O(n) — temps linéaire — parcourent chaque élément une seule fois, comme dans une recherche séquentielle. O(n log n) est la borne inférieure théorique pour les algorithmes de tri basés sur la comparaison ; le tri fusion (merge sort) et le tri par tas (heap sort) atteignent cette complexité. Les algorithmes O(n²), comme le tri à bulles (bubble sort) ou le tri par sélection, impliquent des itérations imbriquées sur les données et deviennent impraticables pour de grandes entrées. Il est crucial de noter que Big O décrit le comportement asymptotique : les constantes et les termes d'ordre inférieur sont ignorés, car lorsque n tend vers l'infini, ils deviennent négligeables. Une fonction qui exécute 5n + 1000 opérations est toujours O(n), puisque le terme linéaire est dominant.",
+    "model_answers": [
+      "'Asymptotic behaviour' refers to how an algorithm's resource usage grows as the input size 'n' tends toward infinity, ignoring real-world constants and smaller terms. Constants are dropped because Big O focuses on growth rate, not absolute performance. For example, an algorithm doing 1000n steps and one doing 2n steps are both O(n): as n grows very large (millions of records), the ratio between them becomes irrelevant compared to the difference between O(n) and O(n²). Big O describes the shape of the curve, not the exact measurement.",
+      "It has been mathematically proven that no comparison-based sorting algorithm can do better than O(n log n) in the worst case, because each comparison only eliminates half the remaining possibilities — which is the same logic as binary search. This implies that bubble sort's O(n²) complexity is not just a flaw in its implementation but a fundamental inefficiency: it does far more work than the theoretical minimum. It is provably suboptimal for large datasets, unlike merge sort or heap sort which reach the proven lower bound.",
+      "hasPairSumOptimal is O(n) because it uses a Set for lookups. A JavaScript Set is backed by a hash table, which provides O(1) average-time lookups (seen.has()) and insertions (seen.add()). The algorithm iterates through the array exactly once (O(n) iterations), and each iteration performs only O(1) operations. Total: O(n) × O(1) = O(n). By contrast, the naive approach uses two nested loops, each of size n, yielding O(n) × O(n) = O(n²)."
+    ],
+    "lexicon": [
+      { "term": "upper bound", "french": "borne supérieure", "definition": "The maximum growth rate guaranteed by Big O: the algorithm will never be worse than this." },
+      { "term": "lower bound", "french": "borne inférieure", "definition": "The best possible complexity that any algorithm solving a problem can achieve." },
+      { "term": "asymptotic behaviour", "french": "comportement asymptotique", "definition": "How a function behaves as its argument approaches infinity." },
+      { "term": "worst-case scenario", "french": "cas le plus défavorable / pire cas", "definition": "The input that causes the algorithm to perform the maximum number of operations." },
+      { "term": "nested iteration", "french": "itération imbriquée", "definition": "A loop inside another loop, typically resulting in O(n²) or higher complexity." },
+      { "term": "hash set", "french": "ensemble de hachage", "definition": "A data structure using hash functions to provide O(1) average time lookups." },
+      { "term": "negligible", "french": "négligeable", "definition": "So small relative to other terms that it can be safely ignored in analysis." }
+    ]
+  },
+
+  {
+    "id": "ex_005",
+    "category": "Sécurité Web",
+    "difficulty": "B2",
+    "title": "Cross-Site Scripting (XSS) Attacks",
+    "intro": "Read this extract from a web security handbook. Translate it accurately, then answer the comprehension questions in English.",
+    "text": "Cross-Site Scripting (XSS) is one of the most prevalent vulnerabilities in web applications, consistently appearing in the OWASP Top 10 list of critical security risks. XSS occurs when an attacker injects malicious scripts — typically JavaScript — into web pages viewed by other users. There are three primary variants: Reflected XSS, where the malicious payload is embedded in a URL and immediately returned by the server in its response; Stored XSS, where the payload is persisted in a database and served to every user who views the affected page; and DOM-based XSS, where the vulnerability exists entirely in client-side code that manipulates the Document Object Model without proper sanitisation. The consequences can be severe: attackers can steal session cookies (bypassing authentication), redirect users to phishing sites, perform actions on behalf of the victim (CSRF-like), or install keyloggers that silently capture form input. The primary mitigation strategies are output encoding — escaping characters such as <, >, and & before rendering them in HTML — and a strict Content Security Policy (CSP), which instructs the browser to only execute scripts from explicitly trusted origins.",
+    "code": "// Vulnerable code — DO NOT USE\nfunction displayComment(userInput) {\n  document.getElementById('output').innerHTML = userInput; // XSS risk!\n}\n\n// Safe alternative — output encoding\nfunction displayCommentSafe(userInput) {\n  const div = document.createElement('div');\n  div.textContent = userInput; // Browser escapes all HTML automatically\n  document.getElementById('output').appendChild(div);\n}\n\n// CSP header (set server-side)\n// Content-Security-Policy: default-src 'self'; script-src 'self' https://trusted-cdn.com",
+    "language": "javascript",
+    "translation_challenge": "Translate the main paragraph into French. Key terms to handle carefully: 'payload', 'sanitisation', 'output encoding', 'session cookies', 'Content Security Policy', 'phishing', and 'keylogger' — use their accepted French equivalents in cybersecurity documentation.",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "What are the three variants of XSS attacks? Explain the key difference between Stored XSS and Reflected XSS in terms of persistence and impact scope."
+      },
+      {
+        "id": "q2",
+        "question": "Why is using 'innerHTML' in the vulnerable code dangerous? How does the safe alternative ('textContent') prevent the attack?"
+      },
+      {
+        "id": "q3",
+        "question": "What is a Content Security Policy (CSP) and how does it mitigate XSS, based on the example header in the code?"
+      }
+    ],
+    "model_translation": "Le Cross-Site Scripting (XSS) est l'une des vulnérabilités les plus répandues dans les applications web, figurant régulièrement dans le Top 10 de l'OWASP des risques de sécurité critiques. Le XSS se produit lorsqu'un attaquant injecte des scripts malveillants — généralement du JavaScript — dans des pages web consultées par d'autres utilisateurs. Il existe trois variantes principales : le XSS réfléchi (Reflected XSS), où la charge malveillante (payload) est intégrée dans une URL et immédiatement renvoyée par le serveur dans sa réponse ; le XSS stocké (Stored XSS), où la charge malveillante est persistée dans une base de données et servie à chaque utilisateur qui consulte la page affectée ; et le XSS basé sur le DOM (DOM-based XSS), où la vulnérabilité existe entièrement dans le code côté client qui manipule le Document Object Model sans assainissement (sanitisation) adéquat. Les conséquences peuvent être graves : les attaquants peuvent voler des cookies de session (contournant l'authentification), rediriger les utilisateurs vers des sites de hameçonnage (phishing), effectuer des actions au nom de la victime (similaire au CSRF), ou installer des enregistreurs de frappe (keyloggers) qui capturent silencieusement les saisies dans les formulaires. Les principales stratégies d'atténuation sont l'encodage de la sortie (output encoding) — l'échappement de caractères tels que <, > et & avant de les afficher en HTML — et une Politique de Sécurité du Contenu (Content Security Policy, CSP) stricte, qui demande au navigateur de n'exécuter que les scripts provenant d'origines explicitement approuvées.",
+    "model_answers": [
+      "The three variants are: (1) Reflected XSS — the malicious payload is in a crafted URL; the server reflects it back in the response and the victim's browser executes it. It affects only users who click the malicious link. (2) Stored XSS — the payload is saved in a database (e.g. in a comment or username). Every user who loads that page executes the malicious code automatically, making it far more dangerous and broad in impact. (3) DOM-based XSS — the payload never reaches the server; instead, client-side JavaScript reads attacker-controlled data (e.g. from the URL hash) and inserts it unsafely into the DOM.",
+      "Setting 'innerHTML' is dangerous because the browser parses the string as HTML markup, including any <script> tags or event handlers (e.g. onerror='...'). An attacker who controls userInput can inject executable JavaScript directly. 'textContent', by contrast, inserts the string as plain text: the browser never parses or executes it as HTML. All special characters are automatically treated as literal text, neutralising any script injections.",
+      "A Content Security Policy is an HTTP response header that tells the browser which sources of content are legitimate. In the example, 'default-src self' means all resources (scripts, styles, images) must come from the same origin by default. 'script-src self https://trusted-cdn.com' allows JavaScript only from the page's own origin and one explicitly trusted CDN. Even if an attacker manages to inject a <script> tag, the browser will refuse to execute it if its source is not on the allowlist — effectively neutering most XSS attacks."
+    ],
+    "lexicon": [
+      { "term": "payload", "french": "charge utile / charge malveillante", "definition": "The malicious code delivered and executed as part of an attack." },
+      { "term": "sanitisation", "french": "assainissement / nettoyage", "definition": "Removing or encoding dangerous characters from user input before processing." },
+      { "term": "output encoding", "french": "encodage de sortie", "definition": "Escaping characters that have special meaning in HTML so they are displayed as text." },
+      { "term": "session cookie", "french": "cookie de session", "definition": "A browser cookie storing a session ID, used to authenticate the user across requests." },
+      { "term": "keylogger", "french": "enregistreur de frappe", "definition": "Malicious code that records keystrokes, used to steal passwords and sensitive input." },
+      { "term": "allowlist", "french": "liste blanche", "definition": "A list of explicitly permitted sources/values; everything not listed is blocked." },
+      { "term": "phishing", "french": "hameçonnage / phishing", "definition": "A social engineering attack that tricks users into revealing credentials on fake sites." }
+    ]
+  },
+
+  {
+    "id": "ex_006",
+    "category": "Bases de Données",
+    "difficulty": "B2",
+    "title": "SQL vs NoSQL — Choosing the Right Database",
+    "intro": "The following text appears in a software engineering guide for junior developers. Translate it and answer the questions.",
+    "text": "The choice between relational (SQL) and non-relational (NoSQL) databases is one of the most consequential architectural decisions in application development. Relational databases — such as PostgreSQL and MySQL — organise data into structured tables with predefined schemas, enforcing referential integrity through foreign keys and guaranteeing ACID properties: Atomicity, Consistency, Isolation, and Durability. These guarantees make SQL databases ideal for transactional systems where data correctness is paramount, such as banking or e-commerce platforms. NoSQL databases — encompassing document stores (MongoDB), key-value stores (Redis), wide-column stores (Cassandra), and graph databases (Neo4j) — sacrifice strict schema enforcement in favour of flexibility and horizontal scalability. They excel in scenarios involving large volumes of unstructured or semi-structured data, high write throughput, or geographically distributed architectures. However, many NoSQL databases offer only eventual consistency rather than strong consistency: a write may not be immediately visible to all nodes in the cluster, which can lead to temporary data discrepancies. The rise of NewSQL databases attempts to bridge this gap, offering SQL-like querying and ACID compliance with the horizontal scalability traditionally associated with NoSQL systems.",
+    "code": null,
+    "language": null,
+    "translation_challenge": "Translate the paragraph into French. Technical terms requiring careful translation: 'referential integrity', 'ACID properties', 'horizontal scalability', 'eventual consistency', 'strong consistency', 'write throughput', 'schema enforcement', and 'data discrepancies'.",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "What do the four ACID properties stand for, and why are they particularly important for financial or transactional applications?"
+      },
+      {
+        "id": "q2",
+        "question": "The text distinguishes between 'eventual consistency' and 'strong consistency'. Define both terms and explain the practical trade-off involved."
+      },
+      {
+        "id": "q3",
+        "question": "What problem do 'NewSQL' databases aim to solve, and which limitations of both SQL and NoSQL systems are they designed to overcome?"
+      }
+    ],
+    "model_translation": "Le choix entre les bases de données relationnelles (SQL) et non relationnelles (NoSQL) est l'une des décisions architecturales les plus importantes du développement d'applications. Les bases de données relationnelles — telles que PostgreSQL et MySQL — organisent les données en tables structurées avec des schémas prédéfinis, assurant l'intégrité référentielle via les clés étrangères et garantissant les propriétés ACID : Atomicité, Cohérence, Isolation et Durabilité. Ces garanties rendent les bases de données SQL idéales pour les systèmes transactionnels où la correction des données est primordiale, comme les plateformes bancaires ou de commerce en ligne. Les bases de données NoSQL — comprenant les bases documentaires (MongoDB), les bases clé-valeur (Redis), les bases à colonnes larges (Cassandra) et les bases de données graphes (Neo4j) — sacrifient l'application stricte des schémas au profit de la flexibilité et de la scalabilité horizontale. Elles excellent dans les scénarios impliquant de grands volumes de données non structurées ou semi-structurées, un débit d'écriture élevé, ou des architectures géographiquement distribuées. Cependant, de nombreuses bases NoSQL n'offrent qu'une cohérence éventuelle (eventual consistency) plutôt qu'une cohérence forte (strong consistency) : une écriture peut ne pas être immédiatement visible sur tous les nœuds du cluster, ce qui peut entraîner des incohérences temporaires dans les données. L'essor des bases de données NewSQL tente de combler cet écart, en offrant des requêtes de type SQL et la conformité ACID, avec la scalabilité horizontale traditionnellement associée aux systèmes NoSQL.",
+    "model_answers": [
+      "ACID stands for: Atomicity (a transaction is all-or-nothing — if any part fails, the entire transaction is rolled back), Consistency (a transaction brings the database from one valid state to another, never violating defined rules), Isolation (concurrent transactions are executed as if they were sequential, preventing dirty reads or race conditions), and Durability (once committed, a transaction persists even if the system crashes, typically via write-ahead logs). These are critical for financial systems because a partial failure — e.g., deducting money from one account but failing to credit another — must be impossible. Atomicity ensures both operations succeed or both are cancelled.",
+      "Strong consistency means that after a write completes, every subsequent read from any node in the system will return the updated value immediately. Eventual consistency means that after a write, different nodes in a distributed system may temporarily return stale (outdated) values, but will eventually converge to the same correct value given enough time with no further writes. The trade-off is performance vs. correctness: eventual consistency allows much higher write throughput and availability across distributed nodes, but is unsuitable for scenarios where stale reads are unacceptable (e.g., bank balances).",
+      "NewSQL databases attempt to solve the false dichotomy between SQL and NoSQL. Traditional SQL databases offer ACID guarantees and relational querying but struggle to scale horizontally across multiple machines. NoSQL databases scale horizontally easily but often sacrifice ACID compliance and structured querying. NewSQL (e.g., Google Spanner, CockroachDB) provides SQL-compatible query languages, ACID transactions, and referential integrity, while also supporting horizontal scaling across distributed clusters — combining the strengths of both paradigms."
+    ],
+    "lexicon": [
+      { "term": "referential integrity", "french": "intégrité référentielle", "definition": "Ensures that foreign key values always correspond to an existing primary key." },
+      { "term": "ACID", "french": "ACID (Atomicité, Cohérence, Isolation, Durabilité)", "definition": "A set of properties guaranteeing reliable database transactions." },
+      { "term": "horizontal scalability", "french": "scalabilité horizontale", "definition": "Adding more machines to handle load, rather than upgrading a single machine." },
+      { "term": "eventual consistency", "french": "cohérence éventuelle", "definition": "All nodes will eventually agree on the same value, but reads may be temporarily stale." },
+      { "term": "write throughput", "french": "débit d'écriture", "definition": "The number of write operations a database can handle per unit of time." },
+      { "term": "schema enforcement", "french": "application du schéma", "definition": "Forcing all data to conform to a predefined structure before it can be stored." },
+      { "term": "data discrepancy", "french": "incohérence de données", "definition": "A situation where different parts of a system show different values for the same piece of data." }
+    ]
+  },
+
+  {
+    "id": "ex_007",
+    "category": "Architecture Web",
+    "difficulty": "C1",
+    "title": "WebSockets & Real-Time Communication",
+    "intro": "The following technical documentation excerpt explains WebSocket technology. Translate it and answer the questions in detail.",
+    "text": "WebSockets provide a standardised mechanism for establishing a persistent, full-duplex communication channel over a single TCP connection between a client and a server. Unlike the traditional HTTP request-response cycle — which is inherently unidirectional and stateless — WebSockets allow both parties to send messages independently at any time, without the overhead of re-establishing a connection for each exchange. The handshake process begins with an HTTP Upgrade request: the client sends a standard HTTP/1.1 request with an 'Upgrade: websocket' header, and if the server agrees, it responds with HTTP 101 (Switching Protocols), after which the connection is promoted from HTTP to the WebSocket protocol. Once established, data is transmitted as lightweight 'frames' rather than full HTTP packets, significantly reducing latency and bandwidth consumption. This makes WebSockets particularly suited for applications requiring low-latency bidirectional communication, such as real-time collaborative editing tools, online multiplayer games, live financial dashboards, and chat applications. A key operational consideration is connection resilience: WebSocket connections can be dropped by network interruptions, load balancers with short timeouts, or proxy servers that do not support the protocol. Robust implementations therefore include heartbeat mechanisms (ping/pong frames) to detect and recover from silent disconnections.",
+    "code": "// WebSocket client (browser)\nconst socket = new WebSocket('wss://jarvis.example.com/ws');\n\nsocket.addEventListener('open', () => {\n  console.log('Connection established');\n  socket.send(JSON.stringify({ type: 'subscribe', channel: 'live-feed' }));\n});\n\nsocket.addEventListener('message', (event) => {\n  const data = JSON.parse(event.data);\n  updateDashboard(data); // real-time UI update\n});\n\nsocket.addEventListener('close', (event) => {\n  console.warn(`Connection closed: code=${event.code}, reason=${event.reason}`);\n  // Reconnect logic with exponential backoff\n  setTimeout(() => reconnect(), 3000);\n});\n\nsocket.addEventListener('error', (error) => {\n  console.error('WebSocket error:', error);\n});",
+    "language": "javascript",
+    "translation_challenge": "Translate the main paragraph into French. Key terms: 'full-duplex', 'TCP connection', 'handshake', 'overhead', 'latency', 'bandwidth', 'heartbeat mechanism', 'ping/pong frames', 'bidirectional', and 'resilience' must use their French technical equivalents.",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "Explain the WebSocket handshake process described in the text. What HTTP status code signals the protocol upgrade, and what does it mean?"
+      },
+      {
+        "id": "q2",
+        "question": "What is 'full-duplex' communication, and how does it differ fundamentally from the HTTP request-response model?"
+      },
+      {
+        "id": "q3",
+        "question": "In the code, what is the purpose of the 'close' event listener? What does 'exponential backoff' imply about reconnection strategy, even though it is only mentioned in a comment?"
+      }
+    ],
+    "model_translation": "Les WebSockets fournissent un mécanisme standardisé pour établir un canal de communication persistant en duplex intégral (full-duplex) sur une seule connexion TCP entre un client et un serveur. Contrairement au cycle classique de requête-réponse HTTP — qui est par nature unidirectionnel et sans état — les WebSockets permettent aux deux parties d'envoyer des messages indépendamment à tout moment, sans la surcharge (overhead) de rétablir une connexion pour chaque échange. Le processus de négociation (handshake) commence par une requête de mise à niveau (Upgrade) HTTP : le client envoie une requête HTTP/1.1 standard avec un en-tête 'Upgrade: websocket', et si le serveur accepte, il répond par HTTP 101 (Changement de Protocoles), après quoi la connexion est promue du protocole HTTP vers le protocole WebSocket. Une fois établie, les données sont transmises sous forme de 'trames' (frames) légères plutôt que de paquets HTTP complets, réduisant considérablement la latence et la consommation de bande passante. Cela rend les WebSockets particulièrement adaptés aux applications nécessitant une communication bidirectionnelle à faible latence, telles que les outils d'édition collaborative en temps réel, les jeux multijoueurs en ligne, les tableaux de bord financiers en direct et les applications de messagerie instantanée. Une considération opérationnelle essentielle est la résilience de la connexion : les connexions WebSocket peuvent être interrompues par des coupures réseau, des équilibreurs de charge (load balancers) avec des délais d'expiration courts, ou des serveurs proxy qui ne supportent pas le protocole. Les implémentations robustes incluent donc des mécanismes de battement de cœur (heartbeat) via des trames ping/pong pour détecter et récupérer les déconnexions silencieuses.",
+    "model_answers": [
+      "The handshake begins with the client sending a regular HTTP/1.1 GET request to the server, but including special headers: 'Connection: Upgrade' and 'Upgrade: websocket', plus a 'Sec-WebSocket-Key' for security. If the server supports WebSockets, it responds with HTTP status 101 (Switching Protocols), signalling that both parties agree to abandon the HTTP protocol and switch to the WebSocket protocol on the same TCP connection. After this, the connection is 'upgraded' — it is no longer HTTP, and both sides can send frames freely.",
+      "Full-duplex means both parties can send and receive data simultaneously and independently over the same connection — like a phone call. HTTP is half-duplex in practice: the client sends a request, the server responds, and the cycle must restart for the next exchange. The server cannot proactively push data to the client without a new request. With WebSockets, the server can push updates at any time without waiting for the client to ask, enabling truly real-time communication.",
+      "The 'close' event listener detects when the WebSocket connection is terminated (either by the server, a network failure, or a proxy timeout). It logs the close code and reason for debugging, then schedules a reconnection attempt after 3 seconds. 'Exponential backoff' means that instead of retrying at fixed intervals (which could overload a recovering server), wait times increase exponentially with each failed attempt (e.g., 1s, 2s, 4s, 8s, up to a maximum), reducing server pressure during outages while still eventually re-establishing the connection."
+    ],
+    "lexicon": [
+      { "term": "full-duplex", "french": "duplex intégral / bidirectionnel simultané", "definition": "Both parties can send and receive data at the same time on the same channel." },
+      { "term": "handshake", "french": "négociation initiale / poignée de main", "definition": "The initial exchange that establishes and configures a connection between two parties." },
+      { "term": "overhead", "french": "surcharge / coût supplémentaire", "definition": "Additional processing or bandwidth cost beyond the actual useful data transmitted." },
+      { "term": "latency", "french": "latence", "definition": "The delay between sending a message and the recipient receiving it." },
+      { "term": "bandwidth", "french": "bande passante", "definition": "The maximum rate of data transfer across a network connection." },
+      { "term": "heartbeat", "french": "battement de cœur / signal de vie", "definition": "Periodic signals sent to confirm a connection is still active." },
+      { "term": "exponential backoff", "french": "retrait exponentiel", "definition": "Retry strategy where the wait time doubles with each failed attempt to avoid overloading." }
+    ]
+  },
+
+  {
+    "id": "ex_008",
+    "category": "JavaScript Avancé",
+    "difficulty": "B2",
+    "title": "CSS Grid Layout — The Two-Dimensional System",
+    "intro": "The following excerpt is from a CSS specification guide for intermediate developers. Translate it and answer the questions.",
+    "text": "CSS Grid Layout is a two-dimensional layout system that allows web developers to create complex, responsive page structures using rows and columns simultaneously — a fundamental advancement over the one-dimensional Flexbox model, which operates along a single axis at a time. A grid container is defined by setting 'display: grid' on a parent element, which causes its direct children — known as grid items — to be placed within a grid formatting context. The grid structure is defined using 'grid-template-columns' and 'grid-template-rows', which accept values in pixels, percentages, the flexible 'fr' unit (representing a fraction of the available space), or the 'repeat()' function to avoid repetition. The 'auto-fill' and 'auto-fit' keywords, combined with 'minmax()', enable a powerful intrinsic sizing pattern that automatically creates as many columns as will fit in the available width without requiring media queries — a technique often called responsive grid without breakpoints. Grid items can span multiple rows or columns using 'grid-column' and 'grid-row' shorthand properties, and the entire layout can be visualised and debugged using browser developer tools, which overlay the grid lines directly on the rendered page.",
+    "code": "/* Responsive grid — auto-fills columns, minimum 280px each */\n.card-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));\n  gap: 24px;\n  padding: 24px;\n}\n\n/* Item spanning 2 columns on large screens */\n.card-featured {\n  grid-column: span 2;\n}\n\n/* Named grid areas for a classic page layout */\n.page-layout {\n  display: grid;\n  grid-template-areas:\n    'header  header'\n    'sidebar main'\n    'footer  footer';\n  grid-template-columns: 260px 1fr;\n  grid-template-rows: auto 1fr auto;\n  min-height: 100vh;\n}",
+    "language": "css",
+    "translation_challenge": "Translate the main paragraph into French. Pay attention to: 'two-dimensional', 'grid container', 'grid item', 'grid formatting context', 'fr unit', 'intrinsic sizing', 'breakpoints', and 'span'. Some CSS property names should remain in English as they are code identifiers.",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "What is the fundamental difference between CSS Grid and Flexbox according to the text? When would you choose one over the other?"
+      },
+      {
+        "id": "q2",
+        "question": "Explain the pattern 'repeat(auto-fill, minmax(280px, 1fr))' used in the code. What does each part mean, and why is this called 'responsive without breakpoints'?"
+      },
+      {
+        "id": "q3",
+        "question": "What are 'named grid areas' (as seen in .page-layout), and what advantage do they offer compared to positioning items with row/column numbers?"
+      }
+    ],
+    "model_translation": "CSS Grid Layout est un système de mise en page à deux dimensions qui permet aux développeurs web de créer des structures de page complexes et responsives en utilisant simultanément des lignes et des colonnes — une avancée fondamentale par rapport au modèle Flexbox unidimensionnel, qui opère le long d'un seul axe à la fois. Un conteneur de grille (grid container) est défini en appliquant 'display: grid' à un élément parent, ce qui amène ses enfants directs — appelés éléments de grille (grid items) — à être placés dans un contexte de formatage de grille. La structure de la grille est définie avec 'grid-template-columns' et 'grid-template-rows', qui acceptent des valeurs en pixels, en pourcentages, en unités flexibles 'fr' (représentant une fraction de l'espace disponible), ou la fonction 'repeat()' pour éviter les répétitions. Les mots-clés 'auto-fill' et 'auto-fit', combinés à 'minmax()', permettent un schéma de dimensionnement intrinsèque puissant qui crée automatiquement autant de colonnes que possible dans la largeur disponible sans nécessiter de media queries — une technique souvent appelée grille responsive sans points de rupture (breakpoints). Les éléments de grille peuvent s'étendre sur plusieurs lignes ou colonnes grâce aux propriétés abrégées 'grid-column' et 'grid-row', et l'ensemble de la mise en page peut être visualisé et débogué dans les outils de développement du navigateur, qui superposent les lignes de grille directement sur la page rendue.",
+    "model_answers": [
+      "CSS Grid is two-dimensional: it controls layout along both rows and columns simultaneously, making it ideal for overall page structure (headers, sidebars, main content, footers). Flexbox is one-dimensional: it arranges items along a single axis (either a row or a column), making it better suited for components within a section, such as a navigation bar or a card's internal layout. You would choose Grid for macro-level page layout and Flexbox for the micro-level alignment of elements within those sections.",
+      "'repeat(auto-fill, minmax(280px, 1fr))' breaks down as: 'repeat()' — create as many columns as the value inside specifies; 'auto-fill' — automatically create as many columns as will fit in the available container width; 'minmax(280px, 1fr)' — each column must be at least 280px wide and can grow up to 1 fraction of remaining space. This is 'responsive without breakpoints' because as the container shrinks, columns automatically drop to the next row once they would fall below 280px — no @media queries needed. The browser calculates the optimal column count dynamically.",
+      "Named grid areas allow you to assign semantic string names to regions of the grid using 'grid-template-areas', then position items by referencing those names rather than abstract row/column numbers. In .page-layout, 'header' spans both columns, 'sidebar' and 'main' share the middle row, and 'footer' spans both columns again. The advantage is readability and maintainability: the visual layout is literally drawn in the CSS as an ASCII-art map, making the intent immediately clear and easy to reorganise without counting grid lines."
+    ],
+    "lexicon": [
+      { "term": "two-dimensional", "french": "bidimensionnel / à deux dimensions", "definition": "Operates on both rows and columns simultaneously, unlike Flexbox which is 1D." },
+      { "term": "grid formatting context", "french": "contexte de formatage de grille", "definition": "The layout mode activated by 'display: grid', governing how children are placed." },
+      { "term": "fr unit", "french": "unité fr (fraction)", "definition": "A flexible unit representing a fraction of the remaining available space in the grid." },
+      { "term": "intrinsic sizing", "french": "dimensionnement intrinsèque", "definition": "Elements size themselves based on their content and available space without explicit values." },
+      { "term": "breakpoint", "french": "point de rupture", "definition": "A specific viewport width at which a CSS media query changes the layout." },
+      { "term": "span", "french": "s'étendre sur / couvrir", "definition": "A grid item property making it occupy multiple rows or columns." },
+      { "term": "gap", "french": "espacement / gouttière", "definition": "The space between grid rows and columns (formerly 'grid-gap')." }
+    ]
+  }
+]
