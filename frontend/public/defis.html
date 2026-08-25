@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+  <title>Jarvis — Défis Dev</title>
+
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0d1117">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Jarvis">
+  <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+
+  <!-- Prism.js — coloration syntaxique -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/defis.css">
+</head>
+<body>
+
+<div class="defis-shell">
+
+  <!-- ═══ HEADER PERSISTANT ═══════════════════════════════ -->
+  <header class="defis-header">
+    <a href="/" class="back-btn" aria-label="Retour accueil">‹</a>
+
+    <div class="header-center">
+      <h1>💻 Défis Dev</h1>
+      <div class="session-bar" id="session-bar" style="display:none">
+        <span id="stat-done">0 fait</span>
+        <span class="sep">·</span>
+        <span id="stat-success" class="green">0 ✓</span>
+        <span class="sep">·</span>
+        <span id="stat-remaining">— restants</span>
+      </div>
+    </div>
+
+    <button class="icon-btn" id="btn-header-random"
+            title="Défi aléatoire" aria-label="Nouveau défi aléatoire"
+            style="display:none">
+      <!-- icône dés -->
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round"
+           stroke-linejoin="round" aria-hidden="true">
+        <rect x="2" y="2" width="9" height="9" rx="2"/>
+        <rect x="13" y="2" width="9" height="9" rx="2"/>
+        <rect x="13" y="13" width="9" height="9" rx="2"/>
+        <rect x="2" y="13" width="9" height="9" rx="2"/>
+        <circle cx="6.5" cy="6.5" r="1" fill="currentColor"/>
+        <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
+        <circle cx="17.5" cy="17.5" r="1" fill="currentColor"/>
+        <circle cx="6.5" cy="17.5" r="1" fill="currentColor"/>
+      </svg>
+    </button>
+  </header>
+
+  <!-- ═══ VUE LANDING ══════════════════════════════════════ -->
+  <section id="view-landing" class="view">
+
+    <div class="landing-hero">
+      <p class="hero-tag">Bootcamp Dev — Challenges VS Code</p>
+      <p class="hero-desc">
+        Génère un défi de code aléatoire, lis l'énoncé, code dans VS Code,
+        puis révèle la solution et la méthodologie.
+      </p>
+    </div>
+
+    <!-- Stats par techno (injectées dynamiquement) -->
+    <div class="techno-grid" id="techno-grid">
+      <!-- cards techno injectées -->
+    </div>
+
+    <!-- Filtres -->
+    <div class="filters-row">
+      <div class="filter-group">
+        <p class="filter-label">Techno</p>
+        <div class="chips" id="techno-chips">
+          <button class="chip active" data-techno="">Toutes</button>
+        </div>
+      </div>
+      <div class="filter-group">
+        <p class="filter-label">Niveau</p>
+        <div class="chips" id="niveau-chips">
+          <button class="chip active" data-niveau="">Tous</button>
+          <button class="chip" data-niveau="Facile">🟢 Facile</button>
+          <button class="chip" data-niveau="Moyen">🟡 Moyen</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA principal -->
+    <div class="cta-area">
+      <button class="cta-btn" id="btn-generate">
+        🎲 Défi aléatoire (catalogue)
+      </button>
+      <button class="cta-btn cta-ia" id="btn-generate-ia" style="margin-top:10px">
+        🤖 Générer un nouveau défi par IA
+      </button>
+      <p class="cta-sub" id="cta-sub">— défis disponibles</p>
+      <p class="ia-note" id="ia-note" style="display:none">
+        ⚠️ Clé API Anthropic requise — voir <a href="/parametres.html">Paramètres</a>
+      </p>
+    </div>
+
+    <!-- Catalogue liste -->
+    <div class="catalog-section">
+      <p class="section-label" id="catalog-label">Tous les défis</p>
+      <div class="catalog-grid" id="catalog-grid">
+        <!-- cards injectées -->
+      </div>
+    </div>
+
+    <div id="landing-error" class="error-notice" style="display:none">
+      ⚠️ Impossible de charger les défis. Vérifiez que le serveur Node.js est démarré.
+    </div>
+
+  </section>
+
+  <!-- ═══ VUE DÉFI ══════════════════════════════════════════ -->
+  <section id="view-defi" class="view" style="display:none">
+
+    <!-- Bandeau méta -->
+    <div class="defi-meta-bar">
+      <span class="badge-techno" id="d-techno">—</span>
+      <span class="badge-niveau" id="d-niveau">—</span>
+      <span class="meta-duration" id="d-duration">⏱ —</span>
+      <div class="meta-tags" id="d-tags"></div>
+    </div>
+
+    <!-- Titre -->
+    <h2 class="defi-title" id="d-title">—</h2>
+
+    <!-- Objectif -->
+    <div class="objectif-box">
+      <span class="objectif-icon">🎯</span>
+      <div>
+        <p class="box-label">Objectif</p>
+        <p id="d-objectif">—</p>
+      </div>
+    </div>
+
+    <!-- Énoncé -->
+    <div class="block-section" id="enonce-section">
+      <p class="section-label">📄 Énoncé</p>
+      <div class="enonce-text" id="d-enonce">—</div>
+    </div>
+
+    <!-- Contraintes -->
+    <div class="block-section">
+      <p class="section-label">⚙️ Contraintes techniques</p>
+      <ol class="contraintes-list" id="d-contraintes"></ol>
+    </div>
+
+    <!-- Ressources -->
+    <div class="block-section" id="ressources-section">
+      <p class="section-label">📚 Ressources suggérées</p>
+      <div class="ressources-list" id="d-ressources"></div>
+    </div>
+
+    <!-- Timer -->
+    <div class="timer-section">
+      <div class="timer-display" id="timer-display">00:00</div>
+      <div class="timer-controls">
+        <button class="timer-btn" id="btn-timer-start">▶ Démarrer</button>
+        <button class="timer-btn" id="btn-timer-reset" style="display:none">↺ Reset</button>
+      </div>
+      <p class="timer-hint">Temps estimé : <strong id="d-duree">—</strong></p>
+    </div>
+
+    <!-- Barre d'action sticky -->
+    <div class="sticky-bar">
+      <button class="action-btn secondary" id="btn-skip-defi">Passer →</button>
+      <button class="action-btn primary"   id="btn-reveal-solution">
+        💡 Voir la solution
+      </button>
+    </div>
+
+  </section>
+
+  <!-- ═══ VUE SOLUTION (inline sous défi) ═════════════════ -->
+  <section id="view-solution" class="view" style="display:none">
+
+    <!-- Séparateur -->
+    <div class="solution-separator">
+      <span>— Solution & Méthodologie —</span>
+    </div>
+
+    <!-- Méthodologie prose -->
+    <div class="block-section solution-block">
+      <p class="section-label">🧠 Méthodologie</p>
+      <div class="methodo-text" id="s-methodologie">—</div>
+    </div>
+
+    <!-- Code coloré -->
+    <div class="code-block-wrapper">
+      <div class="code-toolbar">
+        <span class="code-lang-badge" id="s-lang-badge">JS</span>
+        <button class="copy-btn" id="btn-copy-solution">📋 Copier</button>
+      </div>
+      <pre class="code-pre"><code id="s-code" class="language-javascript"></code></pre>
+    </div>
+
+    <!-- Explications étape par étape -->
+    <div class="block-section">
+      <p class="section-label">💬 Explications clés</p>
+      <ol class="explications-list" id="s-explications"></ol>
+    </div>
+
+    <!-- Auto-évaluation -->
+    <div class="eval-section" id="eval-section">
+      <p class="eval-label">Tu as réussi ce défi ?</p>
+      <div class="eval-btns">
+        <button class="eval-btn ko"      data-score="0">❌ Pas réussi</button>
+        <button class="eval-btn partial" data-score="1">🤔 Partiellement</button>
+        <button class="eval-btn ok"      data-score="2">✅ Réussi !</button>
+      </div>
+    </div>
+
+    <!-- Boutons navigation -->
+    <div class="next-bar">
+      <button class="action-btn primary wide" id="btn-next-defi">
+        🎲 Prochain défi
+      </button>
+      <button class="action-btn secondary" id="btn-back-landing">
+        ← Catalogue
+      </button>
+    </div>
+
+  </section>
+
+  <!-- Spinner global -->
+  <div id="global-loader" class="global-loader" style="display:none" aria-live="polite">
+    <div class="spinner" aria-hidden="true"></div>
+    <p>Chargement du défi…</p>
+  </div>
+
+</div><!-- /.defis-shell -->
+
+<!-- Prism.js syntaxe -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-jsx.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-tsx.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-php.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+
+<script src="/js/auth.js"></script>
+<script src="/js/defis.js"></script>
+</body>
+</html>

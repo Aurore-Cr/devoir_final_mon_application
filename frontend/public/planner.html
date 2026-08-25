@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+  <title>Jarvis — Daily Planner</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0d1117">
+
+  <!-- iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Jarvis">
+  <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/planner.css">
+</head>
+<body>
+
+  <!-- ─── BANNIÈRE D'ALERTE IN-APP ─────────────────────── -->
+  <div id="alert-banner" role="alert" aria-live="assertive">
+    <div class="alert-icon">🤖</div>
+    <div class="alert-content">
+      <p class="alert-label">Ordre de Jarvis</p>
+      <p id="alert-message"></p>
+    </div>
+    <button id="alert-close" aria-label="Fermer">✕</button>
+  </div>
+
+  <!-- ─── BOUTON ACTIVATION NOTIFICATIONS (iOS) ──────── -->
+  <button id="btn-notif" style="display:none" class="notif-permission-btn">
+    <span>🔔</span>
+    <span>Activer les alertes Jarvis</span>
+  </button>
+
+  <div class="planner-shell">
+
+    <!-- HEADER -->
+    <header class="planner-header">
+      <a href="/" class="back-btn" aria-label="Retour">‹</a>
+      <div class="header-center">
+        <h1>📅 Daily Planner</h1>
+        <time id="clock" class="clock" aria-live="polite">--:--:--</time>
+      </div>
+      <button onclick="testAlert()" class="test-btn" title="Tester une alerte">🔔</button>
+    </header>
+
+    <!-- STATUT SYSTÈME -->
+    <section class="system-status" aria-label="Statut système">
+      <span id="status-sw"   class="status-badge">⏳ SW…</span>
+      <span id="status-notif" class="status-badge">⏳ Notifs…</span>
+    </section>
+
+    <!-- TÂCHE COURANTE / SUIVANTE -->
+    <section class="tasks-overview">
+      <div class="task-card current" id="current-task">
+        <p class="card-label">En cours</p>
+        <p class="task-name">—</p>
+        <p class="task-sub"></p>
+      </div>
+
+      <div class="countdown-wrapper" aria-label="Temps restant">
+        <p class="countdown-label">Prochaine transition dans</p>
+        <p id="countdown" class="countdown">--:--</p>
+      </div>
+
+      <div class="task-card next" id="next-task">
+        <p class="card-label">Ensuite</p>
+        <p class="task-name">—</p>
+        <p class="task-sub"></p>
+      </div>
+    </section>
+
+    <!-- PLANNING COMPLET -->
+    <section class="schedule-section">
+      <h2 class="section-title">Planning du jour</h2>
+      <ol id="schedule-list" class="schedule-list" aria-label="Planning minuté"></ol>
+    </section>
+
+  </div><!-- /planner-shell -->
+
+  <script src="/js/planner.js"></script>
+</body>
+</html>

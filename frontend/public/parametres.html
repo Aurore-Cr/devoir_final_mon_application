@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0">
+  <title>JARVIS — Paramètres</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#040810">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/parametres.css">
+</head>
+<body>
+<div class="param-shell">
+
+  <!-- Header -->
+  <header class="param-header">
+    <a href="/" class="back-btn">‹</a>
+    <h1>⚙️ Paramètres</h1>
+    <button class="logout-btn" id="btn-logout" title="Se déconnecter">Quitter</button>
+  </header>
+
+  <!-- Profil utilisateur -->
+  <section class="param-section">
+    <p class="section-title">👤 Mon compte</p>
+    <div class="profile-card" id="profile-card">
+      <div class="profile-avatar" id="profile-avatar">🤖</div>
+      <div class="profile-info">
+        <p class="profile-name" id="profile-name">—</p>
+        <p class="profile-email" id="profile-email">—</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Connexion serveur (URL pour accès mobile) -->
+  <section class="param-section">
+    <p class="section-title">🌐 Connexion Serveur</p>
+    <p class="section-desc">Pour accéder depuis ton iPhone sur le même réseau Wi-Fi.</p>
+    <div class="server-info" id="server-info">
+      <div class="server-row">
+        <span class="server-label">URL locale détectée</span>
+        <span class="server-url" id="detected-url">—</span>
+      </div>
+      <div class="server-row">
+        <span class="server-label">Statut</span>
+        <span class="server-status" id="server-status">Vérification…</span>
+      </div>
+    </div>
+    <div class="field-group mt">
+      <label for="custom-url">URL personnalisée (optionnel)</label>
+      <input type="url" id="custom-url" placeholder="http://192.168.1.xx:3000"
+             inputmode="url" autocomplete="off">
+    </div>
+    <button class="param-btn secondary" id="btn-test-url">🔍 Tester la connexion</button>
+    <div class="url-result" id="url-result"></div>
+  </section>
+
+  <!-- Mon Planning -->
+  <section class="param-section">
+    <p class="section-title">📅 Mon Planning</p>
+    <p class="section-desc">Glisse pour réordonner. Clique sur un créneau pour modifier.</p>
+
+    <div class="schedule-list" id="schedule-list">
+      <!-- injecté dynamiquement -->
+    </div>
+
+    <!-- Formulaire ajout/édition -->
+    <div class="slot-editor" id="slot-editor" style="display:none">
+      <p class="editor-title" id="editor-title">Nouveau créneau</p>
+      <input type="hidden" id="edit-id">
+      <div class="editor-grid">
+        <div class="field-group">
+          <label>Icône</label>
+          <input type="text" id="edit-icon" placeholder="📚" maxlength="2">
+        </div>
+        <div class="field-group">
+          <label>Couleur</label>
+          <input type="color" id="edit-color" value="#58a6ff">
+        </div>
+        <div class="field-group full">
+          <label>Libellé</label>
+          <input type="text" id="edit-label" placeholder="Cours / Travail" maxlength="40">
+        </div>
+        <div class="field-group">
+          <label>Début</label>
+          <input type="time" id="edit-start">
+        </div>
+        <div class="field-group">
+          <label>Fin</label>
+          <input type="time" id="edit-end">
+        </div>
+      </div>
+      <div class="editor-btns">
+        <button class="param-btn danger"    id="btn-delete-slot"  style="display:none">🗑 Supprimer</button>
+        <button class="param-btn secondary" id="btn-cancel-edit">Annuler</button>
+        <button class="param-btn primary"   id="btn-save-slot">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <button class="param-btn primary mt" id="btn-add-slot">+ Ajouter un créneau</button>
+    <button class="param-btn secondary mt" id="btn-save-schedule">☁️ Sauvegarder le planning</button>
+    <div class="save-status" id="save-status"></div>
+  </section>
+
+  <!-- Notifications Push -->
+  <section class="param-section">
+    <p class="section-title">🔔 Alertes & Notifications</p>
+    <p class="section-desc">Reçois une alerte à chaque changement de tâche, même si l'app est en arrière-plan.</p>
+    <div class="notif-status" id="notif-status">Vérification…</div>
+    <button class="param-btn primary" id="btn-enable-notif">🔔 Activer les alertes</button>
+    <button class="param-btn secondary" id="btn-test-notif" style="display:none">🧪 Tester une alerte</button>
+    <div class="notif-note">
+      <p>📱 <strong>Sur iPhone :</strong> l'application doit être installée sur l'écran d'accueil (PWA) et iOS 16.4+.</p>
+      <p>🔕 Si les alertes ne fonctionnent pas, vérifie Réglages → Notifications → JARVIS.</p>
+    </div>
+  </section>
+
+  <!-- Générateur d'exercices IA -->
+  <section class="param-section">
+    <p class="section-title">🤖 Génération d'exercices par IA</p>
+
+    <!-- Statut actuel -->
+    <div class="api-status-box" id="api-status">
+      <div class="status-spinner"></div>
+      <span>Vérification du provider…</span>
+    </div>
+
+    <!-- Sélecteur de provider -->
+    <p class="section-desc" style="margin-top:14px">Choisis ton provider IA et ajoute la variable dans le fichier <code>.env</code> du serveur :</p>
+
+    <div class="provider-list">
+
+      <!-- Ollama -->
+      <div class="provider-card" data-provider="ollama">
+        <div class="prov-header">
+          <span class="prov-icon">🖥️</span>
+          <div>
+            <p class="prov-name">Ollama <span class="prov-badge free">Gratuit illimité</span></p>
+            <p class="prov-sub">Local sur ton PC · Aucun compte · Fonctionne hors-ligne</p>
+          </div>
+          <span class="prov-tag local">Local seulement</span>
+        </div>
+        <div class="prov-steps">
+          <p>1. Télécharger <a href="https://ollama.com" target="_blank" rel="noopener">ollama.com</a></p>
+          <p>2. Dans un terminal : <code>ollama pull llama3.2</code></p>
+          <p>3. Dans <code>.env</code> :</p>
+          <pre class="prov-code">AI_PROVIDER=ollama
+OLLAMA_URL=http://localhost:11434
+OLLAMA_MODEL=llama3.2</pre>
+        </div>
+      </div>
+
+      <!-- Google Gemini -->
+      <div class="provider-card" data-provider="gemini">
+        <div class="prov-header">
+          <span class="prov-icon">🌐</span>
+          <div>
+            <p class="prov-name">Google Gemini <span class="prov-badge free">Gratuit</span></p>
+            <p class="prov-sub">Compte Google · 1 500 req/jour · Fonctionne partout</p>
+          </div>
+          <span class="prov-tag cloud">Cloud</span>
+        </div>
+        <div class="prov-steps">
+          <p>1. Aller sur <a href="https://aistudio.google.com" target="_blank" rel="noopener">aistudio.google.com</a></p>
+          <p>2. Cliquer <strong>"Get API key"</strong> → <strong>"Create API key"</strong></p>
+          <p>3. Dans <code>.env</code> :</p>
+          <pre class="prov-code">AI_PROVIDER=gemini
+GEMINI_API_KEY=AIzaSy...</pre>
+        </div>
+      </div>
+
+      <!-- OpenRouter -->
+      <div class="provider-card" data-provider="openrouter">
+        <div class="prov-header">
+          <span class="prov-icon">🔀</span>
+          <div>
+            <p class="prov-name">OpenRouter <span class="prov-badge free">Gratuit</span></p>
+            <p class="prov-sub">Email · Modèles gratuits disponibles · Fonctionne partout</p>
+          </div>
+          <span class="prov-tag cloud">Cloud</span>
+        </div>
+        <div class="prov-steps">
+          <p>1. Créer un compte sur <a href="https://openrouter.ai" target="_blank" rel="noopener">openrouter.ai</a></p>
+          <p>2. <strong>API Keys</strong> → <strong>Create Key</strong></p>
+          <p>3. Dans <code>.env</code> :</p>
+          <pre class="prov-code">AI_PROVIDER=openrouter
+OPENROUTER_API_KEY=sk-or-...
+OPENROUTER_MODEL=meta-llama/llama-3.2-3b-instruct:free</pre>
+        </div>
+      </div>
+
+      <!-- Groq -->
+      <div class="provider-card" data-provider="groq">
+        <div class="prov-header">
+          <span class="prov-icon">⚡</span>
+          <div>
+            <p class="prov-name">Groq <span class="prov-badge free">Gratuit</span></p>
+            <p class="prov-sub">Email · 14 400 req/jour · Très rapide</p>
+          </div>
+          <span class="prov-tag cloud">Cloud</span>
+        </div>
+        <div class="prov-steps">
+          <p>1. Créer un compte sur <a href="https://console.groq.com" target="_blank" rel="noopener">console.groq.com</a></p>
+          <p>2. <strong>API Keys</strong> → <strong>Create API Key</strong></p>
+          <p>3. Dans <code>.env</code> :</p>
+          <pre class="prov-code">AI_PROVIDER=groq
+GROQ_API_KEY=gsk_...
+GROQ_MODEL=llama-3.3-70b-versatile</pre>
+        </div>
+      </div>
+
+    </div><!-- /.provider-list -->
+
+    <p class="prov-restart">⚠️ Après avoir modifié <code>.env</code>, relancer le serveur : <code>npm start</code></p>
+  </section>
+
+  <!-- Déconnexion -->
+  <section class="param-section">
+    <button class="param-btn danger full" id="btn-logout-bottom">🚪 Se déconnecter</button>
+  </section>
+
+</div><!-- /.param-shell -->
+
+<script src="/js/auth.js"></script>
+<script src="/js/parametres.js"></script>
+</body>
+</html>

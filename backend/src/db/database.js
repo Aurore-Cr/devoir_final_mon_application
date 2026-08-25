@@ -84,7 +84,7 @@ const DEFAULT_SCHEDULE = [
     end_time: "17:00",
   },
   {
-    label: "Jarvis — Défis",
+    label: "James — Défis",
     icon: "🤖",
     start_time: "17:00",
     end_time: "18:00",

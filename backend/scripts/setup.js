@@ -5,7 +5,7 @@ const webpush = require("web-push");
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
-const ENV = path.join(__dirname, "../.env");
+const ENV = path.join(__dirname, "../../.env");
 
 console.log("\n  JAMES — Setup\n");
 let env = {};
@@ -38,7 +38,7 @@ fs.writeFileSync(
   [
     "# JARVIS .env — NE PAS COMMITTER",
     "NODE_ENV=" + (env.NODE_ENV || "production"),
-    "PORT=" + (env.PORT || "3000"),
+    "PORT=" + (env.PORT || "3005"),
     "",
     "# Authentification JWT",
     "JWT_SECRET=" + env.JWT_SECRET,
@@ -61,4 +61,4 @@ if (!env.GEMINI_API_KEY) {
   console.log("  → https://aistudio.google.com → Get API key → Create API key");
   console.log("  → Ajouter dans .env : GEMINI_API_KEY=AIzaSy...");
 }
-console.log("\n  npm install && npm start\n");
+console.log("\n  npm install  npm start\n");

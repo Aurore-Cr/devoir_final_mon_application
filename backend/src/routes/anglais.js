@@ -18,6 +18,7 @@ const path = require("path");
 const fs = require("fs");
 
 // Chargement unique au démarrage (le fichier ne change pas en prod)
+
 const DATA_PATH = path.join(__dirname, "../data/anglais_examen.json");
 let exercises = [];
 
@@ -58,6 +59,7 @@ router.get("/random", (req, res) => {
   }
 
   // Anti-répétition : exclure les IDs déjà vus cette session
+
   if (req.query.exclude) {
     const seen = req.query.exclude.split(",").map((s) => s.trim());
     const filtered = pool.filter((e) => !seen.includes(e.id));
@@ -66,12 +68,10 @@ router.get("/random", (req, res) => {
   }
 
   if (!pool.length) {
-    return res
-      .status(404)
-      .json({
-        success: false,
-        error: "Aucun exercice correspondant aux critères.",
-      });
+    return res.status(404).json({
+      success: false,
+      error: "Aucun exercice correspondant aux critères.",
+    });
   }
 
   const exercise = pool[Math.floor(Math.random() * pool.length)];
@@ -80,6 +80,7 @@ router.get("/random", (req, res) => {
 
 // ─── GET /api/anglais ─────────────────────────────────────
 // Retourne uniquement les méta-données (pas les corrigés) pour le catalogue
+
 router.get("/", (_req, res) => {
   const meta = exercises.map(({ id, category, difficulty, title, intro }) => ({
     id,
@@ -92,15 +93,14 @@ router.get("/", (_req, res) => {
 });
 
 // ─── GET /api/anglais/:id ─────────────────────────────────
+
 router.get("/:id", (req, res) => {
   const exercise = exercises.find((e) => e.id === req.params.id);
   if (!exercise) {
-    return res
-      .status(404)
-      .json({
-        success: false,
-        error: `Exercice '${req.params.id}' introuvable.`,
-      });
+    return res.status(404).json({
+      success: false,
+      error: `Exercice '${req.params.id}' introuvable.`,
+    });
   }
   res.json({ success: true, exercise });
 });

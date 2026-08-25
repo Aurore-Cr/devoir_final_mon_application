@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "setup": "node scripts/setup.js"
+    "setup": "node backend/scripts/setup.js"
   },
   "dependencies": {
     "express": "^4.19.2",

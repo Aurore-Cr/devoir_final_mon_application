@@ -74,6 +74,7 @@ router.get("/random", (req, res) => {
 
 // ─── GET /api/defis ───────────────────────────────────────
 // Méta seule (pas les solutions) pour le catalogue
+
 router.get("/", (_req, res) => {
   const meta = defis.map(
     ({ id, titre, techno, niveau, tags, duree, objectif }) => ({

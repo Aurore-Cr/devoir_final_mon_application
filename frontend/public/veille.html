@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+  <title>Jarvis — Veille Technologique</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0d1117">
+
+  <!-- iOS / iPhone 15 -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Jarvis">
+  <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/veille.css">
+</head>
+<body>
+
+  <div class="veille-shell">
+
+    <!-- ─── HEADER ──────────────────────────────────────── -->
+    <header class="veille-header">
+      <a href="/" class="back-btn" aria-label="Retour">‹</a>
+      <div class="header-center">
+        <h1>📰 Veille Techno</h1>
+        <p class="header-sub" id="report-date">Chargement…</p>
+      </div>
+      <button id="btn-refresh" class="refresh-btn" title="Actualiser les sources" aria-label="Actualiser">
+        <svg id="refresh-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 4 23 10 17 10"/>
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+        </svg>
+      </button>
+    </header>
+
+    <!-- ─── BANDEAU D'INTRO ──────────────────────────────── -->
+    <section class="rapport-intro" id="rapport-intro" style="display:none">
+      <div class="intro-icon">🤖</div>
+      <div class="intro-text">
+        <p class="intro-label">Rapport de Veille de Jarvis</p>
+        <p class="intro-desc" id="intro-desc">—</p>
+      </div>
+    </section>
+
+    <!-- ─── ÉTAT DE CHARGEMENT ───────────────────────────── -->
+    <section class="state-container" id="state-loading">
+      <div class="skeleton-wrapper">
+        <div class="skeleton-header"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-header"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+      </div>
+    </section>
+
+    <!-- ─── ÉTAT D'ERREUR ────────────────────────────────── -->
+    <section class="state-container" id="state-error" style="display:none">
+      <div class="error-box">
+        <p class="error-icon">⚠️</p>
+        <p class="error-title">Actualités indisponibles</p>
+        <p class="error-msg" id="error-msg">Le serveur ne répond pas ou les APIs d'actualités sont temporairement inaccessibles.</p>
+        <button onclick="loadVeille(true)" class="retry-btn">Réessayer</button>
+      </div>
+    </section>
+
+    <!-- ─── CONTENU PRINCIPAL ────────────────────────────── -->
+    <main id="veille-content" style="display:none">
+      <!-- Les catégories sont injectées dynamiquement par veille.js -->
+    </main>
+
+    <!-- ─── FOOTER ───────────────────────────────────────── -->
+    <footer class="veille-footer" id="veille-footer" style="display:none">
+      <p id="footer-info">—</p>
+      <p class="footer-sources">Sources : Developpez.com · Next.ink · LMI · ZATAZ · Undernews · Korben · Silicon.fr</p>
+    </footer>
+
+  </div>
+
+  <script src="/js/veille.js"></script>
+</body>
+</html>
