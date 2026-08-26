@@ -1,0 +1,18 @@
+# ============================================================
+#  JAMES — railway.toml
+#  Alternative à Render : Railway.app
+#  Avantage : pas de spin-down (mais 5$/mois de crédit offert)
+# ============================================================
+
+[build]
+builder = "nixpacks"
+buildCommand = "npm install"
+
+[deploy]
+startCommand = "npm start"
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
+
+[healthcheck]
+path = "/api/status"
+timeout = 15

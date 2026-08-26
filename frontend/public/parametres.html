@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0">
+  <title>JAMES — Paramètres</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#040810">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/parametres.css">
+</head>
+<body>
+<div class="param-shell">
+
+  <!-- Header -->
+  <header class="param-header">
+    <a href="/" class="back-btn">‹</a>
+    <h1>⚙️ Paramètres</h1>
+    <button class="logout-btn" id="btn-logout" title="Se déconnecter">Quitter</button>
+  </header>
+
+  <!-- Profil utilisateur -->
+  <section class="param-section">
+    <p class="section-title">👤 Mon compte</p>
+    <div class="profile-card" id="profile-card">
+      <div class="profile-avatar" id="profile-avatar">🤖</div>
+      <div class="profile-info">
+        <p class="profile-name" id="profile-name">—</p>
+        <p class="profile-email" id="profile-email">—</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="param-section">
+    <p class="section-title">✏️ Informations personnelles</p>
+    <div class="editor-grid">
+      <div class="field-group"><label for="profile-username">Nom d'utilisateur</label><input type="text" id="profile-username" maxlength="40"></div>
+      <div class="field-group"><label for="profile-avatar-input">Avatar</label><input type="text" id="profile-avatar-input" maxlength="8" placeholder="🤖"></div>
+      <div class="field-group full"><label for="profile-email-input">Email</label><input type="email" id="profile-email-input"></div>
+    </div>
+    <button class="param-btn primary" id="btn-save-profile">💾 Enregistrer mon profil</button>
+    <div class="save-status" id="profile-save-status"></div>
+  </section>
+
+  <section class="param-section">
+    <p class="section-title">🔐 Changer le mot de passe</p>
+    <div class="field-group"><label for="current-password">Mot de passe actuel</label><input type="password" id="current-password" autocomplete="current-password"></div>
+    <div class="field-group"><label for="new-password">Nouveau mot de passe</label><input type="password" id="new-password" minlength="8" autocomplete="new-password"></div>
+    <button class="param-btn secondary" id="btn-change-password">Changer le mot de passe</button>
+    <div class="save-status" id="password-status"></div>
+  </section>
+
+  <section class="param-section" id="evolution">
+    <p class="section-title">📈 Mon évolution</p>
+    <div class="progress-stats" id="progress-stats"><p>Chargement…</p></div>
+    <div class="level-track" id="level-track"></div>
+    <p class="section-desc mt">Historique récent des exercices d'anglais</p>
+    <div class="history-list" id="history-list"></div>
+  </section>
+
+  <!-- Connexion serveur (URL pour accès mobile) -->
+  <section class="param-section">
+    <p class="section-title">🌐 Connexion Serveur</p>
+    <p class="section-desc">Pour accéder depuis ton iPhone sur le même réseau Wi-Fi.</p>
+    <div class="server-info" id="server-info">
+      <div class="server-row">
+        <span class="server-label">URL locale détectée</span>
+        <span class="server-url" id="detected-url">—</span>
+      </div>
+      <div class="server-row">
+        <span class="server-label">Statut</span>
+        <span class="server-status" id="server-status">Vérification…</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mon Planning -->
+  <section class="param-section">
+    <p class="section-title">📅 Mon Planning</p>
+    <p class="section-desc">Glisse pour réordonner. Clique sur un créneau pour modifier.</p>
+
+    <div class="schedule-list" id="schedule-list">
+      <!-- injecté dynamiquement -->
+    </div>
+
+    <!-- Formulaire ajout/édition -->
+    <div class="slot-editor" id="slot-editor" style="display:none">
+      <p class="editor-title" id="editor-title">Nouveau créneau</p>
+      <input type="hidden" id="edit-id">
+      <div class="editor-grid">
+        <div class="field-group">
+          <label>Icône</label>
+          <input type="text" id="edit-icon" placeholder="📚" maxlength="2">
+        </div>
+        <div class="field-group">
+          <label>Couleur</label>
+          <input type="color" id="edit-color" value="#58a6ff">
+        </div>
+        <div class="field-group full">
+          <label>Libellé</label>
+          <input type="text" id="edit-label" placeholder="Cours / Travail" maxlength="40">
+        </div>
+        <div class="field-group">
+          <label>Début</label>
+          <input type="time" id="edit-start">
+        </div>
+        <div class="field-group">
+          <label>Fin</label>
+          <input type="time" id="edit-end">
+        </div>
+      </div>
+      <div class="editor-btns">
+        <button class="param-btn danger"    id="btn-delete-slot"  style="display:none">🗑 Supprimer</button>
+        <button class="param-btn secondary" id="btn-cancel-edit">Annuler</button>
+        <button class="param-btn primary"   id="btn-save-slot">💾 Enregistrer</button>
+      </div>
+    </div>
+
+    <button class="param-btn primary mt" id="btn-add-slot">+ Ajouter un créneau</button>
+    <button class="param-btn secondary mt" id="btn-save-schedule">☁️ Sauvegarder le planning</button>
+    <div class="save-status" id="save-status"></div>
+  </section>
+
+  <!-- Notifications Push -->
+  <section class="param-section">
+    <p class="section-title">🔔 Alertes & Notifications</p>
+    <p class="section-desc">Reçois une alerte à chaque changement de tâche, même si l'app est en arrière-plan.</p>
+    <div class="notif-status" id="notif-status">Vérification…</div>
+    <button class="param-btn primary" id="btn-enable-notif">🔔 Activer les alertes</button>
+    <button class="param-btn secondary" id="btn-test-notif" style="display:none">🧪 Tester une alerte</button>
+    <div class="notif-note">
+      <p>📱 <strong>Sur iPhone :</strong> l'application doit être installée sur l'écran d'accueil (PWA) et iOS 16.4+.</p>
+      <p>🔕 Si les alertes ne fonctionnent pas, vérifie Réglages → Notifications → JAMES.</p>
+    </div>
+  </section>
+
+<!-- Déconnexion -->
+  <section class="param-section">
+    <button class="param-btn danger full" id="btn-logout-bottom">🚪 Se déconnecter</button>
+  </section>
+
+</div><!-- /.param-shell -->
+
+<script src="/js/auth.js"></script>
+<script src="/js/parametres.js"></script>
+</body>
+</html>

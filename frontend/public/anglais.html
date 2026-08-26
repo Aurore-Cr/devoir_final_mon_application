@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+  <title>JAMES — Défis Anglais</title>
+
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0d1117">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="JAMES">
+  <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+
+  <!-- Prism.js — coloration syntaxique (JS, CSS, aucun build requis) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/anglais.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     COQUILLE DE L'APPLICATION
+════════════════════════════════════════════════════════════ -->
+<div class="anglais-shell">
+
+  <!-- ─── HEADER PERSISTANT ──────────────────────────────── -->
+  <header class="anglais-header">
+    <a href="/" class="back-btn" aria-label="Retour accueil">‹</a>
+
+    <div class="header-center">
+      <h1>🇬🇧 Défis Anglais</h1>
+      <div class="session-bar" id="session-bar" style="display:none">
+        <span class="session-stat" id="stat-done">0 fait</span>
+        <span class="session-divider">·</span>
+        <span class="session-stat correct" id="stat-correct">0 ✓</span>
+        <span class="session-divider">·</span>
+        <span class="session-stat" id="stat-remaining">— restants</span>
+      </div>
+    </div>
+
+    <button class="header-action" id="btn-new-random" title="Exercice aléatoire" style="display:none" aria-label="Exercice aléatoire">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="16 3 21 3 21 8"/><polyline points="4 20 4 15 9 15"/>
+        <path d="M21 3 9 15"/><path d="M4 20l8-8"/>
+        <polyline points="15 15 21 15 21 20"/><path d="M15 9l6 6"/>
+      </svg>
+    </button>
+  </header>
+
+  <!-- ───────────────────────────────────────────────────────
+       VUE 1 : LANDING
+  ──────────────────────────────────────────────────────── -->
+  <section id="view-landing" class="view">
+
+    <div class="landing-hero">
+      <p class="hero-sub">Entraînement à l'examen écrit de Dev Web</p>
+      <p class="hero-desc">
+        Traduis des textes techniques complexes, réponds aux questions de compréhension,
+        puis révèle le corrigé et le lexique.
+      </p>
+    </div>
+
+    <div class="progression-card" id="english-progress-card">
+      <div><strong>Progression CECRL</strong><br><span id="english-progress-text">Chargement…</span></div>
+      <a href="/parametres.html#evolution">Voir l'évolution</a>
+    </div>
+
+    <!-- Filtres -->
+    <div class="filter-section">
+      <p class="filter-label">Catégorie</p>
+      <div class="filter-chips" id="category-chips">
+        <button class="chip active" data-category="">Toutes</button>
+        <!-- injectées dynamiquement -->
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <p class="filter-label">Niveau</p>
+      <div class="filter-chips" id="difficulty-chips">
+        <button class="chip active" data-difficulty="">Tous</button>
+        <!-- niveaux injectés dynamiquement depuis l'API -->
+      </div>
+    </div>
+
+    <!-- Catalogue -->
+    <div class="catalog-section">
+      <p class="filter-label" id="catalog-count">— exercices disponibles</p>
+      <ul class="catalog-list" id="catalog-list">
+        <!-- injecté dynamiquement -->
+      </ul>
+    </div>
+
+    <div class="landing-cta">
+      <button class="cta-btn" id="btn-start-random">
+        🎲 Exercice aléatoire (catalogue)
+      </button>
+      <button class="cta-btn cta-ia" id="btn-generate-ia" style="margin-top:10px">
+        🤖 Générer un nouvel exercice par IA
+      </button>
+      <p class="ia-note" id="ia-note" style="display:none">
+        ⚠️ Génération IA indisponible — vérifie la configuration Gemini dans <a href="/parametres.html">Paramètres</a>
+      </p>
+    </div>
+
+    <div id="landing-error" class="landing-error" style="display:none">
+      <p>⚠️ Impossible de charger les exercices. Vérifiez que le serveur est démarré.</p>
+    </div>
+
+  </section>
+
+  <!-- ───────────────────────────────────────────────────────
+       VUE 2 : EXERCICE
+  ──────────────────────────────────────────────────────── -->
+  <section id="view-exercise" class="view" style="display:none">
+
+    <!-- Méta de l'exercice -->
+    <div class="exercise-meta">
+      <span class="meta-category" id="ex-category">—</span>
+      <span class="meta-difficulty badge" id="ex-difficulty">—</span>
+      <span class="meta-id" id="ex-id">—</span>
+    </div>
+
+    <h2 class="exercise-title" id="ex-title">—</h2>
+
+    <!-- Consigne d'introduction -->
+    <div class="exercise-intro-box">
+      <p class="intro-flag">📋 Consigne</p>
+      <p id="ex-intro">—</p>
+    </div>
+
+    <!-- ── Texte anglais ── -->
+    <div class="text-section">
+      <p class="section-label">📄 Texte en anglais</p>
+      <blockquote class="english-text" id="ex-text">—</blockquote>
+    </div>
+
+    <!-- ── Bloc de code (conditionnel) ── -->
+    <div class="code-section" id="code-section" style="display:none">
+      <div class="code-header">
+        <span class="code-lang" id="code-lang-badge">—</span>
+        <button class="code-copy-btn" id="btn-copy-code" title="Copier le code">
+          📋 Copier
+        </button>
+      </div>
+      <pre class="code-block"><code id="ex-code" class="language-javascript"></code></pre>
+    </div>
+
+    <!-- ── Défi de traduction ── -->
+    <div class="challenge-section">
+      <div class="challenge-header">
+        <span class="challenge-icon">✍️</span>
+        <p class="section-label">Défi : Traduction</p>
+      </div>
+      <div class="challenge-desc" id="ex-translation-challenge">—</div>
+
+      <label class="answer-label" for="answer-translation">
+        Ta traduction en français :
+      </label>
+      <textarea
+        id="answer-translation"
+        class="answer-area"
+        placeholder="Écris ta traduction ici…"
+        rows="8"
+        spellcheck="true"
+        lang="fr"
+      ></textarea>
+      <div class="char-count" id="char-translation">0 caractères</div>
+    </div>
+
+    <!-- ── Questions de compréhension ── -->
+    <div class="questions-section" id="questions-section">
+      <p class="section-label">❓ Questions de compréhension</p>
+      <p class="questions-note">Réponds en anglais, de façon développée.</p>
+      <!-- injectées dynamiquement -->
+    </div>
+
+    <!-- ── Barre d'action ── -->
+    <div class="action-bar">
+      <button class="action-btn secondary" id="btn-skip">Passer →</button>
+      <button class="action-btn primary" id="btn-reveal">🔍 Révéler le corrigé</button>
+    </div>
+
+  </section>
+
+  <!-- ───────────────────────────────────────────────────────
+       VUE 3 : CORRECTION (inline sous l'exercice)
+  ──────────────────────────────────────────────────────── -->
+  <section id="view-correction" class="view" style="display:none">
+
+    <!-- ── Corrigé traduction ── -->
+    <div class="correction-block" id="correction-translation">
+      <div class="correction-header">
+        <span class="correction-icon">✍️</span>
+        <h3>Corrigé — Traduction</h3>
+      </div>
+
+      <div class="comparison-grid">
+        <div class="comparison-col">
+          <p class="col-label your-label">Ta réponse</p>
+          <div class="your-answer-display" id="display-translation">—</div>
+        </div>
+        <div class="comparison-col">
+          <p class="col-label model-label">Traduction de référence</p>
+          <div class="model-answer-display" id="model-translation">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Corrigé questions ── -->
+    <div class="correction-block" id="correction-questions">
+      <div class="correction-header">
+        <span class="correction-icon">❓</span>
+        <h3>Corrigé — Questions de compréhension</h3>
+      </div>
+      <div id="correction-questions-list">
+        <!-- injectées dynamiquement -->
+      </div>
+    </div>
+
+    <!-- ── Lexique ── -->
+    <div class="correction-block lexicon-block" id="correction-lexicon">
+      <div class="correction-header">
+        <span class="correction-icon">📚</span>
+        <h3>Lexique Technique</h3>
+      </div>
+      <div class="lexicon-grid" id="lexicon-grid">
+        <!-- injectées dynamiquement -->
+      </div>
+    </div>
+
+    <!-- ── Auto-évaluation ── -->
+    <div class="self-eval-section" id="self-eval">
+      <p class="self-eval-label">Comment tu t'en es sorti·e ?</p>
+      <div class="self-eval-btns">
+        <button class="eval-btn wrong"   data-score="0">😓 À retravailler</button>
+        <button class="eval-btn partial" data-score="1">🤔 Partiellement</button>
+        <button class="eval-btn correct" data-score="2">✅ Bien compris</button>
+      </div>
+    </div>
+
+    <!-- ── Prochain exercice ── -->
+    <div class="next-bar">
+      <button class="action-btn primary wide" id="btn-next-exercise">
+        Prochain exercice 🎲
+      </button>
+      <button class="action-btn secondary" id="btn-back-catalog">
+        ← Catalogue
+      </button>
+    </div>
+
+  </section>
+
+  <!-- ── Spinner de chargement global ── -->
+  <div id="global-loader" class="global-loader" style="display:none" aria-live="polite">
+    <div class="loader-spinner" aria-hidden="true"></div>
+    <p>Chargement de l'exercice…</p>
+  </div>
+
+</div>
+
+<!-- Prism.js core + langages -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+
+<script src="/js/auth.js"></script>
+<script src="/js/anglais.js"></script>
+</body>
+</html>

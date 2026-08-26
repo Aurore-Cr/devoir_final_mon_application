@@ -1,0 +1,389 @@
+/* ============================================================
+   JAMES — planner.css
+   Mobile-first, safe-area iOS, thème sombre GitHub-inspired
+   ============================================================ */
+
+/* ─── VARIABLES LOCALES ──────────────────────────────────── */
+:root {
+  --accent-green  : #3fb950;
+  --accent-yellow : #d29922;
+  --accent-red    : #f85149;
+  --accent-purple : #bc8cff;
+  --accent-blue   : #58a6ff;
+  --card-active   : #1f2937;
+  --transition    : 0.2s ease;
+}
+
+/* ─── SHELL PRINCIPAL ────────────────────────────────────── */
+.planner-shell {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 0 0 calc(env(safe-area-inset-bottom) + 24px);
+  min-height: 100dvh;
+}
+
+/* ─── HEADER ─────────────────────────────────────────────── */
+.planner-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(env(safe-area-inset-top) + 12px) 16px 12px;
+  background: rgba(13, 17, 23, 0.92);
+  backdrop-filter: saturate(180%) blur(16px);
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+
+.header-center {
+  text-align: center;
+  flex: 1;
+}
+
+.header-center h1 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.clock {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--accent-blue);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+}
+
+.back-btn {
+  font-size: 1.8rem;
+  color: var(--accent-blue);
+  text-decoration: none;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: background var(--transition);
+}
+
+.back-btn:active { background: var(--card-bg); }
+
+.test-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 1.1rem;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.test-btn:active { background: var(--card-bg); }
+
+/* ─── STATUT SYSTÈME ─────────────────────────────────────── */
+.system-status {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.status-badge {
+  font-size: 0.72rem;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: #8b949e;
+  white-space: nowrap;
+  transition: all var(--transition);
+}
+
+.status-badge.ok    { border-color: var(--accent-green);  color: var(--accent-green); }
+.status-badge.warn  { border-color: var(--accent-yellow); color: var(--accent-yellow); }
+.status-badge.error { border-color: var(--accent-red);    color: var(--accent-red); }
+
+/* ─── TÂCHE COURANTE / SUIVANTE ─────────────────────────── */
+.tasks-overview {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.task-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  min-height: 80px;
+}
+
+.task-card.current {
+  border-color: var(--accent-blue);
+  background: rgba(88, 166, 255, 0.06);
+}
+
+.task-card.next {
+  border-color: var(--border);
+  opacity: 0.75;
+}
+
+.card-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #8b949e;
+  margin-bottom: 6px;
+}
+
+.task-card.current .card-label { color: var(--accent-blue); }
+
+.task-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.35;
+  margin-bottom: 4px;
+}
+
+.task-sub {
+  font-size: 0.75rem;
+  color: #8b949e;
+}
+
+/* ─── COUNTDOWN CENTRAL ──────────────────────────────────── */
+.countdown-wrapper {
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.countdown-label {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #8b949e;
+  margin-bottom: 4px;
+}
+
+.countdown {
+  font-size: 1.15rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent-yellow);
+  white-space: nowrap;
+}
+
+/* ─── PLANNING LISTE ─────────────────────────────────────── */
+.schedule-section {
+  padding: 16px;
+}
+
+.section-title {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #8b949e;
+  margin-bottom: 12px;
+}
+
+.schedule-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.schedule-item {
+  display: grid;
+  grid-template-columns: 110px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  transition: all var(--transition);
+  counter-increment: step;
+}
+
+/* Tâche en cours */
+.schedule-item.active {
+  border-color: var(--accent-blue);
+  background: rgba(88, 166, 255, 0.07);
+  box-shadow: 0 0 0 1px rgba(88, 166, 255, 0.2);
+}
+
+.schedule-item.active::before {
+  content: "▶";
+  position: absolute;
+  left: -18px;
+  color: var(--accent-blue);
+  font-size: 0.7rem;
+}
+
+.schedule-item { position: relative; }
+
+/* Tâche passée */
+.schedule-item.past {
+  opacity: 0.4;
+}
+
+.schedule-item.past .slot-task {
+  text-decoration: line-through;
+  text-decoration-color: #8b949e;
+}
+
+.slot-time {
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  color: #8b949e;
+  white-space: nowrap;
+}
+
+.schedule-item.active .slot-time {
+  color: var(--accent-blue);
+  font-weight: 600;
+}
+
+.slot-task {
+  font-size: 0.85rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.slot-duration {
+  font-size: 0.7rem;
+  color: var(--accent-purple);
+  white-space: nowrap;
+  background: rgba(188, 140, 255, 0.1);
+  padding: 2px 7px;
+  border-radius: 20px;
+  border: 1px solid rgba(188, 140, 255, 0.2);
+}
+
+/* ─── BANNIÈRE D'ALERTE IN-APP ───────────────────────────── */
+#alert-banner {
+  position: fixed;
+  top: calc(env(safe-area-inset-top) + 8px);
+  left: 12px;
+  right: 12px;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #161b22;
+  border: 1px solid var(--accent-blue);
+  border-radius: 14px;
+  padding: 14px 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(88, 166, 255, 0.3);
+
+  /* Masqué par défaut */
+  opacity: 0;
+  transform: translateY(-20px) scale(0.97);
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+#alert-banner.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: all;
+}
+
+.alert-icon {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+  animation: pulse 1.2s ease infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.12); }
+}
+
+.alert-content { flex: 1; }
+
+.alert-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent-blue);
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+
+#alert-message {
+  font-size: 0.85rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+#alert-close {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: #8b949e;
+  font-size: 0.9rem;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition);
+}
+
+#alert-close:active { background: var(--card-bg); }
+
+/* ─── BOUTON PERMISSION NOTIFICATIONS ───────────────────── */
+.notif-permission-btn {
+  position: fixed;
+  bottom: calc(env(safe-area-inset-bottom) + 16px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent-blue);
+  color: #fff;
+  border: none;
+  border-radius: 100px;
+  padding: 12px 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(88, 166, 255, 0.4);
+  white-space: nowrap;
+  transition: opacity var(--transition), transform var(--transition);
+}
+
+.notif-permission-btn:active {
+  opacity: 0.85;
+  transform: translateX(-50%) scale(0.97);
+}
+
+/* ─── RESPONSIVE — Desktop ───────────────────────────────── */
+@media (min-width: 600px) {
+  .planner-header {
+    padding-top: 16px;
+  }
+
+  .schedule-item {
+    grid-template-columns: 130px 1fr auto;
+    padding: 12px 18px;
+  }
+
+  .slot-task { font-size: 0.9rem; }
+
+  .task-name { font-size: 0.95rem; }
+
+  .countdown { font-size: 1.4rem; }
+}

@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>JAMES — Système d'Assistance</title>
+
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#040810" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="JAMES" />
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+    <link rel="icon" type="image/png" href="/icons/icon-192x192.png" />
+
+    <link rel="stylesheet" href="/css/dashboard.css" />
+  </head>
+  <body>
+    <!-- ░ SCAN LINES effet CRT ░ -->
+    <div class="scanlines" aria-hidden="true"></div>
+
+    <!-- ═══ HEADER ══════════════════════════════════════════ -->
+    <header class="j-header">
+      <div class="j-brand">
+        <div class="brand-hex" aria-hidden="true">
+          <svg
+            viewBox="0 0 40 46"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M20 1L38 11V35L20 45L2 35V11L20 1Z"
+              stroke="var(--j-cyan)"
+              stroke-width="1.5"
+              fill="rgba(0,212,255,0.06)"
+            />
+            <text
+              x="50%"
+              y="56%"
+              dominant-baseline="middle"
+              text-anchor="middle"
+              fill="var(--j-cyan)"
+              font-size="14"
+              font-weight="700"
+              font-family="system-ui"
+            >
+              J
+            </text>
+          </svg>
+        </div>
+        <div class="brand-info">
+          <h1 class="brand-name">JAMES</h1>
+          <p class="brand-sub" id="user-name">Chargement…</p>
+        </div>
+      </div>
+
+      <!-- Boutons header -->
+      <div class="header-actions">
+        <a href="/flashcards.html" class="header-icon-btn" title="Flashcards" aria-label="Flashcards du jour" style="font-size:16px;text-decoration:none">🧠</a>
+        <a
+          href="/parametres.html"
+          class="header-icon-btn"
+          title="Paramètres"
+          aria-label="Paramètres"
+        >
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="3" />
+            <path
+              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"
+            />
+          </svg>
+        </a>
+      </div>
+
+      <div class="j-clock-block">
+        <div class="j-time" id="live-time">--:--:--</div>
+        <div class="j-date" id="live-date">--</div>
+      </div>
+    </header>
+    <nav class="j-module-nav" aria-label="Navigation principale">
+      <a href="/" class="module-tab active">🏠 Accueil</a>
+      <a href="/planner.html" class="module-tab">📅 Planning</a>
+      <a href="/veille.html" class="module-tab">🛰 Veille</a>
+      <a href="/anglais.html" class="module-tab">🇬🇧 Anglais</a>
+      <a href="/defis.html" class="module-tab">⚡ Code</a>
+      <a href="/flashcards.html" class="module-tab flash-tab">🧠 Flashcards</a>
+      <a href="/parametres.html" class="module-tab">⚙️ Paramètres</a>
+    </nav>
+
+
+    <!-- ═══ BARRE SYSTÈME ═══════════════════════════════════ -->
+    <div class="j-statusbar">
+      <span class="sbar-item" id="sbar-server">
+        <span class="sdot"></span>Serveur
+      </span>
+      <span class="sbar-item" id="sbar-pwa">
+        <span class="sdot"></span>PWA
+      </span>
+      <span class="sbar-item" id="sbar-notif">
+        <span class="sdot"></span>Alertes
+      </span>
+      <span class="sbar-sep"></span>
+      <span class="sbar-version">v5.0</span>
+    </div>
+
+    <!-- ═══ DASHBOARD PRINCIPAL ════════════════════════════ -->
+    <main class="j-dashboard">
+      <!-- ▓ WIDGET 1 — MISSION DU JOUR ▓ -->
+      <section class="j-widget w-planner" id="widget-planner">
+        <div class="widget-header">
+          <div class="wh-left">
+            <span class="wh-icon">📅</span>
+            <div>
+              <h2 class="wh-title">Mission du Jour</h2>
+              <p class="wh-sub">Daily Planner minuté</p>
+            </div>
+          </div>
+          <a
+            href="/planner.html"
+            class="wh-link"
+            aria-label="Ouvrir le Planner"
+          >
+            Planner <span class="link-arrow">›</span>
+          </a>
+        </div>
+
+        <!-- Tâche courante + suivante -->
+        <div class="planner-hero">
+          <div class="task-now">
+            <div class="tn-label">EN COURS</div>
+            <div class="tn-icon" id="pln-now-icon">⏳</div>
+            <div class="tn-name" id="pln-now-name">Calcul…</div>
+            <div class="tn-time" id="pln-now-time">--:-- → --:--</div>
+          </div>
+
+          <div class="task-countdown-block">
+            <div class="countdown-ring">
+              <svg viewBox="0 0 80 80" class="ring-svg">
+                <circle class="ring-track" cx="40" cy="40" r="34" />
+                <circle
+                  class="ring-progress"
+                  id="ring-arc"
+                  cx="40"
+                  cy="40"
+                  r="34"
+                  stroke-dasharray="213.6"
+                  stroke-dashoffset="0"
+                />
+              </svg>
+              <div class="ring-inner">
+                <div class="ring-remaining" id="pln-remaining">--:--</div>
+                <div class="ring-label">restant</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="task-next">
+            <div class="tnx-label">SUIVANT</div>
+            <div class="tnx-icon" id="pln-next-icon">🔜</div>
+            <div class="tnx-name" id="pln-next-name">—</div>
+            <div class="tnx-time" id="pln-next-time">—</div>
+          </div>
+        </div>
+
+        <!-- Barre de progression de la journée -->
+        <div class="day-progress-bar">
+          <div class="dpb-fill" id="day-progress-fill" style="width: 0%"></div>
+          <div class="dpb-marker" id="dpb-marker" style="left: 0%"></div>
+        </div>
+        <div class="dpb-labels">
+          <span>06h</span><span>12h</span><span>18h</span><span>23h</span>
+        </div>
+
+        <!-- Mini-timeline -->
+        <div class="mini-timeline" id="mini-timeline"></div>
+      </section>
+
+      <!-- ▓ WIDGET 2 — INTEL VEILLE ▓ -->
+      <section class="j-widget w-veille" id="widget-veille">
+        <div class="widget-header">
+          <div class="wh-left">
+            <span class="wh-icon">📡</span>
+            <div>
+              <h2 class="wh-title">Intel Veille</h2>
+              <p class="wh-sub">Actualités tech du moment</p>
+            </div>
+          </div>
+          <a href="/veille.html" class="wh-link">
+            Tout voir <span class="link-arrow">›</span>
+          </a>
+        </div>
+
+        <div id="veille-articles">
+          <div class="skeleton-item"></div>
+          <div class="skeleton-item"></div>
+          <div class="skeleton-item"></div>
+        </div>
+
+        <div class="widget-cta-row">
+          <a href="/veille.html" class="j-btn j-btn-ghost">
+            Rapport complet →
+          </a>
+        </div>
+      </section>
+
+      <!-- ▓ WIDGET 3 — DÉFI ANGLAIS ▓ -->
+      <section class="j-widget w-anglais" id="widget-anglais">
+        <div class="widget-header">
+          <div class="wh-left">
+            <span class="wh-icon">🇬🇧</span>
+            <div>
+              <h2 class="wh-title">Défi Anglais</h2>
+              <p class="wh-sub">Examen tech · Traduction</p>
+            </div>
+          </div>
+          <a href="/anglais.html" class="wh-link">
+            Catalogue <span class="link-arrow">›</span>
+          </a>
+        </div>
+
+        <div id="anglais-preview">
+          <div class="skeleton-item tall"></div>
+        </div>
+
+        <div class="widget-cta-row">
+          <a href="/anglais.html" class="j-btn j-btn-accent accent-orange">
+            Lancer l'exercice →
+          </a>
+        </div>
+      </section>
+
+      <!-- ▓ WIDGET 4 — DÉFI CODE ▓ -->
+      <section class="j-widget w-dev" id="widget-dev">
+        <div class="widget-header">
+          <div class="wh-left">
+            <span class="wh-icon">⚡</span>
+            <div>
+              <h2 class="wh-title">Défi Code</h2>
+              <p class="wh-sub">Challenge VS Code du jour</p>
+            </div>
+          </div>
+          <a href="/defis.html" class="wh-link">
+            Catalogue <span class="link-arrow">›</span>
+          </a>
+        </div>
+
+        <div id="defis-preview">
+          <div class="skeleton-item tall"></div>
+        </div>
+
+        <div class="widget-cta-row">
+          <a href="/defis.html" class="j-btn j-btn-accent accent-purple">
+            Lancer le défi →
+          </a>
+        </div>
+      </section>
+
+      <!-- ▓ WIDGET 5 — FLASHCARDS DU JOUR ▓ -->
+      <section class="j-widget w-flashcards" id="widget-flashcards">
+        <div class="widget-header">
+          <div class="wh-left"><span class="wh-icon">🧠</span><div><h2 class="wh-title">Flashcards du jour</h2><p class="wh-sub">Développement web · Business English · IA</p></div></div>
+          <a href="/flashcards.html" class="wh-link">Ouvrir <span class="link-arrow">›</span></a>
+        </div>
+        <div class="flashcards-grid" id="daily-flashcards"><div class="skeleton-item tall"></div></div>
+        <p class="flashcards-note">6 nouvelles cartes sont générées par Gemini une fois par jour et conservées pour la journée. <a href="/flashcards.html" style="color:var(--j-cyan)">Ouvrir l’onglet Flashcards →</a></p>
+      </section>
+    </main>
+
+    <!-- ═══ FOOTER ══════════════════════════════════════════ -->
+    <footer class="j-footer">
+      <p id="footer-status">⬤ Initialisation…</p>
+      <button class="notif-request-btn" id="btn-notif" style="display: none">
+        🔔 Activer les alertes James
+      </button>
+    </footer>
+
+    <script src="/js/auth.js"></script>
+    <script src="/js/dashboard.js"></script>
+  </body>
+</html>

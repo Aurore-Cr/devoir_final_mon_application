@@ -1,0 +1,207 @@
+{
+  "collection": "exercices",
+  "documents": [
+    {
+      "_id": "mt97vd3kcrck3",
+      "type": "defi",
+      "techno": "Docker",
+      "niveau": "Moyen",
+      "content": {
+        "id": "gen_1787695691559",
+        "titre": "Optimisation et Orchestration d'une API Node.js et PostgreSQL",
+        "techno": "Docker",
+        "niveau": "Moyen",
+        "tags": [
+          "docker-compose",
+          "multi-stage",
+          "security"
+        ],
+        "duree": "25 min",
+        "objectif": "L'objectif de ce défi est de concevoir une architecture Docker sécurisée et optimisée pour une application web Node.js couplée à PostgreSQL. Vous devrez réduire la taille des images et orchestrer l'attente du démarrage des services.",
+        "enonce": "Votre équipe souhaite déployer une API Node.js connectée à une base de données PostgreSQL, mais les images de production actuelles sont trop lourdes et s'exécutent avec des privilèges root. Vous devez créer un Dockerfile multi-stage afin de réduire l'empreinte mémoire et renforcer la sécurité globale. Ensuite, vous rédigerez un fichier Docker Compose qui configure la persistance des données et gère le réseau interne. Enfin, vous devez implémenter un mécanisme d'attente (healthcheck) pour éviter que l'API ne démarre avant que PostgreSQL soit complètement prêt à recevoir des connexions.",
+        "contraintes": [
+          "Utiliser un build multi-stage basé sur node:20-alpine pour séparer le build de la production.",
+          "Exécuter l'application finale sous l'utilisateur non-privilégié 'node'.",
+          "Configurer un volume nommé pour garantir la persistance des données PostgreSQL.",
+          "Mettre en place un healthcheck sur le service PostgreSQL à l'aide de la commande pg_isready.",
+          "Utiliser la condition 'service_healthy' dans la clause 'depends_on' de l'API."
+        ],
+        "ressources": [
+          "Docker Docs - Multi-stage builds",
+          "Docker Docs - Compose file healthcheck"
+        ],
+        "solution": {
+          "methodologie": "Nous commençons par séparer l'étape de construction de l'étape d'exécution finale dans le Dockerfile pour minimiser la taille de l'image. Ensuite, nous définissons l'infrastructure avec Docker Compose en configurant un réseau dédié et la persistance par volume. Enfin, nous intégrons un contrôleur de santé (healthcheck) pour ordonner strictement le démarrage des services.",
+          "langage": "bash",
+          "code": "# === Dockerfile ===\n# Étape 1 : Builder\nFROM node:20-alpine AS builder\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci\n\n# Étape 2 : Runner\nFROM node:20-alpine AS runner\nWORKDIR /app\nENV NODE_ENV=production\n\n# Sécurité : utilisation de l'utilisateur non-root\nUSER node\n\n# Copie des fichiers nécessaires avec les bons droits\nCOPY --chown=node:node package*.json ./\nRUN npm ci --only=production\nCOPY --chown=node:node . .\n\nEXPOSE 3000\nCMD [\"node\", \"server.js\"]\n\n# === docker-compose.yml ===\nversion: '3.8'\n\nservices:\n  db:\n    image: postgres:15-alpine\n    environment:\n      POSTGRES_USER: app_user\n      POSTGRES_PASSWORD: secret_password\n      POSTGRES_DB: app_db\n    volumes:\n      - pgdata:/var/lib/postgresql/data\n    networks:\n      - backend-network\n    healthcheck:\n      test: [\"CMD-SHELL\", \"pg_isready -U app_user -d app_db\"]\n      interval: 5s\n      timeout: 5s\n      retries: 5\n\n  api:\n    build: .\n    ports:\n      - \"3000:3000\"\n    environment:\n      DATABASE_URL: postgres://app_user:secret_password@db:5432/app_db\n    networks:\n      - backend-network\n    depends_on:\n      db:\n        condition: service_healthy\n\nvolumes:\n  pgdata:\n\nnetworks:\n  backend-network:\n    driver: bridge",
+          "explications": [
+            "Le build multi-stage ne conserve dans l'image finale que les dépendances de production et le code exécutable, réduisant grandement sa taille.",
+            "L'instruction 'USER node' combinée avec '--chown=node:node' empêche l'application de s'exécuter avec les privilèges 'root'.",
+            "Le healthcheck exécuté sur le conteneur 'db' utilise 'pg_isready' pour valider le statut réel du serveur de base de données.",
+            "L'option 'condition: service_healthy' bloque le démarrage du service 'api' tant que le check de la base de données ne valide pas son état prêt.",
+            "Le volume nommé 'pgdata' garantit que les données stockées dans la base restent persistantes même après l'arrêt ou la suppression des conteneurs."
+          ]
+        }
+      },
+      "createdAt": "2026-08-25T22:08:34.064Z"
+    },
+    {
+      "_id": "mt98rbimkqmz8",
+      "type": "defi",
+      "techno": "HTML/CSS",
+      "niveau": "Facile",
+      "content": {
+        "id": "html-css-carte-profil-facile",
+        "titre": "Création d'une carte de profil utilisateur",
+        "techno": "HTML/CSS",
+        "niveau": "Facile",
+        "tags": [
+          "HTML5",
+          "CSS3",
+          "Flexbox"
+        ],
+        "duree": "25 minutes",
+        "objectif": "Apprendre à structurer une carte d'utilisateur en HTML5 sémantique et la styliser élégamment avec du CSS3 en utilisant Flexbox.",
+        "enonce": "Créez un composant de type 'Carte de profil utilisateur' moderne et épuré. Le composant doit afficher une image d'avatar, un nom complet, un titre professionnel, une courte biographie et un bouton d'interaction 'Contacter'. L'ensemble doit être centré sur la page.",
+        "contraintes": [
+          "Utiliser au moins une balise sémantique HTML5 (comme <article> ou <main>).",
+          "Centrer la carte horizontalement et verticalement sur la page à l'aide de Flexbox.",
+          "Rendre l'image d'avatar parfaitement circulaire grâce au CSS.",
+          "Ajouter un effet de survol (hover) stylisé avec transition sur le bouton 'Contacter'.",
+          "Ne pas utiliser de bibliothèque ou de framework CSS externe."
+        ],
+        "ressources": [
+          "https://developer.mozilla.org/fr/docs/Web/CSS/CSS_flexible_box_layout/Basic_concepts_of_flexbox",
+          "https://developer.mozilla.org/fr/docs/Web/CSS/border-radius"
+        ],
+        "solution": {
+          "methodologie": "1. Structurer le contenu HTML de manière sémantique avec un <article>.\n2. Appliquer un reset CSS basique et centrer le contenu sur la page via Flexbox sur le <body>.\n3. Styliser la carte (fond, ombre, arrondis, marges).\n4. Transformer l'avatar en cercle et ajuster la typographie.\n5. Ajouter les styles d'interaction sur le bouton.",
+          "langage": "html/css",
+          "code": "<!DOCTYPE html>\n<html lang=\"fr\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Carte Profil Utilisateur</title>\n  <style>\n    /* Réinitialisation de base */\n    * {\n      box-sizing: border-box;\n      margin: 0;\n      padding: 0;\n    }\n\n    /* Centrage de la carte dans le viewport */\n    body {\n      display: flex;\n      justify-content: center;\n      align-items: center;\n      min-height: 100vh;\n      background-color: #f0f2f5;\n      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\n    }\n\n    /* Style de la carte */\n    .profile-card {\n      background-color: #ffffff;\n      padding: 30px;\n      border-radius: 12px;\n      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);\n      text-align: center;\n      max-width: 320px;\n      width: 100%;\n    }\n\n    /* Image d'avatar circulaire */\n    .avatar {\n      width: 96px;\n      height: 96px;\n      border-radius: 50%;\n      object-fit: cover;\n      margin-bottom: 15px;\n      border: 3px solid #007bff;\n    }\n\n    .name {\n      font-size: 1.25rem;\n      color: #1c1e21;\n      margin-bottom: 5px;\n    }\n\n    .job-title {\n      font-size: 0.9rem;\n      color: #007bff;\n      font-weight: 600;\n      margin-bottom: 15px;\n    }\n\n    .bio {\n      font-size: 0.85rem;\n      color: #606770;\n      line-height: 1.4;\n      margin-bottom: 20px;\n    }\n\n    /* Bouton d'action et animation */\n    .btn-contact {\n      background-color: #007bff;\n      color: #ffffff;\n      border: none;\n      padding: 10px 24px;\n      border-radius: 20px;\n      font-weight: bold;\n      cursor: pointer;\n      transition: background-color 0.3s ease, transform 0.1s ease;\n    }\n\n    .btn-contact:hover {\n      background-color: #0056b3;\n      transform: scale(1.03);\n    }\n  </style>\n</head>\n<body>\n\n  <article class=\"profile-card\">\n    <img src=\"https://via.placeholder.com/150\" alt=\"Photo de profil de Sophie Martin\" class=\"avatar\">\n    <h2 class=\"name\">Sophie Martin</h2>\n    <p class=\"job-title\">Développeuse Web Front-End</p>\n    <p class=\"bio\">Passionnée par l'intégration web, le CSS moderne et la création d'expériences utilisateur accessibles.</p>\n    <button class=\"btn-contact\">Contacter</button>\n  </article>\n\n</body>\n</html>",
+          "explications": [
+            "L'élément <article> est utilisé car la carte de profil constitue un composant autonome et réutilisable dans une application.",
+            "L'utilisation de display: flex sur le body combiné à min-height: 100vh permet de centrer parfaitement la carte au milieu de l'écran.",
+            "La propriété border-radius: 50% appliquée sur une image aux dimensions égales (width/height) permet d'obtenir un rendu parfaitement rond.",
+            "L'ombre portée box-shadow ajoute du relief et sépare visuellement la carte du fond gris de la page.",
+            "La propriété transition associée à la pseudo-classe :hover offre une animation fluide lors du survol du bouton par l'utilisateur."
+          ]
+        }
+      },
+      "createdAt": "2026-08-25T22:33:25.006Z"
+    },
+    {
+      "_id": "mt98snwpq5a16",
+      "type": "anglais",
+      "techno": "WebSockets",
+      "niveau": "C1",
+      "content": {
+        "id": "websockets-c1-comprehension",
+        "category": "Web Development",
+        "difficulty": "C1",
+        "title": "Understanding Full-Duplex Communication via WebSockets",
+        "intro": "Dans cet exercice de niveau C1, vous allez étudier le fonctionnement du protocole WebSocket et ses implications architecturales dans le développement web moderne. Lisez le texte puis répondez aux questions de compréhension.",
+        "text": "Unlike traditional HTTP communication, which relies on a stateless request-response paradigm, the WebSocket protocol enables persistent, full-duplex communication channels over a single TCP connection. HTTP forces the client to initiate every interaction, often leading to inefficient polling mechanisms when real-time updates are required. In contrast, WebSockets establish an initial handshake via HTTP/1.1 or HTTP/2, which is then upgraded to a bi-directional WebSocket connection. Once established, both the client and the server can stream data frames back and forth with minimal overhead, eliminating the need to repeatedly open and close headers. This architecture drastically reduces latency and network bandwidth, making WebSockets indispensable for collaborative applications, live financial feeds, online gaming, and chat platforms. However, maintaining long-lived connections presents unique challenges, such as managing connection drops, state management on the server, and handling load balancing across multiple instances, which often necessitates message brokers like Redis to ensure scalability.",
+        "code": null,
+        "language": null,
+        "translation_challenge": "Once established, both the client and the server can stream data frames back and forth with minimal overhead, eliminating the need to repeatedly open and close headers.",
+        "questions": [
+          {
+            "id": "q1",
+            "question": "How does the communication model of WebSockets differ fundamentally from the standard HTTP request-response cycle?"
+          },
+          {
+            "id": "q2",
+            "question": "What specific advantages do WebSockets offer in terms of performance and latency for real-time applications?"
+          },
+          {
+            "id": "q3",
+            "question": "What architectural challenges arise when scaling applications that rely on persistent WebSocket connections?"
+          }
+        ],
+        "model_translation": "Une fois établie, le client et le serveur peuvent échanger des trames de données en continu avec un surcoût minimal, éliminant ainsi le besoin d'ouvrir et de fermer de manière répétée des en-têtes.",
+        "model_answers": [
+          "Standard HTTP communication operates on a stateless request-response model where the client must always initiate interaction. In contrast, the WebSocket protocol establishes a persistent, bi-directional connection over a single TCP socket. This allows both the server and the client to send data asynchronously at any time without waiting for a request. Consequently, WebSockets overcome the limitations of continuous client polling. Overall, this fundamental shift transforms how real-time data flow is handled in modern web applications.",
+          "WebSockets significantly improve performance by eliminating the necessity of transmitting heavy HTTP headers with every payload. After the initial handshake upgrades the connection, data is sent as lightweight frames with minimal protocol overhead. This stream-based interaction drastically reduces latency, making data delivery almost instantaneous. Furthermore, saving network bandwidth allows applications to handle higher frequencies of updates efficiently. Consequently, this makes WebSockets ideal for high-throughput use cases like financial tickers or multiplayer games.",
+          "Maintaining continuous, long-lived TCP connections introduces complexity in managing server-side state and memory allocation. When network disruptions occur, robust re-connection and fallback strategies must be implemented to prevent data loss. Additionally, traditional HTTP load balancers may struggle to distribute persistent WebSocket sessions evenly across server clusters. To solve this, developers often need to integrate message brokers such as Redis to synchronize state across multiple instances. Thus, scaling WebSockets requires careful infrastructure planning beyond standard horizontal web scaling."
+        ],
+        "lexicon": [
+          {
+            "term": "Full-duplex",
+            "french": "Bidirectionnel simultané",
+            "definition": "A communication mode allowing simultaneous bi-directional data transmission between two nodes."
+          },
+          {
+            "term": "Handshake",
+            "french": "Négociation de connexion (poignée de main)",
+            "definition": "The initial automated protocol exchange establishing parameters for communication between two systems."
+          },
+          {
+            "term": "Overhead",
+            "french": "Surcoût (ou surcharge)",
+            "definition": "The indirect computing resources, bandwidth, or protocol data required to perform a specific operational task."
+          },
+          {
+            "term": "Stateless",
+            "french": "Sans état",
+            "definition": "A architecture design where each request from a client contains all the information needed, retaining no context on the server."
+          },
+          {
+            "term": "Polling",
+            "french": "Interrogation périodique",
+            "definition": "A technique where a client repeatedly requests data from a server at specified time intervals to check for updates."
+          },
+          {
+            "term": "Latency",
+            "french": "Latence",
+            "definition": "The time delay between a data transmission request and the actual receipt of that data."
+          }
+        ]
+      },
+      "createdAt": "2026-08-25T22:34:27.722Z"
+    },
+    {
+      "_id": "mt99dlut7tcf5",
+      "type": "defi",
+      "techno": "PHP",
+      "niveau": "Difficile",
+      "content": {
+        "id": "php-di-container-autowire",
+        "titre": "Création d'un conteneur d'injection de dépendances avec Autowiring",
+        "techno": "PHP",
+        "niveau": "Difficile",
+        "tags": [
+          "POO",
+          "Reflection",
+          "Design Pattern"
+        ],
+        "duree": "25 minutes",
+        "objectif": "Implémenter un conteneur d'injection de dépendances (IoC) minimaliste utilisant l'API Reflection de PHP pour la résolution automatique des dépendances (autowiring).",
+        "enonce": "Développez une classe Container capable de résoudre dynamiquement les dépendances requises par le constructeur d'une classe. Le conteneur doit inclure une méthode set() pour enregistrer des liaisons manuelles (closures ou alias), une méthode get() pour récupérer les instances, et gérer la mise en cache des objets instanciés. En cas d'impossibilité d'instancier une classe ou de résoudre une dépendance non typée ou primitive, le conteneur doit lever une exception ContainerException.",
+        "contraintes": [
+          "Utiliser la Reflection API (ReflectionClass, ReflectionParameter) pour l'autowiring.",
+          "Implémenter la méthode set(string $id, string|callable|null $concrete = null) pour enregistrer des résolutions explicites.",
+          "Mettre en cache les instances générées dans une propriété $instances pour réutiliser les objets déjà créés.",
+          "Lever une exception personnalisée ContainerException en cas d'erreur de résolution (classe absente, non instanciable, paramètre ambigu).",
+          "Ne pas utiliser de dépendances ou bibliothèques externes (développement en PHP natif)."
+        ],
+        "ressources": [
+          "https://www.php.net/manual/fr/book.reflection.php",
+          "https://www.php-fig.org/psr/psr-11/"
+        ],
+        "solution": {
+          "methodologie": "La résolution repose sur l'inspection dynamique des constructeurs avec ReflectionClass. La méthode get vérifie d'abord si l'instance existe en cache. Si ce n'est pas le cas, elle examine le constructeur de la classe. Si le constructeur possède des arguments typés par des objets, le conteneur appelle récursivement get() pour chaque paramètre avant d'instancier la classe cible avec newInstanceArgs().",
+          "langage": "PHP",
+          "code": "<?php\n\nclass ContainerException extends Exception {}\n\nclass Container {\n    /** @var array<string, mixed> Stocke les définitions de services */\n    private array $services = [];\n\n    /** @var array<string, object> Stocke les instances déjà créées (cache) */\n    private array $instances = [];\n\n    /**\n     * Enregistre une classe ou une closure associées à un identifiant.\n     */\n    public function set(string $id, string|callable|null $concrete = null): void {\n        $this->services[$id] = $concrete ?? $id;\n    }\n\n    /**\n     * Récupère ou instancie le service demandé.\n     */\n    public function get(string $id): object {\n        if (isset($this->instances[$id])) {\n            return $this->instances[$id];\n        }\n\n        $target = $this->services[$id] ?? $id;\n\n        if (is_callable($target)) {\n            $object = $target($this);\n        } else {\n            $object = $this->autowire($target);\n        }\n\n        $this->instances[$id] = $object;\n        return $object;\n    }\n\n    /**\n     * Inspecte la classe via Reflection et instancie dynamiquement ses dépendances.\n     */\n    private function autowire(string $class): object {\n        if (!class_exists($class)) {\n            throw new ContainerException(\"La classe '{$class}' n'existe pas.\");\n        }\n\n        $reflector = new ReflectionClass($class);\n        if (!$reflector->isInstantiable()) {\n            throw new ContainerException(\"La classe '{$class}' n'est pas instanciable (interface ou classe abstraite).\");\n        }\n\n        $constructor = $reflector->getConstructor();\n        if ($constructor === null) {\n            return new $class();\n        }\n\n        $dependencies = [];\n        foreach ($constructor->getParameters() as $param) {\n            $type = $param->getType();\n            if (!$type || $type->isBuiltin()) {\n                throw new ContainerException(\"Impossible de resoudre le parametre '\".$param->getName().\"' pour la classe '{$class}'.\");\n            }\n            $dependencies[] = $this->get($type->getName());\n        }\n\n        return $reflector->newInstanceArgs($dependencies);\n    }\n}",
+          "explications": [
+            "La propriété $instances sert de registre (cache) pour éviter de réinstancier plusieurs fois un même service (comportement Singleton).",
+            "La méthode set() permet d'associer un identifiant à une Closure ou à un nom de classe concrète si l'autowiring direct ne suffit pas.",
+            "L'utilisation de ReflectionClass::isInstantiable() permet d'empêcher l'instanciation directe d'interfaces ou de classes abstraites.",
+            "L'inspection des paramètres via getParameters() extrait le type d'objet requis et invoque récursivement get() pour instancier les dépendances en profondeur.",
+            "La levée de ContainerException garantit des messages d'erreur clairs en cas de mauvaise configuration ou d'absence de typage explicite."
+          ]
+        }
+      },
+      "createdAt": "2026-08-25T22:50:44.837Z"
+    }
+  ]
+}

@@ -1,0 +1,648 @@
+[
+  {
+    "id": "defi_001",
+    "titre": "Pipeline de transformation de tableau",
+    "techno": "JavaScript",
+    "niveau": "Facile",
+    "tags": ["ES6", "Array", "map", "filter", "reduce"],
+    "duree": "15 min",
+    "objectif": "Maîtriser le chaînage des méthodes fonctionnelles de tableau pour transformer une collection de données en un seul pipeline lisible.",
+    "enonce": "Tu reçois un tableau d'objets représentant des commandes e-commerce. Chaque commande a un statut ('pending', 'shipped', 'delivered'), un montant et un client. Tu dois produire un récapitulatif des commandes livrées : filtrer uniquement les commandes 'delivered', augmenter leur montant de 10% (frais), arrondir à 2 décimales, puis calculer le total global avec reduce. Le résultat final doit être un objet { count, total, orders }.",
+    "contraintes": [
+      "Utiliser uniquement .filter(), .map() et .reduce() en un seul pipeline chaîné (pas de for/forEach).",
+      "Ne pas muter le tableau original.",
+      "Le montant final de chaque commande doit être arrondi à 2 décimales avec Math.round ou toFixed.",
+      "Typer les paramètres des callbacks de façon explicite (nommer chaque paramètre).",
+      "Le code doit tenir en moins de 10 lignes."
+    ],
+    "ressources": [
+      "MDN — Array.prototype.filter()",
+      "MDN — Array.prototype.map()",
+      "MDN — Array.prototype.reduce()"
+    ],
+    "solution": {
+      "methodologie": "Le principe est de construire un pipeline déclaratif : (1) .filter() garde uniquement les objets dont le statut est 'delivered', (2) .map() applique la majoration de 10% sur le montant et retourne un nouvel objet (spread operator pour ne pas muter), (3) .reduce() accumule les montants pour le total. L'objet résultat { count, total, orders } est construit à partir du résultat du reduce.",
+      "langage": "javascript",
+      "code": "const orders = [\n  { id: 1, client: 'Alice', amount: 120.50, status: 'delivered' },\n  { id: 2, client: 'Bob',   amount: 85.00,  status: 'pending'   },\n  { id: 3, client: 'Carol', amount: 200.00, status: 'delivered' },\n  { id: 4, client: 'Dave',  amount: 55.75,  status: 'shipped'   },\n  { id: 5, client: 'Eve',   amount: 310.00, status: 'delivered' },\n];\n\nconst summary = orders\n  .filter(order => order.status === 'delivered')\n  .map(order => ({\n    ...order,\n    amount: Math.round(order.amount * 1.10 * 100) / 100,\n  }))\n  .reduce(\n    (acc, order) => ({\n      count  : acc.count + 1,\n      total  : Math.round((acc.total + order.amount) * 100) / 100,\n      orders : [...acc.orders, order],\n    }),\n    { count: 0, total: 0, orders: [] }\n  );\n\nconsole.log(summary);\n// { count: 3, total: 693.55, orders: [...] }",
+      "explications": [
+        ".filter(order => order.status === 'delivered') — garde 3 commandes sur 5.",
+        ".map(order => ({ ...order, amount: … })) — le spread { ...order } copie toutes les propriétés existantes sans muter l'original, puis on écrase 'amount'.",
+        "Math.round(x * 100) / 100 — technique pour arrondir à 2 décimales sans erreur de floating point (toFixed retourne une string, pas un nombre).",
+        ".reduce(callback, { count:0, total:0, orders:[] }) — l'accumulateur est un objet ; chaque itération retourne un NOUVEL objet (on ne mute pas acc).",
+        "Le spread [...acc.orders, order] dans reduce construit le nouveau tableau orders sans push."
+      ]
+    }
+  },
+
+  {
+    "id": "defi_002",
+    "titre": "Fetch API + rendu dynamique d'une liste",
+    "techno": "JavaScript",
+    "niveau": "Facile",
+    "tags": ["Fetch", "Promise", "async/await", "DOM"],
+    "duree": "20 min",
+    "objectif": "Récupérer des données JSON depuis une API publique et les injecter dans le DOM sans rechargement de page.",
+    "enonce": "En utilisant l'API publique JSONPlaceholder (https://jsonplaceholder.typicode.com/posts), affiche les 10 premiers articles dans une liste HTML. Chaque élément doit afficher le titre (h3) et le corps (p). Gère les états de chargement (indicateur visuel) et d'erreur (message explicite). Le déclencheur est un bouton 'Charger les articles'.",
+    "contraintes": [
+      "Utiliser async/await (pas de .then() chaînés).",
+      "Afficher un spinner ou un texte 'Chargement…' pendant la requête.",
+      "Si la requête échoue (network error ou status >= 400), afficher un message d'erreur lisible à l'utilisateur.",
+      "Vider le conteneur avant chaque nouveau chargement (clic répété sur le bouton).",
+      "Ne pas utiliser de librairie externe (jQuery, Axios, etc.)."
+    ],
+    "ressources": [
+      "MDN — Fetch API",
+      "MDN — Response.ok",
+      "JSONPlaceholder — https://jsonplaceholder.typicode.com"
+    ],
+    "solution": {
+      "methodologie": "La structure async/await suit 4 étapes : (1) afficher le spinner, (2) appeler fetch() et vérifier response.ok, (3) parser le JSON et construire les éléments DOM, (4) masquer le spinner. Le try/catch global capture à la fois les erreurs réseau (fetch() rejette la Promise) et les erreurs HTTP qu'on lève manuellement.",
+      "langage": "javascript",
+      "code": "const btn       = document.getElementById('btn-load');\nconst container = document.getElementById('posts-list');\nconst spinner   = document.getElementById('spinner');\n\nasync function loadPosts() {\n  container.innerHTML = '';\n  spinner.style.display = 'block';\n  btn.disabled = true;\n\n  try {\n    const response = await fetch(\n      'https://jsonplaceholder.typicode.com/posts?_limit=10'\n    );\n\n    if (!response.ok) {\n      throw new Error(`Erreur HTTP : ${response.status} ${response.statusText}`);\n    }\n\n    const posts = await response.json();\n\n    container.innerHTML = posts.map(post => `\n      <li class=\"post-item\">\n        <h3>${post.title}</h3>\n        <p>${post.body}</p>\n      </li>\n    `).join('');\n\n  } catch (error) {\n    container.innerHTML = `\n      <p class=\"error\">⚠️ Impossible de charger les articles : ${error.message}</p>\n    `;\n  } finally {\n    spinner.style.display = 'none';\n    btn.disabled = false;\n  }\n}\n\nbtn.addEventListener('click', loadPosts);",
+      "explications": [
+        "container.innerHTML = '' avant le fetch : vide la liste précédente pour éviter les doublons.",
+        "btn.disabled = true pendant le chargement : empêche les clics multiples simultanés.",
+        "if (!response.ok) throw new Error(...) : fetch() NE rejette PAS la Promise sur les erreurs HTTP (404, 500). Il faut vérifier response.ok manuellement.",
+        "Le bloc finally s'exécute TOUJOURS (succès ou erreur) : idéal pour masquer le spinner et réactiver le bouton.",
+        "?_limit=10 : paramètre de l'API JSONPlaceholder pour limiter à 10 résultats côté serveur."
+      ]
+    }
+  },
+
+  {
+    "id": "defi_003",
+    "titre": "Todo List avec événements délégués",
+    "techno": "JavaScript",
+    "niveau": "Moyen",
+    "tags": ["DOM", "Events", "Delegation", "LocalStorage", "ES6"],
+    "duree": "30 min",
+    "objectif": "Construire une Todo List fonctionnelle en maîtrisant la délégation d'événements et la persistance légère sans framework.",
+    "enonce": "Crée une Todo List complète : ajout d'une tâche (formulaire + touche Entrée), marquage comme terminée (clic sur la tâche), suppression (bouton ×), filtrage (Toutes / Actives / Terminées) et compteur de tâches restantes. Les tâches doivent persister dans sessionStorage pour survivre au rechargement de la page.",
+    "contraintes": [
+      "Un seul addEventListener sur le conteneur de liste (délégation d'événements, pas de listener par tâche).",
+      "Les tâches sont des objets { id, text, done } stockés dans un tableau en mémoire.",
+      "Utiliser crypto.randomUUID() ou Date.now() pour les IDs uniques.",
+      "La fonction de rendu (render) repart toujours de zéro : vider et reconstruire innerHTML depuis le tableau.",
+      "Sauvegarder le tableau dans sessionStorage après chaque modification.",
+      "Interdiction d'utiliser un framework (React, Vue, etc.)."
+    ],
+    "ressources": [
+      "MDN — Event delegation",
+      "MDN — Element.closest()",
+      "MDN — sessionStorage"
+    ],
+    "solution": {
+      "methodologie": "L'architecture repose sur le pattern 'state → render' : (1) un tableau todos est la source de vérité, (2) toute action (ajout, toggle, suppression) modifie le tableau puis appelle render(), (3) render() vide et reconstruit le DOM depuis le tableau filtré. La délégation d'événements sur le <ul> capte les clics sur n'importe quel enfant avec event.target.closest().",
+      "langage": "javascript",
+      "code": "// --- State ---\nlet todos  = JSON.parse(sessionStorage.getItem('todos') || '[]');\nlet filter = 'all'; // 'all' | 'active' | 'done'\n\nconst save  = () => sessionStorage.setItem('todos', JSON.stringify(todos));\nconst add   = text  => { todos.push({ id: Date.now(), text, done: false }); save(); render(); };\nconst toggle = id  => { todos = todos.map(t => t.id === id ? { ...t, done: !t.done } : t); save(); render(); };\nconst remove = id  => { todos = todos.filter(t => t.id !== id); save(); render(); };\n\n// --- Render ---\nfunction render() {\n  const list    = document.getElementById('todo-list');\n  const counter = document.getElementById('counter');\n  const visible = todos.filter(t =>\n    filter === 'all'    ? true :\n    filter === 'active' ? !t.done :\n    t.done\n  );\n\n  list.innerHTML = visible.map(t => `\n    <li class=\"todo-item ${t.done ? 'done' : ''}\" data-id=\"${t.id}\">\n      <span class=\"todo-text\">${t.text}</span>\n      <button class=\"btn-delete\" data-action=\"delete\">×</button>\n    </li>\n  `).join('');\n\n  counter.textContent = `${todos.filter(t => !t.done).length} tâche(s) restante(s)`;\n\n  // Filtres actifs\n  document.querySelectorAll('.filter-btn').forEach(btn =>\n    btn.classList.toggle('active', btn.dataset.filter === filter)\n  );\n}\n\n// --- Délégation sur la liste ---\ndocument.getElementById('todo-list').addEventListener('click', e => {\n  const li = e.target.closest('.todo-item');\n  if (!li) return;\n  const id = Number(li.dataset.id);\n  if (e.target.dataset.action === 'delete') remove(id);\n  else toggle(id);\n});\n\n// --- Formulaire ---\ndocument.getElementById('todo-form').addEventListener('submit', e => {\n  e.preventDefault();\n  const input = document.getElementById('todo-input');\n  const text  = input.value.trim();\n  if (text) { add(text); input.value = ''; }\n});\n\n// --- Filtres ---\ndocument.getElementById('filters').addEventListener('click', e => {\n  if (!e.target.dataset.filter) return;\n  filter = e.target.dataset.filter;\n  render();\n});\n\nrender(); // Premier rendu",
+      "explications": [
+        "Pattern 'state → render' : le DOM est toujours un reflet du tableau todos. On ne manipule jamais le DOM directement ; on modifie le tableau et on appelle render().",
+        "Délégation : un seul listener sur #todo-list, puis closest('.todo-item') remonte le DOM pour trouver le li parent même si on clique sur un enfant (le span ou le bouton).",
+        "e.target.dataset.action === 'delete' distingue le clic sur × du clic sur le texte (toggle).",
+        "todos.map(t => t.id === id ? { ...t, done: !t.done } : t) — retourne un NOUVEAU tableau (immutabilité), remplace l'objet modifié par un spread.",
+        "JSON.parse(sessionStorage.getItem('todos') || '[]') — si rien en storage, utilise un tableau vide comme valeur par défaut."
+      ]
+    }
+  },
+
+  {
+    "id": "defi_004",
+    "titre": "Closure et Module Pattern",
+    "techno": "JavaScript",
+    "niveau": "Moyen",
+    "tags": ["ES6", "Closure", "IIFE", "Module", "Encapsulation"],
+    "duree": "25 min",
+    "objectif": "Comprendre les closures en implémentant un compteur encapsulé avec état privé, impossible à modifier de l'extérieur.",
+    "enonce": "Crée une factory function createCounter(initialValue, step) qui retourne un objet exposant seulement 4 méthodes : increment(), decrement(), reset(), getValue(). La variable interne count ne doit jamais être accessible directement depuis l'extérieur. Bonus : ajoute un système d'historique (undo/redo) basé sur un tableau d'états.",
+    "contraintes": [
+      "La variable count doit être strictement privée (non accessible via counter.count).",
+      "Utiliser une factory function (pas une classe, pas un objet littéral direct).",
+      "increment() et decrement() utilisent le paramètre step (pas forcément 1).",
+      "reset() remet à initialValue, pas à 0.",
+      "Bonus : implémenter undo() qui revient à l'état précédent (pile d'historique)."
+    ],
+    "ressources": [
+      "MDN — Closures",
+      "JavaScript: The Good Parts — Module Pattern"
+    ],
+    "solution": {
+      "methodologie": "Une closure se forme quand une fonction interne référence une variable de sa fonction parente après que cette dernière a terminé son exécution. Ici, les méthodes retournées (increment, getValue…) forment des closures sur count, step et initialValue : elles y ont accès en lecture/écriture, mais ces variables restent invisibles de l'extérieur.",
+      "langage": "javascript",
+      "code": "function createCounter(initialValue = 0, step = 1) {\n  // Variables privées — accessibles uniquement via les closures\n  let count   = initialValue;\n  const history = [initialValue]; // pile pour undo\n  let historyIndex = 0;\n\n  const pushHistory = (value) => {\n    // Effacer l'historique \"futur\" si on agit après un undo\n    history.splice(historyIndex + 1);\n    history.push(value);\n    historyIndex = history.length - 1;\n  };\n\n  return {\n    increment() {\n      count += step;\n      pushHistory(count);\n    },\n    decrement() {\n      count -= step;\n      pushHistory(count);\n    },\n    reset() {\n      count = initialValue;\n      pushHistory(count);\n    },\n    getValue() {\n      return count;\n    },\n    undo() {\n      if (historyIndex > 0) {\n        historyIndex--;\n        count = history[historyIndex];\n      }\n    },\n    redo() {\n      if (historyIndex < history.length - 1) {\n        historyIndex++;\n        count = history[historyIndex];\n      }\n    },\n    getHistory() {\n      return [...history]; // copie pour préserver l'immutabilité\n    }\n  };\n}\n\n// Utilisation\nconst c = createCounter(10, 5);\nc.increment(); // 15\nc.increment(); // 20\nc.decrement(); // 15\nconsole.log(c.getValue()); // 15\nconsole.log(c.count);      // undefined — privé !\nc.undo();                  // revient à 20\nconsole.log(c.getValue()); // 20",
+      "explications": [
+        "count et history vivent dans la portée de createCounter. Quand la fonction se termine, ces variables persistent grâce aux closures formées par les méthodes retournées.",
+        "count est introuvable via c.count (undefined) car il n'est pas dans l'objet retourné.",
+        "pushHistory coupe l'historique futur (history.splice) avant d'ajouter : si tu fais undo puis increment, tu ne peux plus redo vers l'état annulé (comportement identique à VS Code).",
+        "getHistory() retourne [...history] (spread) : une copie du tableau, pas la référence — l'appelant ne peut pas modifier l'historique interne.",
+        "Pattern factory (createCounter()) vs classe (new Counter()) : la factory est plus composable et évite les problèmes de 'this' binding."
+      ]
+    }
+  },
+
+  {
+    "id": "defi_005",
+    "titre": "Formulaire HTML5 avec validation native avancée",
+    "techno": "HTML/CSS",
+    "niveau": "Facile",
+    "tags": ["HTML5", "Forms", "Validation", "CSS", "Accessibility"],
+    "duree": "20 min",
+    "objectif": "Exploiter les attributs de validation natifs HTML5 et les pseudo-classes CSS pour un formulaire accessible et ergonomique sans JavaScript.",
+    "enonce": "Crée un formulaire d'inscription comprenant : prénom (required, 2-50 chars), email (type email, required), mot de passe (pattern: 8 chars min, 1 maj, 1 chiffre), confirmation de mot de passe, date de naissance (type date, 18 ans minimum via max dynamique), et un menu select de pays. Stylise les états valide/invalide avec les pseudo-classes CSS :valid et :invalid uniquement après interaction (pas au chargement).",
+    "contraintes": [
+      "Aucun JavaScript pour la validation (uniquement les attributs HTML5 natifs).",
+      "Utiliser :valid et :invalid combinés à :not(:placeholder-shown) pour masquer les erreurs au chargement.",
+      "Le champ mot de passe utilise pattern='(?=.*[A-Z])(?=.*\\d).{8,}' comme regex.",
+      "Chaque champ doit avoir un <label> associé (for/id) pour l'accessibilité.",
+      "Les messages d'erreur apparaissent via ::after ou title (CSS uniquement).",
+      "Le formulaire doit passer la validation ARIA (role, aria-required)."
+    ],
+    "ressources": [
+      "MDN — HTML5 Constraint Validation",
+      "MDN — :valid / :invalid pseudo-classes",
+      "MDN — pattern attribute"
+    ],
+    "solution": {
+      "methodologie": "La clé est d'utiliser :not(:placeholder-shown) pour que :invalid ne s'applique qu'après que l'utilisateur a commencé à taper (on ajoute des placeholders invisibles si nécessaire). Le max de la date est calculé dynamiquement via un attribut data ou un script inline minimal pour le -18 ans.",
+      "langage": "html",
+      "code": "<!-- HTML -->\n<form class=\"register-form\" novalidate>\n  <div class=\"field\">\n    <label for=\"firstname\">Prénom *</label>\n    <input\n      type=\"text\"\n      id=\"firstname\"\n      name=\"firstname\"\n      placeholder=\" \"\n      required\n      minlength=\"2\"\n      maxlength=\"50\"\n      aria-required=\"true\"\n    >\n    <span class=\"error-msg\">2 à 50 caractères requis.</span>\n  </div>\n\n  <div class=\"field\">\n    <label for=\"email\">Email *</label>\n    <input\n      type=\"email\"\n      id=\"email\"\n      name=\"email\"\n      placeholder=\" \"\n      required\n      aria-required=\"true\"\n    >\n    <span class=\"error-msg\">Adresse email invalide.</span>\n  </div>\n\n  <div class=\"field\">\n    <label for=\"password\">Mot de passe * (8 car., 1 maj, 1 chiffre)</label>\n    <input\n      type=\"password\"\n      id=\"password\"\n      name=\"password\"\n      placeholder=\" \"\n      required\n      pattern=\"(?=.*[A-Z])(?=.*\\d).{8,}\"\n      aria-required=\"true\"\n    >\n    <span class=\"error-msg\">Min. 8 caractères, 1 majuscule, 1 chiffre.</span>\n  </div>\n\n  <div class=\"field\">\n    <label for=\"birthdate\">Date de naissance *</label>\n    <input\n      type=\"date\"\n      id=\"birthdate\"\n      name=\"birthdate\"\n      required\n      aria-required=\"true\"\n    >\n    <span class=\"error-msg\">Vous devez avoir 18 ans minimum.</span>\n  </div>\n\n  <button type=\"submit\">S'inscrire</button>\n</form>\n\n<script>\n  /* Seul JS autorisé : calcul dynamique du max pour -18 ans */\n  const d = new Date();\n  d.setFullYear(d.getFullYear() - 18);\n  document.getElementById('birthdate').max = d.toISOString().split('T')[0];\n</script>\n\n/* ── CSS ── */\n.field { position: relative; margin-bottom: 20px; }\n\n.field input {\n  width: 100%;\n  padding: 10px 12px;\n  border: 2px solid #ccc;\n  border-radius: 8px;\n  font-size: 1rem;\n  transition: border-color 0.2s;\n}\n\n/* Valide seulement APRÈS saisie (placeholder=\" \" astuce) */\n.field input:not(:placeholder-shown):valid {\n  border-color: #3fb950;\n}\n\n.field input:not(:placeholder-shown):invalid {\n  border-color: #f85149;\n}\n\n/* Message d'erreur masqué par défaut */\n.error-msg {\n  display: none;\n  font-size: 0.75rem;\n  color: #f85149;\n  margin-top: 4px;\n}\n\n.field input:not(:placeholder-shown):invalid + .error-msg {\n  display: block;\n}",
+      "explications": [
+        "placeholder=\" \" (un espace) : astuce pour que :placeholder-shown soit vrai au chargement — cela permet de combiner :not(:placeholder-shown):invalid pour masquer les erreurs avant toute interaction.",
+        "pattern=\"(?=.*[A-Z])(?=.*\\d).{8,}\" : lookahead regex — (?=.*[A-Z]) vérifie au moins 1 majuscule n'importe où, (?=.*\\d) au moins 1 chiffre, .{8,} longueur minimum.",
+        "novalidate sur le <form> désactive les bulles de validation natives du navigateur (souvent laides) — on garde la validation HTML5 mais on contrôle l'affichage via CSS.",
+        "input:not(:placeholder-shown):invalid + .error-msg : le sélecteur adjacent + cible le .error-msg immédiatement APRÈS l'input dans le DOM.",
+        "aria-required=\"true\" + label/for : double garantie d'accessibilité — les lecteurs d'écran utilisent ces attributs pour annoncer les champs obligatoires."
+      ]
+    }
+  },
+
+  {
+    "id": "defi_006",
+    "titre": "Layout CSS Grid responsive sans media query",
+    "techno": "HTML/CSS",
+    "niveau": "Facile",
+    "tags": ["CSS Grid", "Responsive", "auto-fill", "minmax", "named areas"],
+    "duree": "20 min",
+    "objectif": "Construire un layout de page complet (header, sidebar, main, footer) et une grille de cartes responsive, sans écrire une seule media query.",
+    "enonce": "Crée deux composants : (1) Un layout de page avec header pleine largeur, une sidebar de 260px fixe à gauche, un main flexible à droite, et un footer pleine largeur. (2) Une grille de cartes qui passe automatiquement de 1 à 2 à 3 colonnes selon la largeur disponible, avec un minimum de 280px par carte. Tout doit fonctionner de 320px à 1440px sans @media.",
+    "contraintes": [
+      "Le layout page utilise grid-template-areas avec des noms sémantiques.",
+      "La grille de cartes utilise repeat(auto-fill, minmax(280px, 1fr)).",
+      "Utiliser min() ou clamp() pour les espacements fluides.",
+      "La sidebar doit disparaître (passer sous le main) sur petits écrans via la grille intrinsèque.",
+      "Aucune media query (@media) dans le CSS.",
+      "Utiliser gap et non les marges pour les espaces entre éléments."
+    ],
+    "ressources": [
+      "MDN — CSS Grid Layout",
+      "MDN — minmax()",
+      "MDN — clamp()",
+      "CSS-Tricks — A Complete Guide to CSS Grid"
+    ],
+    "solution": {
+      "methodologie": "Pour le layout, grid-template-areas définit la structure visuellement comme un ASCII art. Pour la grille de cartes, auto-fill crée autant de colonnes que possible et minmax garantit un minimum. Pour que la sidebar passe sous le main sur mobile, on utilise grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)).",
+      "langage": "css",
+      "code": "/* ── Layout de page ── */\n.page-layout {\n  display: grid;\n  grid-template-areas:\n    'header  header'\n    'sidebar main  '\n    'footer  footer';\n  grid-template-columns: min(260px, 100%) 1fr;\n  grid-template-rows: auto 1fr auto;\n  min-height: 100dvh;\n  gap: 0;\n}\n\n.page-header  { grid-area: header;  background: #1f2937; padding: 16px; }\n.page-sidebar { grid-area: sidebar; background: #111827; padding: 20px; }\n.page-main    { grid-area: main;    padding: clamp(16px, 4vw, 40px); }\n.page-footer  { grid-area: footer;  background: #1f2937; padding: 16px; }\n\n/*\n  Astuce : min(260px, 100%) fait que sur mobile (< 260px de largeur)\n  la sidebar prend 100% et se retrouve sur toute la largeur,\n  poussant le main dessous — sans media query.\n*/\n\n/* ── Grille de cartes responsive ── */\n.cards-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));\n  gap: clamp(12px, 2vw, 24px);\n  padding: clamp(16px, 3vw, 32px);\n}\n\n.card {\n  background: #1f2937;\n  border: 1px solid #374151;\n  border-radius: 12px;\n  padding: clamp(14px, 2vw, 20px);\n  /* Carte sélectionnée s'étend sur 2 colonnes si possible */\n}\n\n.card.featured {\n  grid-column: span 2;\n  /* span 2 est ignoré si une seule colonne existe */\n}",
+      "explications": [
+        "grid-template-areas : la grille ressemble à un ASCII art — 'sidebar main' sur la même ligne = côte à côte. 'header header' = header sur 2 colonnes.",
+        "min(260px, 100%) : si le viewport est plus étroit que 260px, la sidebar prend 100% et crée un wrapping naturel du main en dessous.",
+        "repeat(auto-fill, minmax(min(280px, 100%), 1fr)) : auto-fill crée le max de colonnes possible, minmax garantit 280px min. Sur un téléphone de 320px, min(280px, 100%) = 100% → 1 colonne.",
+        "clamp(16px, 4vw, 40px) : valeur minimum (16px), valeur fluide (4% du viewport), valeur maximum (40px) — padding qui grandit avec l'écran, sans point de rupture.",
+        "grid-column: span 2 sur .card.featured est ignoré automatiquement quand il n'y a qu'une colonne — pas de bug, pas de media query nécessaire."
+      ]
+    }
+  },
+
+  {
+    "id": "defi_007",
+    "titre": "Interface TypeScript avec Generics et Utility Types",
+    "techno": "TypeScript",
+    "niveau": "Moyen",
+    "tags": ["TypeScript", "Generics", "Utility Types", "Interface", "Type Guards"],
+    "duree": "30 min",
+    "objectif": "Exploiter les generics et les utility types TypeScript pour construire des fonctions réutilisables fortement typées.",
+    "enonce": "Crée un système de gestion de ressources API générique : une interface ApiResponse<T>, une fonction fetchResource<T> qui fetch et retourne ApiResponse<T>, et des types dérivés pour des ressources spécifiques (User, Product). Utilise Partial<T>, Required<T>, Pick<T,K> et Readonly<T> pour créer des types de formulaire (création vs mise à jour).",
+    "contraintes": [
+      "ApiResponse<T> doit avoir les propriétés data: T, status: number, error?: string.",
+      "fetchResource<T> retourne Promise<ApiResponse<T>> et gère l'erreur réseau.",
+      "Créer UserCreateDTO (Required) et UserUpdateDTO (Partial, sans id).",
+      "Implémenter un type guard isApiError(response) : response is ApiResponse<never>.",
+      "Utiliser Readonly<T> pour empêcher la mutation des données reçues.",
+      "Aucun type 'any' n'est autorisé (strict: true)."
+    ],
+    "ressources": [
+      "TS Handbook — Generics",
+      "TS Handbook — Utility Types",
+      "TS Handbook — Type Guards and Narrowing"
+    ],
+    "solution": {
+      "methodologie": "Les generics permettent à fetchResource d'accepter et de retourner n'importe quel type T sans perte d'information. Les Utility Types (Partial, Required, Pick, Readonly) sont des transformations de types existants — ils évitent la duplication de définitions d'interfaces.",
+      "langage": "typescript",
+      "code": "// ── Types de base ──\ninterface User {\n  id        : number;\n  name      : string;\n  email     : string;\n  role      : 'admin' | 'user' | 'guest';\n  createdAt : string;\n}\n\ninterface Product {\n  id    : number;\n  name  : string;\n  price : number;\n  stock : number;\n}\n\n// ── Réponse API générique ──\ninterface ApiResponse<T> {\n  data    : Readonly<T>;  // données immutables\n  status  : number;\n  error?  : string;\n}\n\n// ── DTOs dérivés des types existants ──\ntype UserCreateDTO = Required<Omit<User, 'id' | 'createdAt'>>;\n// { name: string; email: string; role: 'admin'|'user'|'guest' } — tout required\n\ntype UserUpdateDTO = Partial<Omit<User, 'id'>>;\n// { name?: string; email?: string; role?: ...; createdAt?: string }\n\ntype UserPreview = Pick<User, 'id' | 'name' | 'email'>;\n// Sous-ensemble léger pour les listes\n\n// ── Type Guard ──\nfunction isApiError<T>(response: ApiResponse<T>): response is ApiResponse<never> {\n  return response.status >= 400 || typeof response.error === 'string';\n}\n\n// ── Fonction générique ──\nasync function fetchResource<T>(url: string): Promise<ApiResponse<T>> {\n  try {\n    const res = await fetch(url);\n    const data: T = await res.json() as T;\n    return { data: Object.freeze(data), status: res.status };\n  } catch (err: unknown) {\n    const message = err instanceof Error ? err.message : 'Erreur inconnue';\n    return { data: undefined as never, status: 0, error: message };\n  }\n}\n\n// ── Utilisation ──\nasync function main() {\n  const response = await fetchResource<User>('/api/users/1');\n\n  if (isApiError(response)) {\n    console.error('API Error:', response.error);\n    return;\n  }\n\n  // Ici TypeScript sait que response.data est un User complet\n  const user: Readonly<User> = response.data;\n  console.log(user.name);       // ✅\n  // user.name = 'Modifié';    // ❌ Error: Cannot assign to 'name' because it is read-only\n\n  const dto: UserUpdateDTO = { name: 'Nouveau Nom' }; // Partial — email facultatif\n  console.log(dto);\n}",
+      "explications": [
+        "ApiResponse<T> : le <T> est un type paramétré — comme un paramètre de fonction, mais pour les types. fetchResource<User> instancie T = User partout dans la signature.",
+        "Omit<User, 'id' | 'createdAt'> retire id et createdAt de User avant d'appliquer Required. C'est un exemple de composition de Utility Types.",
+        "Object.freeze(data) en runtime correspond à Readonly<T> en compile-time : les deux empêchent la mutation, à des niveaux différents.",
+        "Type guard : la signature response is ApiResponse<never> indique à TypeScript que si la fonction retourne true, il doit rétrécir le type de response dans le if-block.",
+        "err: unknown (et non err: any) avec err instanceof Error : pratique recommandée en strict mode. 'any' contourne le système de types ; 'unknown' force la vérification."
+      ]
+    }
+  },
+
+  {
+    "id": "defi_008",
+    "titre": "Composant React avec hooks useState et useReducer",
+    "techno": "React",
+    "niveau": "Facile",
+    "tags": ["React", "Hooks", "useState", "useReducer", "Components"],
+    "duree": "25 min",
+    "objectif": "Implémenter un composant de panier d'achat avec useState puis le refactoriser avec useReducer pour comprendre quand chaque hook est approprié.",
+    "enonce": "Crée un composant <ShoppingCart> qui gère : ajout d'articles (avec quantité), modification de quantité, suppression, calcul du total. Dans un premier temps avec plusieurs useState, puis refactorise avec un seul useReducer. Le composant doit être purement fonctionnel, sans classe.",
+    "contraintes": [
+      "Chaque article a { id, name, price, quantity }.",
+      "Le state ne doit jamais être muté directement (pas de push, splice, etc.).",
+      "useReducer doit avoir des types d'action explicites : 'ADD_ITEM', 'REMOVE_ITEM', 'UPDATE_QTY', 'CLEAR_CART'.",
+      "Le total doit être calculé avec useMemo pour éviter les recalculs inutiles.",
+      "Extraire un composant <CartItem> pour chaque ligne du panier.",
+      "Les props de CartItem doivent être typées avec TypeScript ou PropTypes."
+    ],
+    "ressources": [
+      "React Docs — useReducer",
+      "React Docs — useMemo",
+      "React Docs — Lifting State Up"
+    ],
+    "solution": {
+      "methodologie": "useState convient pour des états simples et indépendants. Quand plusieurs états sont liés et que les transitions sont complexes, useReducer centralise la logique dans un reducer pur (state, action) => newState. Le pattern est identique à Redux mais sans librairie externe.",
+      "langage": "jsx",
+      "code": "import { useReducer, useMemo } from 'react';\n\n// ── Types d'action ──\nconst ADD_ITEM    = 'ADD_ITEM';\nconst REMOVE_ITEM = 'REMOVE_ITEM';\nconst UPDATE_QTY  = 'UPDATE_QTY';\nconst CLEAR_CART  = 'CLEAR_CART';\n\n// ── Reducer pur ──\nfunction cartReducer(state, action) {\n  switch (action.type) {\n    case ADD_ITEM: {\n      const exists = state.find(item => item.id === action.payload.id);\n      if (exists) {\n        return state.map(item =>\n          item.id === action.payload.id\n            ? { ...item, quantity: item.quantity + 1 }\n            : item\n        );\n      }\n      return [...state, { ...action.payload, quantity: 1 }];\n    }\n    case REMOVE_ITEM:\n      return state.filter(item => item.id !== action.payload.id);\n\n    case UPDATE_QTY:\n      return state.map(item =>\n        item.id === action.payload.id\n          ? { ...item, quantity: Math.max(1, action.payload.quantity) }\n          : item\n      );\n    case CLEAR_CART:\n      return [];\n\n    default:\n      return state;\n  }\n}\n\n// ── Composant enfant CartItem ──\nfunction CartItem({ item, dispatch }) {\n  return (\n    <li className=\"cart-item\">\n      <span>{item.name}</span>\n      <input\n        type=\"number\"\n        min=\"1\"\n        value={item.quantity}\n        onChange={e => dispatch({\n          type: UPDATE_QTY,\n          payload: { id: item.id, quantity: Number(e.target.value) }\n        })}\n      />\n      <span>{(item.price * item.quantity).toFixed(2)} €</span>\n      <button onClick={() => dispatch({ type: REMOVE_ITEM, payload: { id: item.id } })}>\n        ×\n      </button>\n    </li>\n  );\n}\n\n// ── Composant principal ShoppingCart ──\nexport default function ShoppingCart() {\n  const [cart, dispatch] = useReducer(cartReducer, []);\n\n  const total = useMemo(\n    () => cart.reduce((sum, item) => sum + item.price * item.quantity, 0),\n    [cart]  // recalcul uniquement si cart change\n  );\n\n  // Produits disponibles (normalement fetchés)\n  const products = [\n    { id: 1, name: 'Clavier mécanique', price: 129.99 },\n    { id: 2, name: 'Souris ergonomique', price: 79.50 },\n    { id: 3, name: 'Webcam 4K',          price: 199.00 },\n  ];\n\n  return (\n    <div className=\"cart\">\n      <h2>Produits disponibles</h2>\n      {products.map(p => (\n        <button key={p.id} onClick={() => dispatch({ type: ADD_ITEM, payload: p })}>\n          + {p.name} ({p.price} €)\n        </button>\n      ))}\n\n      <h2>Panier ({cart.length} article{cart.length > 1 ? 's' : ''})</h2>\n      <ul>\n        {cart.map(item => <CartItem key={item.id} item={item} dispatch={dispatch} />)}\n      </ul>\n\n      <p><strong>Total : {total.toFixed(2)} €</strong></p>\n      <button onClick={() => dispatch({ type: CLEAR_CART })}>Vider le panier</button>\n    </div>\n  );\n}",
+      "explications": [
+        "useReducer(cartReducer, []) : le reducer reçoit (state actuel, action) et retourne le NOUVEAU state. React compare les références — si c'est le même tableau, pas de re-render.",
+        "Le case ADD_ITEM cherche d'abord si l'article existe déjà (find). Si oui, .map() retourne un nouveau tableau avec la quantité incrémentée. Sinon, spread [...state, nouvelArticle].",
+        "Math.max(1, quantity) dans UPDATE_QTY : empêche une quantité négative ou nulle sans validation complexe.",
+        "useMemo(() => ..., [cart]) : total est recalculé seulement quand cart change, pas à chaque re-render du composant parent.",
+        "dispatch est passé à CartItem au lieu d'une fonction prop onRemove, onUpdate : le composant enfant peut dispatcher n'importe quelle action sans que le parent expose une fonction par action."
+      ]
+    }
+  },
+
+  {
+    "id": "defi_009",
+    "titre": "Hook personnalisé useFetch avec cache et abort",
+    "techno": "React",
+    "niveau": "Moyen",
+    "tags": ["React", "Custom Hook", "useEffect", "AbortController", "Cache"],
+    "duree": "35 min",
+    "objectif": "Créer un hook réutilisable useFetch qui encapsule la logique de fetch, annulation de requête et mise en cache simple.",
+    "enonce": "Développe un hook useFetch(url, options) retournant { data, loading, error, refetch }. Le hook doit annuler la requête en cours si le composant est démonté ou si l'url change (AbortController). Ajoute un cache mémoire simple (Map) pour ne pas re-fetcher une URL déjà récupérée dans la même session.",
+    "contraintes": [
+      "Utiliser AbortController pour annuler les requêtes (cleanup du useEffect).",
+      "Cache implémenté avec une Map statique en dehors du hook (shared entre instances).",
+      "L'option { skip: true } doit empêcher le fetch automatique.",
+      "refetch() force le re-fetch même si l'URL est en cache (invalide le cache).",
+      "Les états loading/error/data doivent être cohérents (pas loading + error simultanément).",
+      "Gérer le cas où le composant est démonté avant la fin de la requête (fuites mémoire)."
+    ],
+    "ressources": [
+      "React Docs — useEffect cleanup",
+      "MDN — AbortController",
+      "React Docs — Custom Hooks"
+    ],
+    "solution": {
+      "methodologie": "Le cleanup de useEffect est la clé : il s'exécute avant chaque ré-exécution de l'effet et au démontage. En y appelant controller.abort(), on annule proprement la requête en cours. La Map cache vit en dehors du hook pour persister entre les renders.",
+      "langage": "javascript",
+      "code": "import { useState, useEffect, useCallback, useRef } from 'react';\n\n// Cache partagé entre toutes les instances du hook\nconst fetchCache = new Map();\n\nexport function useFetch(url, options = {}) {\n  const { skip = false } = options;\n\n  const [state, setState] = useState({\n    data    : null,\n    loading : !skip,\n    error   : null,\n  });\n\n  // Compteur pour forcer le re-fetch (invalidation cache)\n  const [refreshKey, setRefreshKey] = useState(0);\n  const isMountedRef = useRef(true);\n\n  useEffect(() => {\n    isMountedRef.current = true;\n    return () => { isMountedRef.current = false; };\n  }, []);\n\n  useEffect(() => {\n    if (!url || skip) return;\n\n    // Cache hit (sauf si refresh demandé)\n    if (fetchCache.has(url) && refreshKey === 0) {\n      setState({ data: fetchCache.get(url), loading: false, error: null });\n      return;\n    }\n\n    const controller = new AbortController();\n    setState(prev => ({ ...prev, loading: true, error: null }));\n\n    (async () => {\n      try {\n        const res = await fetch(url, { signal: controller.signal });\n        if (!res.ok) throw new Error(`HTTP ${res.status}`);\n        const data = await res.json();\n\n        fetchCache.set(url, data); // Mise en cache\n\n        if (isMountedRef.current) {\n          setState({ data, loading: false, error: null });\n        }\n      } catch (err) {\n        // AbortError = annulation volontaire, pas une vraie erreur\n        if (err.name === 'AbortError') return;\n        if (isMountedRef.current) {\n          setState({ data: null, loading: false, error: err.message });\n        }\n      }\n    })();\n\n    // Cleanup : annule la requête si url change ou composant démonté\n    return () => controller.abort();\n  }, [url, skip, refreshKey]);\n\n  const refetch = useCallback(() => {\n    fetchCache.delete(url); // Invalide le cache\n    setRefreshKey(k => k + 1); // Force la ré-exécution du useEffect\n  }, [url]);\n\n  return { ...state, refetch };\n}\n\n// ── Utilisation ──\nfunction UserProfile({ userId }) {\n  const { data, loading, error, refetch } = useFetch(\n    `/api/users/${userId}`\n  );\n\n  if (loading) return <p>Chargement…</p>;\n  if (error)   return <p>Erreur : {error} <button onClick={refetch}>Réessayer</button></p>;\n  return <div><h2>{data?.name}</h2><button onClick={refetch}>↻</button></div>;\n}",
+      "explications": [
+        "Le cleanup du useEffect return () => controller.abort() : s'exécute AVANT chaque re-run de l'effet (quand url change) et au démontage — la requête précédente est annulée avant d'en démarrer une nouvelle.",
+        "isMountedRef.current : évite setState sur un composant démonté. Le useRef ne déclenche pas de re-render quand sa valeur change — parfait pour les flags internes.",
+        "err.name === 'AbortError' : abort() ne rejette pas la Promise avec une erreur classique mais avec une DOMException nommée 'AbortError'. Il ne faut pas la traiter comme une vraie erreur.",
+        "refreshKey dans le tableau de dépendances : chaque appel à refetch() incrémente refreshKey, ce qui force le useEffect à se ré-exécuter même si l'url n'a pas changé.",
+        "La Map cache vit en module scope (hors du composant) : elle persiste entre renders et entre montages/démontages du composant — c'est un singleton de session."
+      ]
+    }
+  },
+
+  {
+    "id": "defi_010",
+    "titre": "API Express avec middleware de validation et gestion d'erreurs",
+    "techno": "Express",
+    "niveau": "Facile",
+    "tags": ["Express", "Middleware", "REST", "Error Handling", "Node.js"],
+    "duree": "25 min",
+    "objectif": "Construire une route CRUD complète avec validation des entrées, middleware d'authentification par token et gestionnaire d'erreurs centralisé.",
+    "enonce": "Crée un mini-serveur Express avec les routes CRUD pour une ressource 'articles' stockée en mémoire (tableau JS). Ajoute : un middleware de validation du body (titre et contenu obligatoires), un middleware d'auth (header Authorization: Bearer <token>), et un handler d'erreurs global qui retourne toujours { success: false, error, code }.",
+    "contraintes": [
+      "Les middlewares doivent être des fonctions réutilisables, pas du code inline dans les routes.",
+      "Le middleware d'auth vérifie un token hardcodé 'james-secret-2024' (simulé).",
+      "Toutes les routes POST/PUT/PATCH passent par le middleware de validation.",
+      "Les erreurs sont propagées via next(error) — pas de try/catch dans les routes.",
+      "Le handler d'erreurs est le dernier middleware (4 paramètres : err, req, res, next).",
+      "Les IDs sont auto-incrémentés côté serveur, jamais fournis par le client."
+    ],
+    "ressources": [
+      "Express Docs — Writing middleware",
+      "Express Docs — Error handling",
+      "Express Docs — Router"
+    ],
+    "solution": {
+      "methodologie": "L'architecture Express repose sur une chaîne de middlewares. next() passe au suivant, next(error) saute tous les middlewares normaux pour atterrir directement sur le handler 4-args. Cela centralise la gestion d'erreurs et évite la duplication de code de réponse.",
+      "langage": "javascript",
+      "code": "'use strict';\n\nconst express = require('express');\nconst app = express();\napp.use(express.json());\n\n// ── Données en mémoire ──\nlet articles = [];\nlet nextId   = 1;\n\n// ── Middleware : Authentification ──\nfunction requireAuth(req, res, next) {\n  const auth  = req.headers['authorization'] || '';\n  const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';\n  if (token !== 'james-secret-2024') {\n    const err  = new Error('Token manquant ou invalide');\n    err.status = 401;\n    return next(err);\n  }\n  next();\n}\n\n// ── Middleware : Validation du body ──\nfunction validateArticle(req, res, next) {\n  const { titre, contenu } = req.body;\n  const errors = [];\n  if (!titre   || titre.trim().length < 3)   errors.push('titre : 3 caractères minimum');\n  if (!contenu || contenu.trim().length < 10) errors.push('contenu : 10 caractères minimum');\n  if (errors.length) {\n    const err  = new Error('Validation échouée : ' + errors.join(', '));\n    err.status = 422;\n    err.errors = errors;\n    return next(err);\n  }\n  next();\n}\n\n// ── Routes ──\nconst router = express.Router();\n\n// GET /api/articles\nrouter.get('/', (req, res) => {\n  res.json({ success: true, data: articles, count: articles.length });\n});\n\n// GET /api/articles/:id\nrouter.get('/:id', (req, res, next) => {\n  const article = articles.find(a => a.id === Number(req.params.id));\n  if (!article) {\n    const err = new Error(`Article #${req.params.id} introuvable`);\n    err.status = 404;\n    return next(err);\n  }\n  res.json({ success: true, data: article });\n});\n\n// POST /api/articles  (auth + validation)\nrouter.post('/', requireAuth, validateArticle, (req, res) => {\n  const article = {\n    id      : nextId++,\n    titre   : req.body.titre.trim(),\n    contenu : req.body.contenu.trim(),\n    createdAt: new Date().toISOString(),\n  };\n  articles.push(article);\n  res.status(201).json({ success: true, data: article });\n});\n\n// PUT /api/articles/:id  (auth + validation)\nrouter.put('/:id', requireAuth, validateArticle, (req, res, next) => {\n  const idx = articles.findIndex(a => a.id === Number(req.params.id));\n  if (idx === -1) {\n    const err = new Error('Article introuvable'); err.status = 404; return next(err);\n  }\n  articles[idx] = { ...articles[idx], ...req.body, id: articles[idx].id };\n  res.json({ success: true, data: articles[idx] });\n});\n\n// DELETE /api/articles/:id  (auth)\nrouter.delete('/:id', requireAuth, (req, res, next) => {\n  const idx = articles.findIndex(a => a.id === Number(req.params.id));\n  if (idx === -1) {\n    const err = new Error('Article introuvable'); err.status = 404; return next(err);\n  }\n  articles.splice(idx, 1);\n  res.status(204).send();\n});\n\napp.use('/api/articles', router);\n\n// ── Handler d'erreurs global (4 params obligatoires) ──\napp.use((err, req, res, next) => { // eslint-disable-line no-unused-vars\n  const status = err.status || 500;\n  res.status(status).json({\n    success : false,\n    error   : err.message || 'Erreur serveur interne',\n    code    : status,\n    ...(err.errors && { details: err.errors }),\n  });\n});\n\napp.listen(3000, () => console.log('Serveur sur http://localhost:3000'));",
+      "explications": [
+        "router.post('/', requireAuth, validateArticle, handler) : Express exécute les middlewares dans l'ordre. Si requireAuth appelle next(err), validateArticle et handler sont sautés — on va directement au handler 4-args.",
+        "err.status = 401 : Express ne fait rien de magique avec les propriétés de l'erreur — c'est notre handler qui lit err.status. Si non défini, on fallback à 500.",
+        "Le handler d'erreurs DOIT avoir exactement 4 paramètres (err, req, res, next). Si next est absent, Express ne le reconnaît pas comme error handler.",
+        "articles.splice(idx, 1) : une des rares mutations légitimes — c'est un tableau côté serveur, pas un state React.",
+        "res.status(204).send() pour DELETE : 204 No Content = succès sans corps de réponse. Envoyer un body avec 204 est techniquement invalide."
+      ]
+    }
+  },
+
+  {
+    "id": "defi_011",
+    "titre": "Jointures SQL et agrégation avancée",
+    "techno": "MySQL",
+    "niveau": "Facile",
+    "tags": ["SQL", "JOIN", "GROUP BY", "HAVING", "Aggregate"],
+    "duree": "20 min",
+    "objectif": "Maîtriser les jointures multiples et les fonctions d'agrégation pour extraire des statistiques métier depuis une base relationnelle.",
+    "enonce": "Tu as 3 tables : customers (id, name, city), orders (id, customer_id, total, status, created_at), order_items (order_id, product_name, quantity, unit_price). Écris les requêtes pour : (1) le top 5 des clients par chiffre d'affaires total (uniquement commandes 'completed'), (2) le revenu mensuel des 6 derniers mois, (3) les produits vendus dans toutes les villes (intersection).",
+    "contraintes": [
+      "Utiliser uniquement des INNER JOIN et LEFT JOIN (pas de sous-requêtes corrélées).",
+      "La requête du top 5 clients doit exclure les clients sans commande (pas de clients avec total = 0).",
+      "Le revenu mensuel utilise DATE_FORMAT pour formater la date.",
+      "Alias explicites sur toutes les colonnes calculées.",
+      "Utiliser HAVING pour filtrer les agrégats (pas WHERE sur une fonction d'agrégation)."
+    ],
+    "ressources": [
+      "MySQL Docs — JOIN Syntax",
+      "MySQL Docs — GROUP BY and HAVING",
+      "MySQL Docs — DATE_FORMAT()"
+    ],
+    "solution": {
+      "methodologie": "La règle fondamentale : WHERE filtre les lignes AVANT l'agrégation, HAVING filtre les groupes APRÈS. Pour le top 5, on filtre status='completed' dans WHERE (avant GROUP BY), puis on pourrait utiliser HAVING si on voulait filtrer sur SUM(). Pour le revenu mensuel, DATE_FORMAT + GROUP BY crée des 'buckets' par mois.",
+      "langage": "sql",
+      "code": "-- ── Requête 1 : Top 5 clients par CA (commandes completed) ──\nSELECT\n  c.id                          AS customer_id,\n  c.name                        AS customer_name,\n  c.city,\n  COUNT(o.id)                   AS order_count,\n  SUM(o.total)                  AS total_revenue,\n  AVG(o.total)                  AS avg_order_value\nFROM customers c\nINNER JOIN orders o\n  ON o.customer_id = c.id\n  AND o.status = 'completed'       -- filtre avant GROUP BY\nGROUP BY c.id, c.name, c.city\nHAVING total_revenue > 0           -- exclut les clients sans CA\nORDER BY total_revenue DESC\nLIMIT 5;\n\n\n-- ── Requête 2 : Revenu mensuel sur 6 mois ──\nSELECT\n  DATE_FORMAT(o.created_at, '%Y-%m')  AS month,\n  COUNT(DISTINCT o.id)                AS order_count,\n  SUM(oi.quantity * oi.unit_price)    AS revenue,\n  ROUND(AVG(o.total), 2)              AS avg_basket\nFROM orders o\nINNER JOIN order_items oi ON oi.order_id = o.id\nWHERE o.created_at >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)\n  AND o.status = 'completed'\nGROUP BY DATE_FORMAT(o.created_at, '%Y-%m')\nORDER BY month ASC;\n\n\n-- ── Requête 3 : Produits vendus dans TOUTES les villes ──\n-- Astuce : count(villes distinctes du produit) = count(total villes)\nSELECT\n  oi.product_name,\n  COUNT(DISTINCT c.city)  AS cities_count,\n  SUM(oi.quantity)        AS total_sold\nFROM order_items oi\nINNER JOIN orders o   ON o.id = oi.order_id\nINNER JOIN customers c ON c.id = o.customer_id\nGROUP BY oi.product_name\nHAVING cities_count = (SELECT COUNT(DISTINCT city) FROM customers)\nORDER BY total_sold DESC;",
+      "explications": [
+        "INNER JOIN ... AND o.status = 'completed' : mettre la condition dans la clause ON du JOIN plutôt que dans WHERE donne le même résultat ici, mais c'est une bonne habitude pour les LEFT JOIN (une condition dans WHERE transforme un LEFT JOIN en INNER JOIN).",
+        "HAVING total_revenue > 0 vs WHERE : total_revenue est un alias de SUM(). WHERE est évalué avant GROUP BY et ne peut pas référencer des alias ou des agrégats — HAVING est évalué après.",
+        "DATE_FORMAT(o.created_at, '%Y-%m') : formate en '2024-07'. On peut l'utiliser dans GROUP BY — MySQL regroupe toutes les commandes du même mois.",
+        "SUM(oi.quantity * oi.unit_price) dans la requête 2 : si on veut le CA réel par article, on recalcule depuis order_items. SUM(o.total) donnerait le montant de la commande entière.",
+        "Requête 3 — technique de division relationnelle : COUNT(DISTINCT c.city) doit être égal au nombre total de villes distinctes. Si un produit manque une ville, son count sera inférieur et HAVING l'exclura."
+      ]
+    }
+  },
+
+  {
+    "id": "defi_012",
+    "titre": "Transaction SQL et gestion de stock concurrent",
+    "techno": "MySQL",
+    "niveau": "Moyen",
+    "tags": ["SQL", "Transaction", "ACID", "Locks", "Concurrence"],
+    "duree": "30 min",
+    "objectif": "Implémenter une transaction sécurisée pour une commande e-commerce qui garantit la cohérence des stocks même en accès concurrent.",
+    "enonce": "Crée la procédure stockée placeOrder(p_customer_id, p_items JSON) qui : vérifie le stock de chaque article, décrémente le stock, insère la commande et ses lignes, calcule le total, et rollback si un article manque de stock. Simule aussi un accès concurrent avec SELECT ... FOR UPDATE.",
+    "contraintes": [
+      "Utiliser START TRANSACTION ... COMMIT / ROLLBACK.",
+      "SELECT ... FOR UPDATE sur la table products avant de décrémenter le stock (verrou pessimiste).",
+      "Si un produit n'a pas assez de stock, ROLLBACK et retourner un code d'erreur explicite.",
+      "La procédure insère dans orders et order_items en une seule transaction.",
+      "Utiliser LAST_INSERT_ID() pour récupérer l'ID de la commande insérée.",
+      "Documenter pourquoi SELECT FOR UPDATE est nécessaire vs une vérification simple."
+    ],
+    "ressources": [
+      "MySQL Docs — START TRANSACTION",
+      "MySQL Docs — SELECT FOR UPDATE",
+      "MySQL Docs — Stored Procedures"
+    ],
+    "solution": {
+      "methodologie": "Sans SELECT FOR UPDATE, deux commandes simultanées pourraient lire le même stock (ex: 1 unité restante), toutes deux le trouver suffisant, et toutes deux décrémenter — résultat : stock à -1. FOR UPDATE pose un verrou exclusif sur les lignes jusqu'au COMMIT, forçant la seconde transaction à attendre.",
+      "langage": "sql",
+      "code": "DELIMITER //\n\nCREATE PROCEDURE placeOrder(\n  IN  p_customer_id INT,\n  IN  p_product_id  INT,\n  IN  p_quantity    INT,\n  OUT p_order_id    INT,\n  OUT p_error       VARCHAR(255)\n)\nBEGIN\n  DECLARE v_stock      INT DEFAULT 0;\n  DECLARE v_price      DECIMAL(10,2) DEFAULT 0;\n  DECLARE v_total      DECIMAL(10,2) DEFAULT 0;\n  DECLARE EXIT HANDLER FOR SQLEXCEPTION\n  BEGIN\n    ROLLBACK;\n    SET p_order_id = -1;\n    SET p_error    = 'Erreur SQL inattendue — transaction annulée';\n  END;\n\n  START TRANSACTION;\n\n  -- Verrou pessimiste : bloque la ligne jusqu'au COMMIT\n  -- Empêche une autre transaction de lire et modifier le même stock\n  SELECT stock, price\n    INTO v_stock, v_price\n    FROM products\n   WHERE id = p_product_id\n     FOR UPDATE;  -- <-- CRUCIAL pour la concurrence\n\n  -- Vérification du stock\n  IF v_stock < p_quantity THEN\n    ROLLBACK;\n    SET p_order_id = -1;\n    SET p_error    = CONCAT('Stock insuffisant : disponible=', v_stock,\n                            ', demandé=', p_quantity);\n    LEAVE TRANSACTION_BLOCK;  -- sortie propre\n  END IF;\n\n  -- Décrément du stock\n  UPDATE products\n     SET stock = stock - p_quantity\n   WHERE id = p_product_id;\n\n  -- Calcul du total\n  SET v_total = v_price * p_quantity;\n\n  -- Insertion de la commande\n  INSERT INTO orders (customer_id, total, status, created_at)\n  VALUES (p_customer_id, v_total, 'pending', NOW());\n\n  SET p_order_id = LAST_INSERT_ID();\n\n  -- Insertion de la ligne de commande\n  INSERT INTO order_items (order_id, product_id, quantity, unit_price)\n  VALUES (p_order_id, p_product_id, p_quantity, v_price);\n\n  COMMIT;\n  SET p_error = NULL;\nEND //\n\nDELIMITER ;\n\n-- Appel\nCALL placeOrder(42, 7, 3, @order_id, @error);\nSELECT @order_id, @error;",
+      "explications": [
+        "SELECT ... FOR UPDATE pose un verrou exclusif (X-lock) sur la ligne. La seconde transaction qui tente le même SELECT FOR UPDATE sera BLOQUÉE jusqu'au COMMIT ou ROLLBACK de la première. Cela élimine la race condition.",
+        "DECLARE EXIT HANDLER FOR SQLEXCEPTION : capture n'importe quelle erreur SQL et exécute automatiquement le ROLLBACK — filet de sécurité si une requête interne échoue.",
+        "LAST_INSERT_ID() retourne l'ID auto-increment de la dernière INSERT dans la connexion courante — sûr en multi-connexion car chaque connexion a sa propre valeur.",
+        "stock = stock - p_quantity directement dans l'UPDATE : plutôt que de lire, calculer, puis écrire — cette écriture atomique est plus sûre même si on a déjà le verrou.",
+        "ROLLBACK annule tout ce qui a été fait depuis START TRANSACTION — les données sont remises dans leur état initial, comme si la transaction n'avait pas existé."
+      ]
+    }
+  },
+
+  {
+    "id": "defi_013",
+    "titre": "Classe PHP orientée objet avec héritage et interfaces",
+    "techno": "PHP",
+    "niveau": "Facile",
+    "tags": ["PHP", "OOP", "Interface", "Abstract", "Inheritance", "PHP 8"],
+    "duree": "25 min",
+    "objectif": "Construire une hiérarchie de classes PHP 8 respectant les principes SOLID, avec interface, classe abstraite et classes concrètes.",
+    "enonce": "Crée une hiérarchie pour un système de paiement : une interface Payable, une classe abstraite AbstractPayment avec les propriétés communes, et deux classes concrètes CreditCardPayment et PayPalPayment. Chaque classe implémente une méthode process() différente. Utilise le constructor property promotion de PHP 8.",
+    "contraintes": [
+      "L'interface Payable déclare process(float $amount): PaymentResult et validate(): bool.",
+      "PaymentResult est un readonly class PHP 8.2 avec { success, transactionId, message }.",
+      "AbstractPayment est abstract et implémente validate() par défaut.",
+      "Utiliser le constructor property promotion (public readonly string $currency).",
+      "Typage strict : declare(strict_types=1) en haut de chaque fichier.",
+      "Gestion d'exception avec une PaymentException custom."
+    ],
+    "ressources": [
+      "PHP Docs — Interfaces",
+      "PHP Docs — Abstract Classes",
+      "PHP 8.1 — readonly properties",
+      "PHP 8.0 — Constructor Promotion"
+    ],
+    "solution": {
+      "methodologie": "L'interface définit le contrat (ce que la classe DOIT faire), la classe abstraite partage du code commun (comment les classes partagent validate()), les classes concrètes implémentent le comportement spécifique (process()). Ce pattern correspond au principe 'Program to an interface, not an implementation'.",
+      "langage": "php",
+      "code": "<?php\ndeclare(strict_types=1);\n\n// ── Value Object résultat ──\nreadonly class PaymentResult\n{\n    public function __construct(\n        public bool   $success,\n        public string $transactionId,\n        public string $message,\n    ) {}\n}\n\n// ── Exception custom ──\nclass PaymentException extends RuntimeException {}\n\n// ── Interface contrat ──\ninterface Payable\n{\n    public function process(float $amount): PaymentResult;\n    public function validate(): bool;\n}\n\n// ── Classe abstraite — comportement partagé ──\nabstract class AbstractPayment implements Payable\n{\n    public function __construct(\n        protected readonly string $currency = 'EUR',\n        protected readonly float  $maxAmount = 10_000.0,\n    ) {}\n\n    // Implémentation par défaut de validate()\n    public function validate(): bool\n    {\n        return $this->currency !== '' && $this->maxAmount > 0;\n    }\n\n    // Méthode utilitaire partagée\n    protected function generateTransactionId(): string\n    {\n        return strtoupper(bin2hex(random_bytes(8)));\n    }\n}\n\n// ── Classe concrète : Carte Bancaire ──\nclass CreditCardPayment extends AbstractPayment\n{\n    public function __construct(\n        private readonly string $cardNumber,\n        private readonly string $cvv,\n        string $currency = 'EUR',\n    ) {\n        parent::__construct($currency);\n    }\n\n    public function process(float $amount): PaymentResult\n    {\n        if (!$this->validate()) {\n            throw new PaymentException('Paramètres de paiement invalides');\n        }\n        if ($amount > $this->maxAmount) {\n            throw new PaymentException(\"Montant {$amount} dépasse la limite {$this->maxAmount}\");\n        }\n        if (!$this->luhnCheck($this->cardNumber)) {\n            return new PaymentResult(false, '', 'Numéro de carte invalide');\n        }\n\n        return new PaymentResult(\n            success       : true,\n            transactionId : 'CC-' . $this->generateTransactionId(),\n            message       : \"Paiement de {$amount} {$this->currency} accepté\",\n        );\n    }\n\n    private function luhnCheck(string $number): bool\n    {\n        $sum = 0;\n        $alt = false;\n        foreach (array_reverse(str_split($number)) as $digit) {\n            $n = (int) $digit;\n            if ($alt) { $n *= 2; if ($n > 9) $n -= 9; }\n            $sum += $n;\n            $alt  = !$alt;\n        }\n        return $sum % 10 === 0;\n    }\n}\n\n// ── Classe concrète : PayPal ──\nclass PayPalPayment extends AbstractPayment\n{\n    public function __construct(\n        private readonly string $email,\n        string $currency = 'EUR',\n    ) {\n        parent::__construct($currency);\n    }\n\n    public function validate(): bool\n    {\n        return parent::validate() && filter_var($this->email, FILTER_VALIDATE_EMAIL) !== false;\n    }\n\n    public function process(float $amount): PaymentResult\n    {\n        if (!$this->validate()) {\n            throw new PaymentException(\"Email PayPal invalide : {$this->email}\");\n        }\n\n        return new PaymentResult(\n            success       : true,\n            transactionId : 'PP-' . $this->generateTransactionId(),\n            message       : \"PayPal : {$amount} {$this->currency} → {$this->email}\",\n        );\n    }\n}\n\n// ── Utilisation ──\n$card   = new CreditCardPayment('4532015112830366', '123');\n$result = $card->process(149.99);\necho $result->success ? \"✅ \" . $result->message : \"❌ \" . $result->message;",
+      "explications": [
+        "readonly class : tous les paramètres du constructeur sont automatiquement readonly — la valeur ne peut être assignée qu'à la construction. Idéal pour les Value Objects immuables.",
+        "Constructor property promotion (public readonly string $currency) : évite de déclarer la propriété en haut de la classe ET de faire $this->currency = $currency dans le constructeur — PHP le fait automatiquement.",
+        "PayPalPayment::validate() appelle parent::validate() pour réutiliser la vérification de base, puis ajoute sa propre logique (validation email). C'est le principe de Liskov Substitution.",
+        "generateTransactionId() est protected dans la classe abstraite : accessible aux classes enfants mais pas de l'extérieur — encapsulation sans duplication.",
+        "filter_var($email, FILTER_VALIDATE_EMAIL) : fonction native PHP, plus fiable qu'une regex maison pour valider les emails."
+      ]
+    }
+  },
+
+  {
+    "id": "defi_014",
+    "titre": "Service Symfony avec injection de dépendances et Repository",
+    "techno": "Symfony",
+    "niveau": "Moyen",
+    "tags": ["Symfony", "Service", "DI", "Repository", "Doctrine", "Controller"],
+    "duree": "35 min",
+    "objectif": "Construire un Service Symfony qui encapsule la logique métier d'un article de blog, injecté dans un Controller via l'autowiring.",
+    "enonce": "Crée : une entité Article (id, title, content, author, status, publishedAt), un ArticleRepository avec des méthodes custom, un ArticleService avec la logique publish() et getLatest(), et un ArticleController avec les routes index, show et publish. Utilise l'autowiring Symfony pour toutes les injections.",
+    "contraintes": [
+      "L'entité Article utilise les attributs PHP 8 Doctrine (#[ORM\\Entity], #[ORM\\Column]).",
+      "ArticleRepository étend ServiceEntityRepository et ajoute findPublished(int $limit).",
+      "ArticleService est un service Symfony (pas new ArticleService() — autowiring).",
+      "publish() vérifie que le status est 'draft' avant de passer à 'published'.",
+      "Le Controller retourne du JSON (JsonResponse) pour une API REST.",
+      "Utiliser #[Route] en attribut PHP 8, pas en annotation YAML."
+    ],
+    "ressources": [
+      "Symfony Docs — Services",
+      "Symfony Docs — Doctrine ORM",
+      "Symfony Docs — Controller"
+    ],
+    "solution": {
+      "methodologie": "Le pattern Symfony est Controller → Service → Repository. Le Controller gère HTTP (requête/réponse), le Service contient la logique métier, le Repository gère les requêtes Doctrine. L'autowiring Symfony injecte automatiquement les dépendances basées sur le type-hint.",
+      "langage": "php",
+      "code": "<?php\n// ── src/Entity/Article.php ──\nnamespace App\\Entity;\n\nuse App\\Repository\\ArticleRepository;\nuse Doctrine\\ORM\\Mapping as ORM;\nuse DateTimeImmutable;\n\n#[ORM\\Entity(repositoryClass: ArticleRepository::class)]\n#[ORM\\Table(name: 'articles')]\nclass Article\n{\n    #[ORM\\Id, ORM\\GeneratedValue, ORM\\Column]\n    private ?int $id = null;\n\n    #[ORM\\Column(length: 255)]\n    private string $title;\n\n    #[ORM\\Column(type: 'text')]\n    private string $content;\n\n    #[ORM\\Column(length: 50, options: ['default' => 'draft'])]\n    private string $status = 'draft';\n\n    #[ORM\\Column(nullable: true)]\n    private ?DateTimeImmutable $publishedAt = null;\n\n    // Getters & setters (générés par make:entity)\n    public function getId(): ?int { return $this->id; }\n    public function getTitle(): string { return $this->title; }\n    public function setTitle(string $t): self { $this->title = $t; return $this; }\n    public function getContent(): string { return $this->content; }\n    public function setContent(string $c): self { $this->content = $c; return $this; }\n    public function getStatus(): string { return $this->status; }\n    public function setStatus(string $s): self { $this->status = $s; return $this; }\n    public function getPublishedAt(): ?DateTimeImmutable { return $this->publishedAt; }\n    public function setPublishedAt(?DateTimeImmutable $d): self { $this->publishedAt = $d; return $this; }\n\n    public function toArray(): array {\n        return [\n            'id'          => $this->id,\n            'title'       => $this->title,\n            'status'      => $this->status,\n            'publishedAt' => $this->publishedAt?->format('c'),\n        ];\n    }\n}\n\n\n// ── src/Repository/ArticleRepository.php ──\nnamespace App\\Repository;\n\nuse App\\Entity\\Article;\nuse Doctrine\\Bundle\\DoctrineBundle\\Repository\\ServiceEntityRepository;\nuse Doctrine\\Persistence\\ManagerRegistry;\n\nclass ArticleRepository extends ServiceEntityRepository\n{\n    public function __construct(ManagerRegistry $registry)\n    {\n        parent::__construct($registry, Article::class);\n    }\n\n    /** @return Article[] */\n    public function findPublished(int $limit = 10): array\n    {\n        return $this->createQueryBuilder('a')\n            ->where('a.status = :status')\n            ->setParameter('status', 'published')\n            ->orderBy('a.publishedAt', 'DESC')\n            ->setMaxResults($limit)\n            ->getQuery()\n            ->getResult();\n    }\n}\n\n\n// ── src/Service/ArticleService.php ──\nnamespace App\\Service;\n\nuse App\\Entity\\Article;\nuse App\\Repository\\ArticleRepository;\nuse Doctrine\\ORM\\EntityManagerInterface;\nuse DateTimeImmutable;\nuse LogicException;\n\nclass ArticleService\n{\n    // Autowiring : Symfony injecte ArticleRepository et EntityManager\n    public function __construct(\n        private readonly ArticleRepository    $repository,\n        private readonly EntityManagerInterface $em,\n    ) {}\n\n    public function publish(int $id): Article\n    {\n        $article = $this->repository->find($id)\n            ?? throw new \\InvalidArgumentException(\"Article #{$id} introuvable\");\n\n        if ($article->getStatus() !== 'draft') {\n            throw new LogicException(\n                \"Seul un brouillon peut être publié. Statut actuel : {$article->getStatus()}\"\n            );\n        }\n\n        $article->setStatus('published');\n        $article->setPublishedAt(new DateTimeImmutable());\n        $this->em->flush(); // Sauvegarde en base\n\n        return $article;\n    }\n\n    /** @return Article[] */\n    public function getLatest(int $limit = 10): array\n    {\n        return $this->repository->findPublished($limit);\n    }\n}\n\n\n// ── src/Controller/ArticleController.php ──\nnamespace App\\Controller;\n\nuse App\\Service\\ArticleService;\nuse Symfony\\Bundle\\FrameworkBundle\\Controller\\AbstractController;\nuse Symfony\\Component\\HttpFoundation\\JsonResponse;\nuse Symfony\\Component\\Routing\\Attribute\\Route;\n\n#[Route('/api/articles')]\nclass ArticleController extends AbstractController\n{\n    // ArticleService injecté automatiquement par l'autowiring\n    public function __construct(\n        private readonly ArticleService $articleService,\n    ) {}\n\n    #[Route('', methods: ['GET'])]\n    public function index(): JsonResponse\n    {\n        $articles = $this->articleService->getLatest();\n        return $this->json(array_map(fn($a) => $a->toArray(), $articles));\n    }\n\n    #[Route('/{id}/publish', methods: ['POST'])]\n    public function publish(int $id): JsonResponse\n    {\n        try {\n            $article = $this->articleService->publish($id);\n            return $this->json($article->toArray());\n        } catch (\\InvalidArgumentException $e) {\n            return $this->json(['error' => $e->getMessage()], 404);\n        } catch (\\LogicException $e) {\n            return $this->json(['error' => $e->getMessage()], 409);\n        }\n    }\n}",
+      "explications": [
+        "Autowiring : Symfony lit le type-hint du constructeur (ArticleService $articleService) et cherche dans son container un service de ce type. Si l'autowiring est activé (défaut), pas besoin de configurer services.yaml.",
+        "#[ORM\\Entity(repositoryClass: ArticleRepository::class)] : Doctrine sait quel Repository utiliser pour cette entité. Le repository est accessible via $em->getRepository(Article::class).",
+        "createQueryBuilder('a') : 'a' est l'alias de la table articles dans le DQL. Plus puissant que findBy() pour les requêtes complexes (JOIN, ORDER, LIMIT).",
+        "$article ?? throw new \\InvalidArgumentException(...) : le null-coalescing throw (PHP 8) retourne la valeur si non-null, sinon exécute le throw — élimine le if($article === null) { throw... }.",
+        "$this->em->flush() : EntityManager met les changements en attente lors de persist()/setter ; flush() exécute effectivement le SQL UPDATE. Si on oublie flush(), les changements sont perdus."
+      ]
+    }
+  },
+
+  {
+    "id": "defi_015",
+    "titre": "Composant Angular avec Observable et Service HTTP",
+    "techno": "Angular",
+    "niveau": "Moyen",
+    "tags": ["Angular", "RxJS", "Observable", "HttpClient", "Service", "Pipe"],
+    "duree": "35 min",
+    "objectif": "Créer un service Angular qui consomme une API REST via HttpClient et expose des Observables, consommés dans un composant avec le pipe async.",
+    "enonce": "Crée un ProductService qui fetch /api/products, expose un searchProducts(term) avec debounce (300ms), un getProduct(id) qui met en cache le résultat, et gère les erreurs avec catchError. Le composant ProductListComponent utilise le pipe async et un champ de recherche réactif avec ReactiveFormsModule.",
+    "contraintes": [
+      "Utiliser HttpClient (pas fetch natif).",
+      "searchProducts() utilise debounceTime(300) et distinctUntilChanged() de RxJS.",
+      "getProduct(id) met en cache dans un Map privé du service — retourne of(cached) si déjà fetché.",
+      "Le composant utilise le pipe async dans le template (pas de subscribe dans le TS).",
+      "Gérer les erreurs avec catchError + throwError.",
+      "Utiliser takeUntilDestroyed() pour les subscriptions (Angular 16+)."
+    ],
+    "ressources": [
+      "Angular Docs — HttpClient",
+      "RxJS Docs — debounceTime",
+      "Angular Docs — async pipe",
+      "RxJS Docs — catchError"
+    ],
+    "solution": {
+      "methodologie": "RxJS permet de traiter les événements comme des flux. debounceTime(300) attend 300ms d'inactivité avant d'émettre — évite un appel API à chaque frappe. Le pipe async s'abonne/désabonne automatiquement, gérant le cycle de vie du composant sans subscribe manuel.",
+      "langage": "typescript",
+      "code": "// ── product.service.ts ──\nimport { Injectable, inject } from '@angular/core';\nimport { HttpClient, HttpErrorResponse } from '@angular/common/http';\nimport { Observable, of, throwError } from 'rxjs';\nimport { catchError, map, shareReplay, tap } from 'rxjs/operators';\n\nexport interface Product {\n  id: number; name: string; price: number; category: string;\n}\n\n@Injectable({ providedIn: 'root' })\nexport class ProductService {\n  private readonly http = inject(HttpClient);\n  private readonly cache = new Map<number, Product>(); // Cache en mémoire\n  private readonly apiUrl = '/api/products';\n\n  // Recherche avec résultats partagés (shareReplay)\n  searchProducts(term: string): Observable<Product[]> {\n    if (!term.trim()) return of([]);\n    return this.http.get<Product[]>(`${this.apiUrl}?q=${encodeURIComponent(term)}`).pipe(\n      map(products => products.slice(0, 20)), // Limite affichage\n      catchError(this.handleError),\n    );\n  }\n\n  getProduct(id: number): Observable<Product> {\n    // Cache hit : retourne un Observable synchrone\n    if (this.cache.has(id)) {\n      return of(this.cache.get(id)!);\n    }\n    return this.http.get<Product>(`${this.apiUrl}/${id}`).pipe(\n      tap(product => this.cache.set(id, product)), // Mise en cache à la réception\n      shareReplay(1),                              // Partage entre plusieurs subscribers\n      catchError(this.handleError),\n    );\n  }\n\n  private handleError(error: HttpErrorResponse): Observable<never> {\n    const message = error.status === 0\n      ? 'Erreur réseau — serveur inaccessible'\n      : `Erreur ${error.status} : ${error.message}`;\n    console.error('[ProductService]', message);\n    return throwError(() => new Error(message));\n  }\n}\n\n\n// ── product-list.component.ts ──\nimport { Component, inject, OnInit } from '@angular/core';\nimport { FormControl, ReactiveFormsModule } from '@angular/forms';\nimport { AsyncPipe, CommonModule } from '@angular/common';\nimport { Observable, EMPTY } from 'rxjs';\nimport { debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';\nimport { takeUntilDestroyed } from '@angular/core/rxjs-interop';\nimport { ProductService, Product } from './product.service';\n\n@Component({\n  selector: 'app-product-list',\n  standalone: true,\n  imports: [ReactiveFormsModule, AsyncPipe, CommonModule],\n  template: `\n    <input\n      [formControl]=\"searchControl\"\n      placeholder=\"Rechercher un produit…\"\n    />\n\n    <p *ngIf=\"isSearching\">🔍 Recherche en cours…</p>\n\n    <!-- Le pipe async subscribe/unsubscribe automatiquement -->\n    <ul *ngIf=\"products$ | async as products\">\n      <li *ngFor=\"let product of products; trackBy: trackById\">\n        {{ product.name }} — {{ product.price | currency:'EUR' }}\n      </li>\n      <li *ngIf=\"products.length === 0\">Aucun résultat.</li>\n    </ul>\n  `,\n})\nexport class ProductListComponent {\n  private readonly productService = inject(ProductService);\n\n  readonly searchControl = new FormControl('', { nonNullable: true });\n  products$!: Observable<Product[]>;\n  isSearching = false;\n\n  constructor() {\n    this.products$ = this.searchControl.valueChanges.pipe(\n      debounceTime(300),          // Attend 300ms sans frappe\n      distinctUntilChanged(),     // N'émet pas si la valeur n'a pas changé\n      switchMap(term => {         // Annule la requête précédente si new frappe\n        this.isSearching = true;\n        return this.productService.searchProducts(term).pipe(\n          tap(() => this.isSearching = false),\n          catchError(() => { this.isSearching = false; return EMPTY; })\n        );\n      }),\n      takeUntilDestroyed(),       // Se désabonne automatiquement au destroy du composant\n    );\n  }\n\n  trackById(_: number, product: Product): number {\n    return product.id;\n  }\n}",
+      "explications": [
+        "debounceTime(300) + distinctUntilChanged() : debounce attend 300ms de silence avant d'émettre, distinctUntilChanged empêche une requête si l'utilisateur efface et retape la même valeur — ensemble ils réduisent les appels API de 95%.",
+        "switchMap : à chaque nouvelle valeur, il annule l'Observable interne précédent (la requête HTTP en cours) et en démarre un nouveau. Évite les résultats désordonnés si une requête lente revient après une requête plus récente.",
+        "pipe async dans le template : Angular s'abonne à products$ à l'affichage du composant et se désabonne automatiquement à la destruction — zéro memory leak sans unsubscribe manuel.",
+        "shareReplay(1) dans getProduct : si deux composants subscribent à getProduct(42) simultanément, un seul appel HTTP est fait ; les deux reçoivent le résultat mis en replay.",
+        "takeUntilDestroyed() : Angular 16+ détecte la destruction du composant et complète automatiquement l'Observable — remplace le pattern manuel Subject + takeUntil + ngOnDestroy."
+      ]
+    }
+  },
+
+  {
+    "id": "defi_016",
+    "titre": "CSS Animations et Transitions pour micro-interactions",
+    "techno": "HTML/CSS",
+    "niveau": "Moyen",
+    "tags": ["CSS", "Animations", "Transitions", "Keyframes", "Performance", "will-change"],
+    "duree": "25 min",
+    "objectif": "Créer des micro-interactions fluides pour une interface : bouton de chargement, carte avec hover 3D, notification animée et skeleton loader.",
+    "enonce": "Implémente en CSS pur (sans JS pour les animations) : (1) un bouton qui se transforme en spinner pendant le chargement via :focus/:active, (2) un effet de carte 3D au hover avec perspective CSS, (3) une notification qui entre par la droite et disparaît automatiquement, (4) un skeleton loader en shimmer animé.",
+    "contraintes": [
+      "Uniquement CSS — pas de JavaScript pour déclencher les animations.",
+      "Utiliser transform et opacity pour les animations (GPU-composited, 60fps).",
+      "Ajouter will-change uniquement là où nécessaire (pas en global).",
+      "Respecter prefers-reduced-motion avec @media (prefers-reduced-motion: reduce).",
+      "Les transitions doivent avoir des timing-functions appropriées (ease-out pour les entrées, ease-in pour les sorties).",
+      "Le skeleton loader utilise un gradient animé (animation: shimmer) sans image."
+    ],
+    "ressources": [
+      "MDN — CSS Animations",
+      "MDN — will-change",
+      "MDN — prefers-reduced-motion",
+      "Google — CSS GPU Compositing"
+    ],
+    "solution": {
+      "methodologie": "Règle d'or des animations CSS performantes : animer uniquement transform et opacity — ces propriétés sont composited par le GPU et ne déclenchent pas de layout recalculation. Tout le reste (width, height, top, margin) force un reflow et génère des janks.",
+      "langage": "css",
+      "code": "/* ════ 1. BOUTON CHARGEMENT ════ */\n.btn-load {\n  position: relative;\n  padding: 12px 24px;\n  background: #58a6ff;\n  color: white;\n  border: none;\n  border-radius: 8px;\n  cursor: pointer;\n  transition: background 0.2s ease;\n  overflow: hidden;\n}\n\n/* Spinner masqué par défaut */\n.btn-load::after {\n  content: '';\n  position: absolute;\n  inset: 0;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 20px; height: 20px;\n  margin: auto;\n  border: 2px solid transparent;\n  border-top-color: white;\n  border-radius: 50%;\n  opacity: 0;\n  transition: opacity 0.2s;\n}\n\n/* Au clic : texte invisible, spinner visible */\n.btn-load:active .btn-text    { opacity: 0; }\n.btn-load.loading .btn-text   { opacity: 0; }\n.btn-load.loading::after {\n  opacity: 1;\n  animation: spin 0.7s linear infinite;\n}\n@keyframes spin { to { transform: rotate(360deg); } }\n\n\n/* ════ 2. CARTE 3D AU HOVER ════ */\n.card-3d-wrapper {\n  perspective: 800px;    /* Plus bas = effet 3D plus prononcé */\n}\n\n.card-3d {\n  transform-style: preserve-3d;\n  transition: transform 0.4s ease-out, box-shadow 0.4s ease-out;\n  will-change: transform; /* Prépare le layer GPU à l'avance */\n  border-radius: 12px;\n  background: #1f2937;\n  padding: 24px;\n}\n\n.card-3d:hover {\n  transform: rotateY(-8deg) rotateX(4deg) translateZ(20px);\n  box-shadow: 16px 16px 40px rgba(0,0,0,0.4);\n}\n\n/* Reflet en pseudo-élément */\n.card-3d::before {\n  content: '';\n  position: absolute;\n  inset: 0;\n  background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 60%);\n  border-radius: inherit;\n  opacity: 0;\n  transition: opacity 0.4s;\n}\n.card-3d:hover::before { opacity: 1; }\n\n\n/* ════ 3. NOTIFICATION ANIMÉE ════ */\n.notification {\n  position: fixed;\n  top: 16px; right: 16px;\n  background: #1f2937;\n  border: 1px solid #374151;\n  border-left: 3px solid #3fb950;\n  padding: 14px 20px;\n  border-radius: 10px;\n  animation:\n    slideIn  0.35s ease-out forwards,\n    fadeOut  0.4s  ease-in  3.6s  forwards; /* Disparaît à t=3.6s */\n}\n\n@keyframes slideIn {\n  from { transform: translateX(120%); opacity: 0; }\n  to   { transform: translateX(0);    opacity: 1; }\n}\n\n@keyframes fadeOut {\n  from { transform: translateX(0);    opacity: 1; }\n  to   { transform: translateX(120%); opacity: 0; }\n}\n\n\n/* ════ 4. SKELETON SHIMMER ════ */\n.skeleton {\n  background: linear-gradient(\n    90deg,\n    #1f2937 25%,\n    #374151 50%,\n    #1f2937 75%\n  );\n  background-size: 200% 100%;\n  border-radius: 6px;\n  animation: shimmer 1.5s infinite;\n}\n\n@keyframes shimmer {\n  0%   { background-position: 200% 0; }\n  100% { background-position: -200% 0; }\n}\n\n.skeleton-title { height: 22px; width: 70%; margin-bottom: 12px; }\n.skeleton-text  { height: 14px; width: 100%; margin-bottom: 8px; }\n.skeleton-text:last-child { width: 55%; }\n\n\n/* ════ ACCESSIBILITÉ — Respect des préférences ════ */\n@media (prefers-reduced-motion: reduce) {\n  .card-3d,\n  .notification,\n  .skeleton,\n  .btn-load::after {\n    animation: none !important;\n    transition: none !important;\n  }\n  /* Montrer directement les états finaux */\n  .notification { opacity: 1; transform: none; }\n}",
+      "explications": [
+        "transform + opacity = GPU compositing : le navigateur déplace ces propriétés sur le GPU, qui peut les animer à 60fps sans impliquer le thread principal. width/height/top forcent le layout engine à recalculer tout le flux — éviter pour les animations.",
+        "will-change: transform sur .card-3d : prépare le GPU layer à l'avance. À utiliser avec parcimonie : chaque will-change consomme de la VRAM. Ne jamais mettre en global sur * {}.",
+        "double animation sur .notification : animation est une liste séparée par des virgules. La fadeOut démarre à 3.6s (delay) — la notification est visible 3.6s puis disparaît sur 0.4s = total 4s de vie.",
+        "background-size: 200% 100% + background-position animée : le gradient occupe 2× la largeur. En l'animant de 200% à -200%, on fait défiler l'effet de brillance de droite à gauche sans image.",
+        "prefers-reduced-motion: reduce : certains utilisateurs ont des troubles vestibulaires ou épileptiques. Cette media query respecte leur préférence système — toujours implémenter dans un projet professionnel."
+      ]
+    }
+  },
+
+  {
+    "id": "defi_017",
+    "titre": "Promise.all et gestion d'erreurs parallèles",
+    "techno": "JavaScript",
+    "niveau": "Moyen",
+    "tags": ["ES6", "Promise", "Promise.all", "Promise.allSettled", "Error Handling"],
+    "duree": "20 min",
+    "objectif": "Maîtriser l'exécution de requêtes parallèles et la gestion fine des échecs partiels avec Promise.all et Promise.allSettled.",
+    "enonce": "Tu dois récupérer des données de 3 APIs différentes en parallèle (utilisateurs, produits, commandes). Implémente deux versions : (1) avec Promise.all — tout ou rien, (2) avec Promise.allSettled — récupère les résultats partiels même si une API est down. Affiche un récapitulatif clair de ce qui a réussi/échoué.",
+    "contraintes": [
+      "Les 3 fetch doivent être lancés SIMULTANÉMENT (pas await dans une boucle).",
+      "Version Promise.all : afficher une erreur globale si une seule requête échoue.",
+      "Version Promise.allSettled : afficher les données disponibles et signaler les erreurs individuellement.",
+      "Créer une fonction wrapper fetchWithTimeout(url, ms) qui rejette après ms millisecondes.",
+      "Mesurer le temps total avec performance.now().",
+      "Éviter les promesses non gérées (unhandled rejection)."
+    ],
+    "ressources": [
+      "MDN — Promise.all()",
+      "MDN — Promise.allSettled()",
+      "MDN — AbortController + signal.timeout"
+    ],
+    "solution": {
+      "methodologie": "Promise.all fait du 'fail fast' : dès qu'une Promise rejette, il rejette immédiatement (les autres continuent mais leurs résultats sont ignorés). Promise.allSettled attend TOUTES les Promises et retourne un tableau de { status: 'fulfilled'|'rejected', value|reason } — idéal pour les dashboards où les données partielles sont mieux que rien.",
+      "langage": "javascript",
+      "code": "// ── Wrapper avec timeout ──\nfunction fetchWithTimeout(url, timeoutMs = 5000) {\n  const controller = new AbortController();\n  const timeoutId  = setTimeout(() => controller.abort(), timeoutMs);\n\n  return fetch(url, { signal: controller.signal })\n    .then(res => {\n      clearTimeout(timeoutId);\n      if (!res.ok) throw new Error(`HTTP ${res.status} sur ${url}`);\n      return res.json();\n    })\n    .catch(err => {\n      clearTimeout(timeoutId);\n      throw err.name === 'AbortError'\n        ? new Error(`Timeout (${timeoutMs}ms) sur ${url}`)\n        : err;\n    });\n}\n\n// ── Version 1 : Promise.all — tout ou rien ──\nasync function fetchAllOrNothing() {\n  const t0 = performance.now();\n  try {\n    const [users, products, orders] = await Promise.all([\n      fetchWithTimeout('/api/users',    3000),\n      fetchWithTimeout('/api/products', 3000),\n      fetchWithTimeout('/api/orders',   3000),\n    ]);\n    const elapsed = (performance.now() - t0).toFixed(0);\n    console.log(`✅ Toutes les données récupérées en ${elapsed}ms`);\n    return { users, products, orders };\n  } catch (err) {\n    // Une seule erreur suffit à déclencher ce catch\n    console.error(`❌ Échec global : ${err.message}`);\n    throw err;\n  }\n}\n\n// ── Version 2 : Promise.allSettled — résultats partiels ──\nasync function fetchBestEffort() {\n  const t0      = performance.now();\n  const endpoints = [\n    { key: 'users',    url: '/api/users'    },\n    { key: 'products', url: '/api/products' },\n    { key: 'orders',   url: '/api/orders'   },\n  ];\n\n  const results = await Promise.allSettled(\n    endpoints.map(e => fetchWithTimeout(e.url, 3000))\n  );\n\n  const elapsed = (performance.now() - t0).toFixed(0);\n  const summary = { data: {}, errors: [] };\n\n  results.forEach((result, i) => {\n    const { key } = endpoints[i];\n    if (result.status === 'fulfilled') {\n      summary.data[key] = result.value;\n      console.log(`✅ ${key} : ${result.value.length ?? 1} éléments`);\n    } else {\n      summary.errors.push({ key, error: result.reason.message });\n      console.warn(`⚠️  ${key} indisponible : ${result.reason.message}`);\n    }\n  });\n\n  console.log(`\\n⏱ Temps total : ${elapsed}ms`);\n  console.log(`📊 Succès : ${Object.keys(summary.data).length}/3`);\n  return summary;\n}\n\nfetchBestEffort();",
+      "explications": [
+        "Les 3 fetchWithTimeout sont dans un tableau passé à Promise.allSettled — ils sont TOUS lancés simultanément. Si on écrivait await pour chacun séquentiellement, le temps total serait la somme des 3 temps au lieu du maximum.",
+        "clearTimeout(timeoutId) dans les deux branches (.then ET .catch) : si la requête aboutit avant le timeout, on annule le setTimeout pour éviter un abort tardif.",
+        "result.status === 'fulfilled' ? result.value : result.reason : la structure retournée par allSettled est toujours un objet avec status. Jamais de .catch nécessaire — allSettled ne rejette jamais.",
+        "performance.now() : donne le temps en millisecondes avec précision sous-milliseconde. Plus précis que Date.now() pour mesurer des durées.",
+        "La destructuration const [users, products, orders] = await Promise.all([...]) : chaque élément correspond à la Promise à la même position — même ordre garanti même si les résultats arrivent dans un ordre différent."
+      ]
+    }
+  },
+
+  {
+    "id": "defi_018",
+    "titre": "Générateur de formulaire React dynamique et typé",
+    "techno": "React",
+    "niveau": "Moyen",
+    "tags": ["React", "TypeScript", "Forms", "Dynamic", "Validation"],
+    "duree": "40 min",
+    "objectif": "Construire un FormBuilder générique qui rend n'importe quel formulaire depuis une configuration JSON, avec validation et typage fort.",
+    "enonce": "Crée un composant <DynamicForm config={formConfig} onSubmit={handleSubmit} /> qui accepte une configuration décrivant les champs (text, email, select, checkbox, textarea). Il gère la validation (required, minLength, pattern), l'affichage des erreurs en temps réel, et retourne les valeurs typées à onSubmit.",
+    "contraintes": [
+      "La config est un tableau de FieldConfig : { name, label, type, required, validation, options }.",
+      "L'état du formulaire est un Record<string, string|boolean> géré avec useReducer.",
+      "Chaque champ a son propre composant (TextField, SelectField, CheckboxField).",
+      "La validation s'exécute onBlur pour chaque champ (pas seulement au submit).",
+      "TypeScript strict : le type du résultat onSubmit est inféré depuis la config.",
+      "Aucune librairie de formulaire externe (pas react-hook-form, formik)."
+    ],
+    "ressources": [
+      "React Docs — Controlled Components",
+      "TypeScript — Mapped Types",
+      "React Docs — useReducer"
+    ],
+    "solution": {
+      "methodologie": "Un FormBuilder générique découple la structure du formulaire (config JSON) de son rendu (composants React). Le reducer centralise tous les changements de valeur et d'erreur. Chaque FieldConfig est 'rendu' par une factory qui choisit le bon composant selon type.",
+      "langage": "tsx",
+      "code": "import { useReducer, useCallback } from 'react';\n\n// ── Types ──\ntype FieldType = 'text' | 'email' | 'password' | 'select' | 'checkbox' | 'textarea';\n\ninterface ValidationRules {\n  required?  : boolean;\n  minLength? : number;\n  maxLength? : number;\n  pattern?   : RegExp;\n  message?   : string; // message d'erreur custom\n}\n\ninterface FieldConfig {\n  name       : string;\n  label      : string;\n  type       : FieldType;\n  placeholder?: string;\n  options?   : { value: string; label: string }[]; // pour select\n  validation?: ValidationRules;\n}\n\ntype FormValues = Record<string, string | boolean>;\ntype FormErrors = Record<string, string>;\n\ninterface FormState { values: FormValues; errors: FormErrors; touched: Set<string>; }\n\ntype FormAction =\n  | { type: 'SET_VALUE'; field: string; value: string | boolean }\n  | { type: 'SET_ERROR'; field: string; error: string }\n  | { type: 'TOUCH';     field: string };\n\n// ── Reducer ──\nfunction formReducer(state: FormState, action: FormAction): FormState {\n  switch (action.type) {\n    case 'SET_VALUE':\n      return { ...state, values: { ...state.values, [action.field]: action.value } };\n    case 'SET_ERROR':\n      return { ...state, errors: { ...state.errors, [action.field]: action.error } };\n    case 'TOUCH':\n      return { ...state, touched: new Set([...state.touched, action.field]) };\n    default: return state;\n  }\n}\n\n// ── Moteur de validation ──\nfunction validateField(value: string | boolean, rules?: ValidationRules): string {\n  if (!rules) return '';\n  const strVal = String(value);\n  if (rules.required && !value) return rules.message || 'Ce champ est obligatoire';\n  if (rules.minLength && strVal.length < rules.minLength)\n    return rules.message || `Minimum ${rules.minLength} caractères`;\n  if (rules.maxLength && strVal.length > rules.maxLength)\n    return rules.message || `Maximum ${rules.maxLength} caractères`;\n  if (rules.pattern && !rules.pattern.test(strVal))\n    return rules.message || 'Format invalide';\n  return '';\n}\n\n// ── Composants de champ ──\nfunction TextField({ field, value, error, onChange, onBlur }: any) {\n  return (\n    <div className=\"field\">\n      <label>{field.label}{field.validation?.required && ' *'}</label>\n      <input\n        type={field.type}\n        value={value as string}\n        placeholder={field.placeholder}\n        onChange={e => onChange(field.name, e.target.value)}\n        onBlur={() => onBlur(field.name)}\n        className={error ? 'invalid' : ''}\n      />\n      {error && <span className=\"error\">{error}</span>}\n    </div>\n  );\n}\n\nfunction SelectField({ field, value, error, onChange, onBlur }: any) {\n  return (\n    <div className=\"field\">\n      <label>{field.label}</label>\n      <select value={value as string} onChange={e => onChange(field.name, e.target.value)} onBlur={() => onBlur(field.name)}>\n        <option value=\"\">-- Choisir --</option>\n        {field.options?.map((o: any) => <option key={o.value} value={o.value}>{o.label}</option>)}\n      </select>\n      {error && <span className=\"error\">{error}</span>}\n    </div>\n  );\n}\n\n// ── Composant principal ──\ninterface DynamicFormProps {\n  config   : FieldConfig[];\n  onSubmit : (values: FormValues) => void;\n}\n\nexport function DynamicForm({ config, onSubmit }: DynamicFormProps) {\n  const initialValues = config.reduce<FormValues>((acc, f) =>\n    ({ ...acc, [f.name]: f.type === 'checkbox' ? false : '' }), {});\n\n  const [state, dispatch] = useReducer(formReducer, {\n    values: initialValues, errors: {}, touched: new Set()\n  });\n\n  const handleChange = useCallback((field: string, value: string | boolean) => {\n    dispatch({ type: 'SET_VALUE', field, value });\n  }, []);\n\n  const handleBlur = useCallback((field: string) => {\n    dispatch({ type: 'TOUCH', field });\n    const fieldConfig = config.find(f => f.name === field)!;\n    const error = validateField(state.values[field], fieldConfig.validation);\n    dispatch({ type: 'SET_ERROR', field, error });\n  }, [config, state.values]);\n\n  const handleSubmit = (e: React.FormEvent) => {\n    e.preventDefault();\n    let valid = true;\n    config.forEach(f => {\n      const error = validateField(state.values[f.name], f.validation);\n      if (error) { dispatch({ type: 'SET_ERROR', field: f.name, error }); valid = false; }\n    });\n    if (valid) onSubmit(state.values);\n  };\n\n  return (\n    <form onSubmit={handleSubmit}>\n      {config.map(field => {\n        const props = { field, value: state.values[field.name], error: state.errors[field.name], onChange: handleChange, onBlur: handleBlur };\n        if (field.type === 'select')   return <SelectField key={field.name} {...props} />;\n        return <TextField key={field.name} {...props} />;\n      })}\n      <button type=\"submit\">Soumettre</button>\n    </form>\n  );\n}",
+      "explications": [
+        "config.reduce<FormValues>(...) : construit l'état initial en une passe depuis la config — chaque champ checkbox démarre à false, les autres à ''. Pas de boucle for manuelle.",
+        "validateField retourne une string vide si valide, le message d'erreur sinon — pattern simple qui évite un objet { valid, message } plus verbeux.",
+        "handleBlur déclenche la validation 'à la perte de focus' (onBlur) — l'utilisateur voit l'erreur seulement après avoir essayé de remplir le champ, pas dès qu'il clique dessus.",
+        "config.find(f => f.name === field)! : le ! est une assertion non-null TypeScript — on garantit que le field existe dans config. Acceptable ici car handleBlur ne peut être appelé que sur un champ de la config.",
+        "La factory de composants if (field.type === 'select') return <SelectField> : pattern simple pour rendre différents composants selon le type. Extensible : ajouter un CheckboxField sans modifier le reste."
+      ]
+    }
+  }
+]

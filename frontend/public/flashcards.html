@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0">
+  <title>JAMES — Flashcards du jour</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#040810">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="JAMES">
+  <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/flashcards.css">
+</head>
+<body>
+  <div class="flash-shell">
+    <header class="flash-header">
+      <a href="/" class="back-btn" aria-label="Retour accueil">‹</a>
+      <div class="header-center">
+        <h1>🧠 Flashcards du jour</h1>
+        <p>Développement web · Codage · Business English</p>
+      </div>
+      <a href="/parametres.html#evolution" class="evolution-btn" title="Voir mon évolution" aria-label="Voir mon évolution">📈</a>
+    </header>
+    <nav class="flash-module-nav" aria-label="Navigation JAMES">
+      <a href="/">🏠 Accueil</a>
+      <a href="/anglais.html">🇬🇧 Anglais</a>
+      <a href="/defis.html">⚡ Code</a>
+      <a href="/flashcards.html" class="active">🧠 Flashcards</a>
+      <a href="/parametres.html">⚙️ Paramètres</a>
+    </nav>
+
+
+    <main class="flash-main">
+      <section class="intro-card">
+        <div>
+          <span class="eyebrow">RÉVISION QUOTIDIENNE</span>
+          <h2>6 cartes générées par JAMES chaque jour</h2>
+          <p>3 cartes sur le développement web et le codage, puis 3 cartes d'anglais des affaires. Clique sur une carte pour révéler la réponse.</p>
+        </div>
+        <div class="day-badge" id="flash-day">Aujourd'hui</div>
+      </section>
+
+      <div class="flash-status" id="flash-status">Chargement des flashcards…</div>
+
+      <section class="category-section">
+        <div class="section-heading">
+          <div><span class="section-icon">💻</span><div><h2>Développement web & codage</h2><p>HTML, CSS, JavaScript, React, Node.js, SQL, Git, sécurité…</p></div></div>
+          <span class="count-badge" id="dev-count">0/3</span>
+        </div>
+        <div class="cards-grid" id="dev-flashcards"></div>
+      </section>
+
+      <section class="category-section">
+        <div class="section-heading">
+          <div><span class="section-icon">💼</span><div><h2>Business English</h2><p>Vocabulaire utile en réunion, équipe, ticket, client et déploiement.</p></div></div>
+          <span class="count-badge" id="business-count">0/3</span>
+        </div>
+        <div class="cards-grid" id="business-flashcards"></div>
+      </section>
+
+      <section class="daily-note">
+        <strong>💡 Une série par jour</strong>
+        <p>Les cartes du jour sont conservées dans la base de données. Elles restent identiques pendant la journée afin de favoriser la mémorisation et d'éviter des générations IA inutiles.</p>
+        <button class="reload-btn" id="btn-reload" type="button">↻ Recharger les cartes</button>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script src="/js/flashcards.js"></script>
+</body>
+</html>

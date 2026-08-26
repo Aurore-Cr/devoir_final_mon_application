@@ -1,0 +1,30 @@
+{
+  "name": "james-app",
+  "version": "6.0.0",
+  "description": "JAMES — Assistant Personnel PWA — Projet TP DWWM",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "setup": "node backend/scripts/setup.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "node-cron": "^3.0.3",
+    "node-fetch": "^2.7.0",
+    "pg": "^8.23.0",
+    "rss-parser": "^3.13.0",
+    "sql.js": "^1.11.0",
+    "web-push": "^3.6.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
