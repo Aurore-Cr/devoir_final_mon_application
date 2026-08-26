@@ -30,15 +30,38 @@
       "Content negotiation allows a single URI endpoint to return different data formats depending on what the client can handle. The client sends an 'Accept' HTTP header specifying its preferred content type (e.g., 'Accept: application/json' or 'Accept: application/xml'), and the server responds with the most appropriate representation."
     ],
     "lexicon": [
-      { "term": "statelessness", "french": "absence d'état / apatridie", "definition": "Each request is independent; the server retains no memory of previous interactions." },
-      { "term": "side effects", "french": "effets de bord", "definition": "Unintended changes to system state caused by an operation. GET should have none." },
-      { "term": "content negotiation", "french": "négociation de contenu", "definition": "The mechanism by which client and server agree on the format of the data exchanged." },
-      { "term": "scalability", "french": "scalabilité / montée en charge", "definition": "The ability of a system to handle growing amounts of work gracefully." },
-      { "term": "endpoint", "french": "point de terminaison", "definition": "A specific URL at which an API resource can be accessed." },
-      { "term": "decoupled", "french": "découplé", "definition": "Components that are independent and do not depend on each other's internal implementation." }
+      {
+        "term": "statelessness",
+        "french": "absence d'état / apatridie",
+        "definition": "Each request is independent; the server retains no memory of previous interactions."
+      },
+      {
+        "term": "side effects",
+        "french": "effets de bord",
+        "definition": "Unintended changes to system state caused by an operation. GET should have none."
+      },
+      {
+        "term": "content negotiation",
+        "french": "négociation de contenu",
+        "definition": "The mechanism by which client and server agree on the format of the data exchanged."
+      },
+      {
+        "term": "scalability",
+        "french": "scalabilité / montée en charge",
+        "definition": "The ability of a system to handle growing amounts of work gracefully."
+      },
+      {
+        "term": "endpoint",
+        "french": "point de terminaison",
+        "definition": "A specific URL at which an API resource can be accessed."
+      },
+      {
+        "term": "decoupled",
+        "french": "découplé",
+        "definition": "Components that are independent and do not depend on each other's internal implementation."
+      }
     ]
   },
-
   {
     "id": "ex_002",
     "category": "JavaScript Avancé",
@@ -70,16 +93,43 @@
       "If 'response.ok' is false (meaning the HTTP status code indicates an error, e.g. 404 or 500), the code inside the if-block executes and throws a new Error with the status code. This error is immediately caught by the catch block. Inside catch, the error is logged to the console via console.error(), and then re-thrown with 'throw error', propagating the exception to the caller of fetchUserData() so it can implement its own error-handling logic."
     ],
     "lexicon": [
-      { "term": "single-threaded", "french": "mono-thread", "definition": "Only one sequence of instructions executes at a time, on a single call stack." },
-      { "term": "call stack", "french": "pile d'appels", "definition": "A data structure tracking which functions are currently being executed." },
-      { "term": "event loop", "french": "boucle d'événements", "definition": "Mechanism that continuously checks if the call stack is empty before pushing queued tasks." },
-      { "term": "callback hell", "french": "pyramide du destin / enfer des callbacks", "definition": "Deeply nested callback functions that make code hard to read and maintain." },
-      { "term": "syntactic sugar", "french": "sucre syntaxique", "definition": "Syntax that makes code easier to write/read without adding new functionality." },
-      { "term": "non-blocking", "french": "non bloquant", "definition": "Code that does not halt the execution thread while waiting for an operation to complete." },
-      { "term": "re-throw", "french": "relancer / propager (une exception)", "definition": "Catching an error then throwing it again so the calling code can also handle it." }
+      {
+        "term": "single-threaded",
+        "french": "mono-thread",
+        "definition": "Only one sequence of instructions executes at a time, on a single call stack."
+      },
+      {
+        "term": "call stack",
+        "french": "pile d'appels",
+        "definition": "A data structure tracking which functions are currently being executed."
+      },
+      {
+        "term": "event loop",
+        "french": "boucle d'événements",
+        "definition": "Mechanism that continuously checks if the call stack is empty before pushing queued tasks."
+      },
+      {
+        "term": "callback hell",
+        "french": "pyramide du destin / enfer des callbacks",
+        "definition": "Deeply nested callback functions that make code hard to read and maintain."
+      },
+      {
+        "term": "syntactic sugar",
+        "french": "sucre syntaxique",
+        "definition": "Syntax that makes code easier to write/read without adding new functionality."
+      },
+      {
+        "term": "non-blocking",
+        "french": "non bloquant",
+        "definition": "Code that does not halt the execution thread while waiting for an operation to complete."
+      },
+      {
+        "term": "re-throw",
+        "french": "relancer / propager (une exception)",
+        "definition": "Catching an error then throwing it again so the calling code can also handle it."
+      }
     ]
   },
-
   {
     "id": "ex_003",
     "category": "Sécurité Web",
@@ -111,16 +161,43 @@
       "The code returns HTTP 401 ('Access token missing') when no Authorization header or token is provided — 401 Unauthorized is semantically correct because the request lacks authentication credentials entirely. It returns HTTP 403 ('Token invalid or expired') when a token is present but fails verification (wrong signature or expired) — 403 Forbidden is appropriate because the server understood the request and identified the caller, but refuses access due to an invalid credential."
     ],
     "lexicon": [
-      { "term": "claims", "french": "revendications / assertions", "definition": "Statements encoded in the JWT payload, e.g. user identity, roles, expiry." },
-      { "term": "signed", "french": "signé", "definition": "The token carries a cryptographic signature guaranteeing it has not been altered." },
-      { "term": "encrypted", "french": "chiffré", "definition": "The content is transformed so it cannot be read without the decryption key." },
-      { "term": "tampered with", "french": "altéré / falsifié", "definition": "Maliciously modified after being issued." },
-      { "term": "token rotation", "french": "rotation de jetons", "definition": "Strategy of issuing new tokens periodically to limit the damage of theft." },
-      { "term": "refresh token", "french": "jeton de rafraîchissement", "definition": "A long-lived token used to obtain a new short-lived access token without re-authentication." },
-      { "term": "asymmetric algorithm", "french": "algorithme asymétrique", "definition": "Uses a key pair (public + private). Private key signs; public key verifies." }
+      {
+        "term": "claims",
+        "french": "revendications / assertions",
+        "definition": "Statements encoded in the JWT payload, e.g. user identity, roles, expiry."
+      },
+      {
+        "term": "signed",
+        "french": "signé",
+        "definition": "The token carries a cryptographic signature guaranteeing it has not been altered."
+      },
+      {
+        "term": "encrypted",
+        "french": "chiffré",
+        "definition": "The content is transformed so it cannot be read without the decryption key."
+      },
+      {
+        "term": "tampered with",
+        "french": "altéré / falsifié",
+        "definition": "Maliciously modified after being issued."
+      },
+      {
+        "term": "token rotation",
+        "french": "rotation de jetons",
+        "definition": "Strategy of issuing new tokens periodically to limit the damage of theft."
+      },
+      {
+        "term": "refresh token",
+        "french": "jeton de rafraîchissement",
+        "definition": "A long-lived token used to obtain a new short-lived access token without re-authentication."
+      },
+      {
+        "term": "asymmetric algorithm",
+        "french": "algorithme asymétrique",
+        "definition": "Uses a key pair (public + private). Private key signs; public key verifies."
+      }
     ]
   },
-
   {
     "id": "ex_004",
     "category": "Algorithmique",
@@ -152,16 +229,43 @@
       "hasPairSumOptimal is O(n) because it uses a Set for lookups. A JavaScript Set is backed by a hash table, which provides O(1) average-time lookups (seen.has()) and insertions (seen.add()). The algorithm iterates through the array exactly once (O(n) iterations), and each iteration performs only O(1) operations. Total: O(n) × O(1) = O(n). By contrast, the naive approach uses two nested loops, each of size n, yielding O(n) × O(n) = O(n²)."
     ],
     "lexicon": [
-      { "term": "upper bound", "french": "borne supérieure", "definition": "The maximum growth rate guaranteed by Big O: the algorithm will never be worse than this." },
-      { "term": "lower bound", "french": "borne inférieure", "definition": "The best possible complexity that any algorithm solving a problem can achieve." },
-      { "term": "asymptotic behaviour", "french": "comportement asymptotique", "definition": "How a function behaves as its argument approaches infinity." },
-      { "term": "worst-case scenario", "french": "cas le plus défavorable / pire cas", "definition": "The input that causes the algorithm to perform the maximum number of operations." },
-      { "term": "nested iteration", "french": "itération imbriquée", "definition": "A loop inside another loop, typically resulting in O(n²) or higher complexity." },
-      { "term": "hash set", "french": "ensemble de hachage", "definition": "A data structure using hash functions to provide O(1) average time lookups." },
-      { "term": "negligible", "french": "négligeable", "definition": "So small relative to other terms that it can be safely ignored in analysis." }
+      {
+        "term": "upper bound",
+        "french": "borne supérieure",
+        "definition": "The maximum growth rate guaranteed by Big O: the algorithm will never be worse than this."
+      },
+      {
+        "term": "lower bound",
+        "french": "borne inférieure",
+        "definition": "The best possible complexity that any algorithm solving a problem can achieve."
+      },
+      {
+        "term": "asymptotic behaviour",
+        "french": "comportement asymptotique",
+        "definition": "How a function behaves as its argument approaches infinity."
+      },
+      {
+        "term": "worst-case scenario",
+        "french": "cas le plus défavorable / pire cas",
+        "definition": "The input that causes the algorithm to perform the maximum number of operations."
+      },
+      {
+        "term": "nested iteration",
+        "french": "itération imbriquée",
+        "definition": "A loop inside another loop, typically resulting in O(n²) or higher complexity."
+      },
+      {
+        "term": "hash set",
+        "french": "ensemble de hachage",
+        "definition": "A data structure using hash functions to provide O(1) average time lookups."
+      },
+      {
+        "term": "negligible",
+        "french": "négligeable",
+        "definition": "So small relative to other terms that it can be safely ignored in analysis."
+      }
     ]
   },
-
   {
     "id": "ex_005",
     "category": "Sécurité Web",
@@ -193,16 +297,43 @@
       "A Content Security Policy is an HTTP response header that tells the browser which sources of content are legitimate. In the example, 'default-src self' means all resources (scripts, styles, images) must come from the same origin by default. 'script-src self https://trusted-cdn.com' allows JavaScript only from the page's own origin and one explicitly trusted CDN. Even if an attacker manages to inject a <script> tag, the browser will refuse to execute it if its source is not on the allowlist — effectively neutering most XSS attacks."
     ],
     "lexicon": [
-      { "term": "payload", "french": "charge utile / charge malveillante", "definition": "The malicious code delivered and executed as part of an attack." },
-      { "term": "sanitisation", "french": "assainissement / nettoyage", "definition": "Removing or encoding dangerous characters from user input before processing." },
-      { "term": "output encoding", "french": "encodage de sortie", "definition": "Escaping characters that have special meaning in HTML so they are displayed as text." },
-      { "term": "session cookie", "french": "cookie de session", "definition": "A browser cookie storing a session ID, used to authenticate the user across requests." },
-      { "term": "keylogger", "french": "enregistreur de frappe", "definition": "Malicious code that records keystrokes, used to steal passwords and sensitive input." },
-      { "term": "allowlist", "french": "liste blanche", "definition": "A list of explicitly permitted sources/values; everything not listed is blocked." },
-      { "term": "phishing", "french": "hameçonnage / phishing", "definition": "A social engineering attack that tricks users into revealing credentials on fake sites." }
+      {
+        "term": "payload",
+        "french": "charge utile / charge malveillante",
+        "definition": "The malicious code delivered and executed as part of an attack."
+      },
+      {
+        "term": "sanitisation",
+        "french": "assainissement / nettoyage",
+        "definition": "Removing or encoding dangerous characters from user input before processing."
+      },
+      {
+        "term": "output encoding",
+        "french": "encodage de sortie",
+        "definition": "Escaping characters that have special meaning in HTML so they are displayed as text."
+      },
+      {
+        "term": "session cookie",
+        "french": "cookie de session",
+        "definition": "A browser cookie storing a session ID, used to authenticate the user across requests."
+      },
+      {
+        "term": "keylogger",
+        "french": "enregistreur de frappe",
+        "definition": "Malicious code that records keystrokes, used to steal passwords and sensitive input."
+      },
+      {
+        "term": "allowlist",
+        "french": "liste blanche",
+        "definition": "A list of explicitly permitted sources/values; everything not listed is blocked."
+      },
+      {
+        "term": "phishing",
+        "french": "hameçonnage / phishing",
+        "definition": "A social engineering attack that tricks users into revealing credentials on fake sites."
+      }
     ]
   },
-
   {
     "id": "ex_006",
     "category": "Bases de Données",
@@ -234,16 +365,43 @@
       "NewSQL databases attempt to solve the false dichotomy between SQL and NoSQL. Traditional SQL databases offer ACID guarantees and relational querying but struggle to scale horizontally across multiple machines. NoSQL databases scale horizontally easily but often sacrifice ACID compliance and structured querying. NewSQL (e.g., Google Spanner, CockroachDB) provides SQL-compatible query languages, ACID transactions, and referential integrity, while also supporting horizontal scaling across distributed clusters — combining the strengths of both paradigms."
     ],
     "lexicon": [
-      { "term": "referential integrity", "french": "intégrité référentielle", "definition": "Ensures that foreign key values always correspond to an existing primary key." },
-      { "term": "ACID", "french": "ACID (Atomicité, Cohérence, Isolation, Durabilité)", "definition": "A set of properties guaranteeing reliable database transactions." },
-      { "term": "horizontal scalability", "french": "scalabilité horizontale", "definition": "Adding more machines to handle load, rather than upgrading a single machine." },
-      { "term": "eventual consistency", "french": "cohérence éventuelle", "definition": "All nodes will eventually agree on the same value, but reads may be temporarily stale." },
-      { "term": "write throughput", "french": "débit d'écriture", "definition": "The number of write operations a database can handle per unit of time." },
-      { "term": "schema enforcement", "french": "application du schéma", "definition": "Forcing all data to conform to a predefined structure before it can be stored." },
-      { "term": "data discrepancy", "french": "incohérence de données", "definition": "A situation where different parts of a system show different values for the same piece of data." }
+      {
+        "term": "referential integrity",
+        "french": "intégrité référentielle",
+        "definition": "Ensures that foreign key values always correspond to an existing primary key."
+      },
+      {
+        "term": "ACID",
+        "french": "ACID (Atomicité, Cohérence, Isolation, Durabilité)",
+        "definition": "A set of properties guaranteeing reliable database transactions."
+      },
+      {
+        "term": "horizontal scalability",
+        "french": "scalabilité horizontale",
+        "definition": "Adding more machines to handle load, rather than upgrading a single machine."
+      },
+      {
+        "term": "eventual consistency",
+        "french": "cohérence éventuelle",
+        "definition": "All nodes will eventually agree on the same value, but reads may be temporarily stale."
+      },
+      {
+        "term": "write throughput",
+        "french": "débit d'écriture",
+        "definition": "The number of write operations a database can handle per unit of time."
+      },
+      {
+        "term": "schema enforcement",
+        "french": "application du schéma",
+        "definition": "Forcing all data to conform to a predefined structure before it can be stored."
+      },
+      {
+        "term": "data discrepancy",
+        "french": "incohérence de données",
+        "definition": "A situation where different parts of a system show different values for the same piece of data."
+      }
     ]
   },
-
   {
     "id": "ex_007",
     "category": "Architecture Web",
@@ -251,7 +409,7 @@
     "title": "WebSockets & Real-Time Communication",
     "intro": "The following technical documentation excerpt explains WebSocket technology. Translate it and answer the questions in detail.",
     "text": "WebSockets provide a standardised mechanism for establishing a persistent, full-duplex communication channel over a single TCP connection between a client and a server. Unlike the traditional HTTP request-response cycle — which is inherently unidirectional and stateless — WebSockets allow both parties to send messages independently at any time, without the overhead of re-establishing a connection for each exchange. The handshake process begins with an HTTP Upgrade request: the client sends a standard HTTP/1.1 request with an 'Upgrade: websocket' header, and if the server agrees, it responds with HTTP 101 (Switching Protocols), after which the connection is promoted from HTTP to the WebSocket protocol. Once established, data is transmitted as lightweight 'frames' rather than full HTTP packets, significantly reducing latency and bandwidth consumption. This makes WebSockets particularly suited for applications requiring low-latency bidirectional communication, such as real-time collaborative editing tools, online multiplayer games, live financial dashboards, and chat applications. A key operational consideration is connection resilience: WebSocket connections can be dropped by network interruptions, load balancers with short timeouts, or proxy servers that do not support the protocol. Robust implementations therefore include heartbeat mechanisms (ping/pong frames) to detect and recover from silent disconnections.",
-    "code": "// WebSocket client (browser)\nconst socket = new WebSocket('wss://jarvis.example.com/ws');\n\nsocket.addEventListener('open', () => {\n  console.log('Connection established');\n  socket.send(JSON.stringify({ type: 'subscribe', channel: 'live-feed' }));\n});\n\nsocket.addEventListener('message', (event) => {\n  const data = JSON.parse(event.data);\n  updateDashboard(data); // real-time UI update\n});\n\nsocket.addEventListener('close', (event) => {\n  console.warn(`Connection closed: code=${event.code}, reason=${event.reason}`);\n  // Reconnect logic with exponential backoff\n  setTimeout(() => reconnect(), 3000);\n});\n\nsocket.addEventListener('error', (error) => {\n  console.error('WebSocket error:', error);\n});",
+    "code": "// WebSocket client (browser)\nconst socket = new WebSocket('wss://james.example.com/ws');\n\nsocket.addEventListener('open', () => {\n  console.log('Connection established');\n  socket.send(JSON.stringify({ type: 'subscribe', channel: 'live-feed' }));\n});\n\nsocket.addEventListener('message', (event) => {\n  const data = JSON.parse(event.data);\n  updateDashboard(data); // real-time UI update\n});\n\nsocket.addEventListener('close', (event) => {\n  console.warn(`Connection closed: code=${event.code}, reason=${event.reason}`);\n  // Reconnect logic with exponential backoff\n  setTimeout(() => reconnect(), 3000);\n});\n\nsocket.addEventListener('error', (error) => {\n  console.error('WebSocket error:', error);\n});",
     "language": "javascript",
     "translation_challenge": "Translate the main paragraph into French. Key terms: 'full-duplex', 'TCP connection', 'handshake', 'overhead', 'latency', 'bandwidth', 'heartbeat mechanism', 'ping/pong frames', 'bidirectional', and 'resilience' must use their French technical equivalents.",
     "questions": [
@@ -275,16 +433,43 @@
       "The 'close' event listener detects when the WebSocket connection is terminated (either by the server, a network failure, or a proxy timeout). It logs the close code and reason for debugging, then schedules a reconnection attempt after 3 seconds. 'Exponential backoff' means that instead of retrying at fixed intervals (which could overload a recovering server), wait times increase exponentially with each failed attempt (e.g., 1s, 2s, 4s, 8s, up to a maximum), reducing server pressure during outages while still eventually re-establishing the connection."
     ],
     "lexicon": [
-      { "term": "full-duplex", "french": "duplex intégral / bidirectionnel simultané", "definition": "Both parties can send and receive data at the same time on the same channel." },
-      { "term": "handshake", "french": "négociation initiale / poignée de main", "definition": "The initial exchange that establishes and configures a connection between two parties." },
-      { "term": "overhead", "french": "surcharge / coût supplémentaire", "definition": "Additional processing or bandwidth cost beyond the actual useful data transmitted." },
-      { "term": "latency", "french": "latence", "definition": "The delay between sending a message and the recipient receiving it." },
-      { "term": "bandwidth", "french": "bande passante", "definition": "The maximum rate of data transfer across a network connection." },
-      { "term": "heartbeat", "french": "battement de cœur / signal de vie", "definition": "Periodic signals sent to confirm a connection is still active." },
-      { "term": "exponential backoff", "french": "retrait exponentiel", "definition": "Retry strategy where the wait time doubles with each failed attempt to avoid overloading." }
+      {
+        "term": "full-duplex",
+        "french": "duplex intégral / bidirectionnel simultané",
+        "definition": "Both parties can send and receive data at the same time on the same channel."
+      },
+      {
+        "term": "handshake",
+        "french": "négociation initiale / poignée de main",
+        "definition": "The initial exchange that establishes and configures a connection between two parties."
+      },
+      {
+        "term": "overhead",
+        "french": "surcharge / coût supplémentaire",
+        "definition": "Additional processing or bandwidth cost beyond the actual useful data transmitted."
+      },
+      {
+        "term": "latency",
+        "french": "latence",
+        "definition": "The delay between sending a message and the recipient receiving it."
+      },
+      {
+        "term": "bandwidth",
+        "french": "bande passante",
+        "definition": "The maximum rate of data transfer across a network connection."
+      },
+      {
+        "term": "heartbeat",
+        "french": "battement de cœur / signal de vie",
+        "definition": "Periodic signals sent to confirm a connection is still active."
+      },
+      {
+        "term": "exponential backoff",
+        "french": "retrait exponentiel",
+        "definition": "Retry strategy where the wait time doubles with each failed attempt to avoid overloading."
+      }
     ]
   },
-
   {
     "id": "ex_008",
     "category": "JavaScript Avancé",
@@ -316,13 +501,545 @@
       "Named grid areas allow you to assign semantic string names to regions of the grid using 'grid-template-areas', then position items by referencing those names rather than abstract row/column numbers. In .page-layout, 'header' spans both columns, 'sidebar' and 'main' share the middle row, and 'footer' spans both columns again. The advantage is readability and maintainability: the visual layout is literally drawn in the CSS as an ASCII-art map, making the intent immediately clear and easy to reorganise without counting grid lines."
     ],
     "lexicon": [
-      { "term": "two-dimensional", "french": "bidimensionnel / à deux dimensions", "definition": "Operates on both rows and columns simultaneously, unlike Flexbox which is 1D." },
-      { "term": "grid formatting context", "french": "contexte de formatage de grille", "definition": "The layout mode activated by 'display: grid', governing how children are placed." },
-      { "term": "fr unit", "french": "unité fr (fraction)", "definition": "A flexible unit representing a fraction of the remaining available space in the grid." },
-      { "term": "intrinsic sizing", "french": "dimensionnement intrinsèque", "definition": "Elements size themselves based on their content and available space without explicit values." },
-      { "term": "breakpoint", "french": "point de rupture", "definition": "A specific viewport width at which a CSS media query changes the layout." },
-      { "term": "span", "french": "s'étendre sur / couvrir", "definition": "A grid item property making it occupy multiple rows or columns." },
-      { "term": "gap", "french": "espacement / gouttière", "definition": "The space between grid rows and columns (formerly 'grid-gap')." }
+      {
+        "term": "two-dimensional",
+        "french": "bidimensionnel / à deux dimensions",
+        "definition": "Operates on both rows and columns simultaneously, unlike Flexbox which is 1D."
+      },
+      {
+        "term": "grid formatting context",
+        "french": "contexte de formatage de grille",
+        "definition": "The layout mode activated by 'display: grid', governing how children are placed."
+      },
+      {
+        "term": "fr unit",
+        "french": "unité fr (fraction)",
+        "definition": "A flexible unit representing a fraction of the remaining available space in the grid."
+      },
+      {
+        "term": "intrinsic sizing",
+        "french": "dimensionnement intrinsèque",
+        "definition": "Elements size themselves based on their content and available space without explicit values."
+      },
+      {
+        "term": "breakpoint",
+        "french": "point de rupture",
+        "definition": "A specific viewport width at which a CSS media query changes the layout."
+      },
+      {
+        "term": "span",
+        "french": "s'étendre sur / couvrir",
+        "definition": "A grid item property making it occupy multiple rows or columns."
+      },
+      {
+        "term": "gap",
+        "french": "espacement / gouttière",
+        "definition": "The space between grid rows and columns (formerly 'grid-gap')."
+      }
+    ]
+  },
+  {
+    "id": "ex_009",
+    "category": "HTML/CSS",
+    "difficulty": "A1",
+    "title": "My First Web Page",
+    "intro": "Lis ce petit texte en anglais sur une page web simple. Traduis-le en français puis réponds aux questions avec des phrases courtes.",
+    "text": "I am a web developer student. I create a simple web page with HTML. The page has a title, a paragraph, and a button. I use CSS to change the color and the size of the text. I open the page in my browser to check my work. When I click the button, nothing happens yet because I have not added JavaScript. HTML gives structure to the page. CSS changes the design. Later, I can use JavaScript to make the page interactive. I save my files in a project folder and I use clear names for each file.",
+    "code": null,
+    "language": null,
+    "translation_challenge": "Traduis le texte en français. Garde les mots techniques HTML, CSS et JavaScript tels quels.",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "What does HTML give to the page?"
+      },
+      {
+        "id": "q2",
+        "question": "What does CSS change?"
+      },
+      {
+        "id": "q3",
+        "question": "Why does the button do nothing yet?"
+      }
+    ],
+    "model_translation": "Je suis étudiant en développement web. Je crée une page web simple avec HTML. La page possède un titre, un paragraphe et un bouton. J’utilise CSS pour changer la couleur et la taille du texte. J’ouvre la page dans mon navigateur pour vérifier mon travail. Quand je clique sur le bouton, rien ne se passe encore car je n’ai pas ajouté JavaScript. HTML donne la structure à la page. CSS change le design. Plus tard, je peux utiliser JavaScript pour rendre la page interactive. J’enregistre mes fichiers dans un dossier de projet et j’utilise des noms clairs pour chaque fichier.",
+    "model_answers": [
+      "HTML gives structure to the web page.",
+      "CSS changes the design, including colors and text size.",
+      "The button does nothing because JavaScript has not been added yet."
+    ],
+    "lexicon": [
+      {
+        "term": "web page",
+        "french": "page web",
+        "definition": "A document displayed in a web browser."
+      },
+      {
+        "term": "title",
+        "french": "titre",
+        "definition": "The main heading of a page."
+      },
+      {
+        "term": "paragraph",
+        "french": "paragraphe",
+        "definition": "A block of text."
+      },
+      {
+        "term": "button",
+        "french": "bouton",
+        "definition": "A clickable interface element."
+      },
+      {
+        "term": "browser",
+        "french": "navigateur",
+        "definition": "Software used to open websites."
+      },
+      {
+        "term": "folder",
+        "french": "dossier",
+        "definition": "A place used to organize files."
+      }
+    ]
+  },
+  {
+    "id": "ex_010",
+    "category": "Git",
+    "difficulty": "A1",
+    "title": "Saving My Code with Git",
+    "intro": "Lis ce texte très simple sur Git, traduis-le en français puis réponds aux trois questions.",
+    "text": "I use Git for my coding project. Git helps me save the history of my work. First, I check my files. Then I add the files and create a commit. A commit is like a saved step in my project. I write a short message to explain my change. I can also send my code to GitHub. GitHub stores a copy of my project online. If I make a mistake, the history can help me understand what changed. I use Git often because it is useful when I work alone or with other developers.",
+    "code": null,
+    "language": null,
+    "translation_challenge": "Traduis le texte en français en conservant les mots Git, commit et GitHub.",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "What does Git save?"
+      },
+      {
+        "id": "q2",
+        "question": "What is a commit?"
+      },
+      {
+        "id": "q3",
+        "question": "Where can GitHub store the project?"
+      }
+    ],
+    "model_translation": "J’utilise Git pour mon projet de code. Git m’aide à sauvegarder l’historique de mon travail. D’abord, je vérifie mes fichiers. Ensuite, j’ajoute les fichiers et je crée un commit. Un commit ressemble à une étape sauvegardée dans mon projet. J’écris un court message pour expliquer ma modification. Je peux aussi envoyer mon code sur GitHub. GitHub stocke une copie de mon projet en ligne. Si je fais une erreur, l’historique peut m’aider à comprendre ce qui a changé. J’utilise souvent Git car il est utile lorsque je travaille seul ou avec d’autres développeurs.",
+    "model_answers": [
+      "Git saves the history of the project.",
+      "A commit is a saved step or snapshot of the work.",
+      "GitHub can store the project online."
+    ],
+    "lexicon": [
+      {
+        "term": "history",
+        "french": "historique",
+        "definition": "The list of changes made over time."
+      },
+      {
+        "term": "commit",
+        "french": "commit",
+        "definition": "A saved snapshot of changes in Git."
+      },
+      {
+        "term": "change",
+        "french": "modification",
+        "definition": "Something that has been modified."
+      },
+      {
+        "term": "online",
+        "french": "en ligne",
+        "definition": "Available through the Internet."
+      },
+      {
+        "term": "mistake",
+        "french": "erreur",
+        "definition": "Something incorrect."
+      },
+      {
+        "term": "developer",
+        "french": "développeur",
+        "definition": "A person who creates software."
+      }
+    ]
+  },
+  {
+    "id": "ex_011",
+    "category": "JavaScript",
+    "difficulty": "A2",
+    "title": "A Simple JavaScript Function",
+    "intro": "Lis ce texte de niveau A2 sur une fonction JavaScript. Traduis-le puis réponds aux questions en anglais.",
+    "text": "A JavaScript function is a reusable block of code. A developer can give the function a name and call it when it is needed. A function can receive values called parameters. It can also return a result. For example, a function can receive two numbers and return their sum. Functions help developers avoid repeating the same code many times. They also make a program easier to read and maintain. When a function has a clear name, another developer can quickly understand its purpose. Small functions are often easier to test and debug than one very large block of code.",
+    "code": null,
+    "language": null,
+    "translation_challenge": "Traduis le texte en français. Fais attention aux termes function, parameters, return, test et debug.",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "What can a function receive?"
+      },
+      {
+        "id": "q2",
+        "question": "Why do functions help developers?"
+      },
+      {
+        "id": "q3",
+        "question": "Why are small functions useful?"
+      }
+    ],
+    "model_translation": "Une fonction JavaScript est un bloc de code réutilisable. Un développeur peut donner un nom à la fonction et l’appeler lorsqu’elle est nécessaire. Une fonction peut recevoir des valeurs appelées paramètres. Elle peut aussi retourner un résultat. Par exemple, une fonction peut recevoir deux nombres et retourner leur somme. Les fonctions aident les développeurs à éviter de répéter le même code plusieurs fois. Elles rendent aussi un programme plus facile à lire et à maintenir. Lorsqu’une fonction possède un nom clair, un autre développeur peut rapidement comprendre son objectif. Les petites fonctions sont souvent plus faciles à tester et à déboguer qu’un très grand bloc de code.",
+    "model_answers": [
+      "A function can receive values called parameters.",
+      "Functions avoid repeated code and make programs easier to read and maintain.",
+      "Small functions are easier to test and debug."
+    ],
+    "lexicon": [
+      {
+        "term": "reusable",
+        "french": "réutilisable",
+        "definition": "Able to be used again."
+      },
+      {
+        "term": "parameter",
+        "french": "paramètre",
+        "definition": "A value received by a function."
+      },
+      {
+        "term": "return",
+        "french": "retourner",
+        "definition": "To send a result back from a function."
+      },
+      {
+        "term": "maintain",
+        "french": "maintenir",
+        "definition": "To keep code working and easy to change."
+      },
+      {
+        "term": "test",
+        "french": "tester",
+        "definition": "To check that code works correctly."
+      },
+      {
+        "term": "debug",
+        "french": "déboguer",
+        "definition": "To find and fix errors in code."
+      }
+    ]
+  },
+  {
+    "id": "ex_012",
+    "category": "Architecture Web",
+    "difficulty": "A2",
+    "title": "Client and Server",
+    "intro": "Lis ce texte de niveau A2 sur le fonctionnement client-serveur. Traduis-le puis réponds aux questions.",
+    "text": "A web application often has a client and a server. The client is usually the browser used by the user. It displays the interface and sends requests. The server receives these requests, processes information, and sends a response. For example, when a user logs in, the browser sends an email and a password to the server. The server checks the information and can return user data. The client and the server often exchange data in JSON format. This separation is useful because the interface and the business logic can evolve independently while still communicating through an API.",
+    "code": null,
+    "language": null,
+    "translation_challenge": "Traduis le texte en français. Conserve les termes JSON et API.",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "What is usually the client in a web application?"
+      },
+      {
+        "id": "q2",
+        "question": "What does the server do with a request?"
+      },
+      {
+        "id": "q3",
+        "question": "Which format is often used to exchange data?"
+      }
+    ],
+    "model_translation": "Une application web possède souvent un client et un serveur. Le client est généralement le navigateur utilisé par l’utilisateur. Il affiche l’interface et envoie des requêtes. Le serveur reçoit ces requêtes, traite les informations et envoie une réponse. Par exemple, lorsqu’un utilisateur se connecte, le navigateur envoie un e-mail et un mot de passe au serveur. Le serveur vérifie les informations et peut retourner les données de l’utilisateur. Le client et le serveur échangent souvent des données au format JSON. Cette séparation est utile car l’interface et la logique métier peuvent évoluer indépendamment tout en communiquant grâce à une API.",
+    "model_answers": [
+      "The client is usually the web browser.",
+      "The server receives the request, processes information, and sends a response.",
+      "JSON is often used to exchange data."
+    ],
+    "lexicon": [
+      {
+        "term": "client",
+        "french": "client",
+        "definition": "The part of an application used by the user."
+      },
+      {
+        "term": "server",
+        "french": "serveur",
+        "definition": "A system that processes requests and returns responses."
+      },
+      {
+        "term": "request",
+        "french": "requête",
+        "definition": "A message sent to ask a server for an action or data."
+      },
+      {
+        "term": "response",
+        "french": "réponse",
+        "definition": "The data returned by a server."
+      },
+      {
+        "term": "business logic",
+        "french": "logique métier",
+        "definition": "Rules that implement application behavior."
+      },
+      {
+        "term": "exchange",
+        "french": "échanger",
+        "definition": "To send and receive information."
+      }
+    ]
+  },
+  {
+    "id": "ex_013",
+    "category": "Développement Web",
+    "difficulty": "B1",
+    "title": "Working with a REST API",
+    "intro": "Lis ce court texte sur les API REST, traduis-le en français puis réponds aux questions en anglais.",
+    "text": "A web application often needs data from a server. One common solution is to use a REST API. The browser sends an HTTP request to an endpoint, for example /api/users. The server processes the request and usually returns JSON data. Developers use methods such as GET to read data, POST to create data, PUT to update it and DELETE to remove it. A good API also returns clear HTTP status codes. For example, 200 means that the request succeeded, while 404 means that the requested resource was not found. Keeping the client and server separated makes an application easier to maintain and test.",
+    "code": "",
+    "language": "",
+    "translation_challenge": "Traduis le texte en français en conservant les termes techniques REST, endpoint, JSON et codes HTTP.",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "Why does a web application use a REST API?"
+      },
+      {
+        "id": "q2",
+        "question": "Which HTTP methods are mentioned and what are they used for?"
+      },
+      {
+        "id": "q3",
+        "question": "What do status codes 200 and 404 mean?"
+      }
+    ],
+    "model_translation": "Une application web a souvent besoin de données provenant d’un serveur. Une solution courante consiste à utiliser une API REST. Le navigateur envoie une requête HTTP vers un endpoint, par exemple /api/users. Le serveur traite la requête et renvoie généralement des données JSON. Les développeurs utilisent des méthodes comme GET pour lire des données, POST pour en créer, PUT pour les mettre à jour et DELETE pour les supprimer. Une bonne API renvoie aussi des codes d’état HTTP clairs. Par exemple, 200 signifie que la requête a réussi, tandis que 404 signifie que la ressource demandée n’a pas été trouvée. Séparer le client et le serveur facilite la maintenance et les tests de l’application.",
+    "model_answers": [
+      "A web application uses a REST API to communicate with a server and exchange data. The browser sends requests to API endpoints and receives data, often in JSON format.",
+      "GET reads data, POST creates data, PUT updates data and DELETE removes data. These methods describe the action that the client wants the server to perform.",
+      "Status code 200 means the request was successful. Status code 404 means the requested resource could not be found on the server."
+    ],
+    "lexicon": [
+      {
+        "term": "endpoint",
+        "french": "point de terminaison",
+        "definition": "A URL exposed by an API for a specific resource or action."
+      },
+      {
+        "term": "request",
+        "french": "requête",
+        "definition": "A message sent by a client to a server."
+      },
+      {
+        "term": "response",
+        "french": "réponse",
+        "definition": "The message returned by the server."
+      },
+      {
+        "term": "status code",
+        "french": "code d’état",
+        "definition": "A numeric HTTP result describing the outcome of a request."
+      },
+      {
+        "term": "maintain",
+        "french": "maintenir",
+        "definition": "To keep software working and improve it over time."
+      },
+      {
+        "term": "resource",
+        "french": "ressource",
+        "definition": "A data object exposed by an API."
+      }
+    ]
+  },
+  {
+    "id": "ex_014",
+    "category": "Anglais professionnel",
+    "difficulty": "B1",
+    "title": "Explaining a Bug to Your Team",
+    "intro": "Lis ce message professionnel, traduis-le puis réponds aux questions en anglais.",
+    "text": "During the morning stand-up, Maya explains that the login page sometimes displays an error after a user submits the form. She has reproduced the issue on Chrome and Firefox. The API returns a 500 status code, so she thinks the problem is on the server side. She created a ticket with the steps to reproduce the bug, the expected result and the actual result. Before changing the code, she plans to check the server logs and write a small test. Her teammate suggests reviewing the last authentication changes because the bug appeared after yesterday’s deployment.",
+    "code": "",
+    "language": "",
+    "translation_challenge": "Traduis le message en français avec un vocabulaire professionnel adapté à une équipe de développement.",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "Where has Maya reproduced the bug?"
+      },
+      {
+        "id": "q2",
+        "question": "Why does she suspect a server-side problem?"
+      },
+      {
+        "id": "q3",
+        "question": "What will she do before changing the code?"
+      }
+    ],
+    "model_translation": "Pendant le point quotidien du matin, Maya explique que la page de connexion affiche parfois une erreur après l’envoi du formulaire. Elle a reproduit le problème sur Chrome et Firefox. L’API renvoie un code 500, elle pense donc que le problème vient du serveur. Elle a créé un ticket avec les étapes permettant de reproduire le bug, le résultat attendu et le résultat obtenu. Avant de modifier le code, elle prévoit de consulter les logs du serveur et d’écrire un petit test. Son collègue suggère de revoir les dernières modifications de l’authentification, car le bug est apparu après le déploiement d’hier.",
+    "model_answers": [
+      "She reproduced the bug on Chrome and Firefox. Testing it in two browsers helps confirm that it is not limited to one browser.",
+      "She suspects the server because the API returns HTTP status code 500. This code normally indicates an internal server error.",
+      "She will check the server logs and write a small test before changing the code. This gives her evidence and helps avoid an unstructured fix."
+    ],
+    "lexicon": [
+      {
+        "term": "stand-up",
+        "french": "point quotidien",
+        "definition": "A short daily team meeting."
+      },
+      {
+        "term": "reproduce",
+        "french": "reproduire",
+        "definition": "To make a bug happen again using known steps."
+      },
+      {
+        "term": "expected result",
+        "french": "résultat attendu",
+        "definition": "What the software should do."
+      },
+      {
+        "term": "actual result",
+        "french": "résultat obtenu",
+        "definition": "What the software really does."
+      },
+      {
+        "term": "server logs",
+        "french": "journaux serveur",
+        "definition": "Recorded server events used for diagnosis."
+      },
+      {
+        "term": "deployment",
+        "french": "déploiement",
+        "definition": "The act of releasing an application version."
+      }
+    ]
+  },
+  {
+    "id": "ex_015",
+    "category": "Architecture Web",
+    "difficulty": "C2",
+    "title": "Resilience in Distributed Web Systems",
+    "intro": "Analyse ce texte avancé d’architecture distribuée, traduis-le avec précision et réponds en anglais.",
+    "text": "Designing resilient distributed systems requires more than duplicating services across several nodes. Engineers must reason explicitly about partial failure, back-pressure, idempotency, retry amplification and the consistency guarantees offered by each dependency. A retry policy that appears harmless in isolation may trigger a cascading failure when thousands of clients simultaneously repeat requests against a degraded downstream service. Circuit breakers, bounded queues and exponential backoff with jitter can reduce that risk, but each mechanism introduces trade-offs in latency, throughput and operational complexity. Observability is equally important: logs, metrics and traces must make causal chains visible enough for engineers to distinguish a local symptom from the original fault. Resilience therefore emerges from deliberate system-wide design rather than from any single framework or infrastructure component.",
+    "code": "",
+    "language": "",
+    "translation_challenge": "Traduis le texte en français en conservant la précision des notions de résilience, cohérence, back-pressure, idempotence et observabilité.",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "Why can an apparently safe retry policy become dangerous in a distributed system?"
+      },
+      {
+        "id": "q2",
+        "question": "What trade-offs can resilience mechanisms introduce?"
+      },
+      {
+        "id": "q3",
+        "question": "How does observability contribute to system resilience according to the text?"
+      }
+    ],
+    "model_translation": "Concevoir des systèmes distribués résilients exige davantage que de dupliquer des services sur plusieurs nœuds. Les ingénieurs doivent raisonner explicitement sur les défaillances partielles, la contre-pression, l’idempotence, l’amplification des nouvelles tentatives et les garanties de cohérence offertes par chaque dépendance. Une politique de nouvelle tentative qui paraît inoffensive isolément peut déclencher une panne en cascade lorsque des milliers de clients répètent simultanément leurs requêtes vers un service en aval dégradé. Les disjoncteurs, les files bornées et le backoff exponentiel avec gigue peuvent réduire ce risque, mais chaque mécanisme introduit des compromis en matière de latence, de débit et de complexité opérationnelle. L’observabilité est tout aussi importante : logs, métriques et traces doivent rendre les chaînes causales suffisamment visibles pour distinguer un symptôme local de la panne d’origine. La résilience résulte donc d’une conception délibérée à l’échelle du système plutôt que d’un framework ou composant d’infrastructure isolé.",
+    "model_answers": [
+      "Retries can multiply load precisely when a downstream service is already degraded. If many clients retry simultaneously, the additional traffic can exhaust remaining capacity and propagate failure through the system.",
+      "Circuit breakers, bounded queues and exponential backoff can improve resilience, but they may increase latency, reduce throughput in some situations and add operational complexity. Engineers must choose parameters according to the system’s requirements.",
+      "Observability connects symptoms to causes through logs, metrics and distributed traces. It helps engineers understand causal chains and identify the original fault instead of treating only a local consequence."
+    ],
+    "lexicon": [
+      {
+        "term": "partial failure",
+        "french": "défaillance partielle",
+        "definition": "A failure affecting only part of a distributed system."
+      },
+      {
+        "term": "back-pressure",
+        "french": "contre-pression",
+        "definition": "A mechanism that limits incoming work when consumers are saturated."
+      },
+      {
+        "term": "idempotency",
+        "french": "idempotence",
+        "definition": "The property that repeating an operation has no additional side effect."
+      },
+      {
+        "term": "cascading failure",
+        "french": "panne en cascade",
+        "definition": "A failure that propagates from one component to others."
+      },
+      {
+        "term": "jitter",
+        "french": "gigue / aléa temporel",
+        "definition": "Random variation added to retry delays to avoid synchronized retries."
+      },
+      {
+        "term": "observability",
+        "french": "observabilité",
+        "definition": "The ability to understand internal system state from emitted signals."
+      }
+    ]
+  },
+  {
+    "id": "ex_016",
+    "category": "Anglais professionnel",
+    "difficulty": "C2",
+    "title": "Negotiating a Technical Delivery Risk",
+    "intro": "Lis cette situation de communication professionnelle avancée, traduis-la et réponds avec nuance en anglais.",
+    "text": "A client asks the development team to bring a release forward by two weeks so that it coincides with a marketing campaign. Rather than rejecting the request outright, the technical lead reframes the discussion around risk and scope. She explains that compressing the schedule without changing scope would reduce the time available for regression testing, accessibility checks and security review. She proposes three alternatives: keep the original date, release a smaller verified feature set earlier, or accept the accelerated date with explicitly documented residual risks. By translating technical uncertainty into business consequences, she enables the client to make an informed decision. The exchange illustrates that effective technical communication is not merely the simplification of jargon; it is the disciplined presentation of trade-offs, evidence and accountability.",
+    "code": "",
+    "language": "",
+    "translation_challenge": "Traduis le texte en français en préservant les nuances de négociation, de risque résiduel et de compromis.",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "How does the technical lead reframe the client’s request?"
+      },
+      {
+        "id": "q2",
+        "question": "What three alternatives does she propose?"
+      },
+      {
+        "id": "q3",
+        "question": "What broader definition of effective technical communication does the text suggest?"
+      }
+    ],
+    "model_translation": "Un client demande à l’équipe de développement d’avancer une livraison de deux semaines afin qu’elle coïncide avec une campagne marketing. Plutôt que de rejeter immédiatement la demande, la responsable technique recentre la discussion sur le risque et le périmètre. Elle explique que réduire le calendrier sans modifier le périmètre diminuerait le temps disponible pour les tests de régression, les vérifications d’accessibilité et la revue de sécurité. Elle propose trois options : conserver la date initiale, publier plus tôt un ensemble réduit de fonctionnalités vérifiées, ou accepter la date accélérée en documentant explicitement les risques résiduels. En traduisant l’incertitude technique en conséquences métier, elle permet au client de prendre une décision éclairée. Cet échange montre qu’une communication technique efficace ne consiste pas seulement à simplifier le jargon ; elle repose sur une présentation rigoureuse des compromis, des preuves et des responsabilités.",
+    "model_answers": [
+      "She shifts the conversation from a simple yes-or-no deadline request to an explicit analysis of scope, quality and risk. This makes the consequences of the requested acceleration visible.",
+      "She proposes keeping the original date, delivering a smaller verified scope earlier, or keeping the accelerated date while explicitly accepting and documenting residual risks.",
+      "The text presents technical communication as the disciplined explanation of trade-offs, evidence and accountability. It should enable informed business decisions, not merely translate technical jargon into simpler words."
+    ],
+    "lexicon": [
+      {
+        "term": "bring a release forward",
+        "french": "avancer une livraison",
+        "definition": "To move a planned release to an earlier date."
+      },
+      {
+        "term": "scope",
+        "french": "périmètre",
+        "definition": "The set of work or features included in a project."
+      },
+      {
+        "term": "regression testing",
+        "french": "tests de régression",
+        "definition": "Testing that existing behaviour still works after changes."
+      },
+      {
+        "term": "residual risk",
+        "french": "risque résiduel",
+        "definition": "Risk that remains after controls or mitigations."
+      },
+      {
+        "term": "trade-off",
+        "french": "compromis / arbitrage",
+        "definition": "A choice that improves one dimension at the cost of another."
+      },
+      {
+        "term": "accountability",
+        "french": "responsabilité",
+        "definition": "Being answerable for decisions and outcomes."
+      }
     ]
   }
 ]

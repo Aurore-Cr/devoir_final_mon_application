@@ -1,7 +1,7 @@
 'use strict';
 
 // ============================================================
-//  JARVIS — defis.js
+//  JAMES — defis.js
 //
 //  States :
 //    landing   → catalogue + filtres + CTA

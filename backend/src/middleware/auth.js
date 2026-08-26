@@ -1,7 +1,10 @@
 'use strict';
 
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = process.env.JWT_SECRET || 'jarvis-jwt-secret-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET || (process.env.NODE_ENV !== 'production' ? 'james-jwt-secret-local-development-only' : null);
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET manquant en production');
+}
 
 function requireAuth(req, res, next) {
   const header = req.headers['authorization'] || '';

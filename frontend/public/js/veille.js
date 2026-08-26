@@ -1,7 +1,7 @@
 'use strict';
 
 // ============================================================
-//  JARVIS — veille.js
+//  JAMES — veille.js
 //  Rôle : Consomme /api/veille et rend le rapport dans l'UI
 //
 //  États UI gérés :

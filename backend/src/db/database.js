@@ -12,7 +12,7 @@ const path = require("path");
 const fs = require("fs");
 
 const DATA_DIR = path.join(__dirname, "../../data");
-const DB_PATH = path.join(DATA_DIR, "jarvis.db");
+const DB_PATH = path.join(DATA_DIR, "james.db");
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
 let _db = null;
@@ -152,6 +152,35 @@ async function initDatabase() {
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
   )`);
 
+  _db.run(`CREATE TABLE IF NOT EXISTS english_attempts (
+    id           INTEGER  PRIMARY KEY AUTOINCREMENT,
+    user_id      INTEGER  NOT NULL,
+    exercise_id  TEXT     NOT NULL,
+    title        TEXT     NOT NULL,
+    difficulty   TEXT     NOT NULL,
+    score        INTEGER  NOT NULL DEFAULT 0,
+    source       TEXT     NOT NULL DEFAULT 'catalogue',
+    completed_at DATETIME NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  )`);
+
+  _db.run(`CREATE TABLE IF NOT EXISTS daily_flashcards (
+    id         INTEGER  PRIMARY KEY AUTOINCREMENT,
+    user_id    INTEGER  NOT NULL,
+    day        TEXT     NOT NULL,
+    category   TEXT     NOT NULL,
+    question   TEXT     NOT NULL,
+    answer     TEXT     NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  )`);
+
+  _db.run(
+    "CREATE INDEX IF NOT EXISTS idx_attempts_user ON english_attempts (user_id, completed_at)",
+  );
+  _db.run(
+    "CREATE INDEX IF NOT EXISTS idx_flashcards_user_day ON daily_flashcards (user_id, day)",
+  );
   _db.run(
     "CREATE INDEX IF NOT EXISTS idx_schedules_user ON schedules (user_id, order_idx)",
   );
@@ -293,6 +322,56 @@ const deletePushSub = {
     ]),
 };
 
+const findUserAuthById = {
+  get: (id) => get("SELECT * FROM users WHERE id = ?", [Number(id)]),
+};
+
+const updateUserProfile = {
+  run: (id, d) => run(
+    "UPDATE users SET username = ?, email = ?, avatar = ? WHERE id = ?",
+    [d.username, d.email, d.avatar || "🤖", Number(id)],
+  ),
+};
+
+const updateUserPassword = {
+  run: (id, hash) => run("UPDATE users SET password_hash = ? WHERE id = ?", [hash, Number(id)]),
+};
+
+const addEnglishAttempt = {
+  run: (d) => run(
+    "INSERT INTO english_attempts (user_id, exercise_id, title, difficulty, score, source) VALUES (?, ?, ?, ?, ?, ?)",
+    [Number(d.user_id), d.exercise_id, d.title, d.difficulty, Number(d.score), d.source || "catalogue"],
+  ),
+};
+
+const getEnglishAttempts = {
+  all: (uid, limit = 50) => all(
+    "SELECT * FROM english_attempts WHERE user_id = ? ORDER BY completed_at DESC, id DESC LIMIT ?",
+    [Number(uid), Number(limit)],
+  ),
+};
+
+const getSuccessfulEnglishByLevel = {
+  all: (uid) => all(
+    "SELECT difficulty, COUNT(DISTINCT exercise_id) AS successes FROM english_attempts WHERE user_id = ? AND score = 2 GROUP BY difficulty",
+    [Number(uid)],
+  ),
+};
+
+const getDailyFlashcards = {
+  all: (uid, day) => all(
+    "SELECT id, day, category, question, answer FROM daily_flashcards WHERE user_id = ? AND day = ? ORDER BY id ASC",
+    [Number(uid), day],
+  ),
+};
+
+const addDailyFlashcard = {
+  run: (d) => run(
+    "INSERT INTO daily_flashcards (user_id, day, category, question, answer) VALUES (?, ?, ?, ?, ?)",
+    [Number(d.user_id), d.day, d.category, d.question, d.answer],
+  ),
+};
+
 function createUserWithSchedule(userData) {
   const { lastInsertRowid: userId } = createUser.run(userData);
   DEFAULT_SCHEDULE.forEach((s, i) =>
@@ -330,6 +409,14 @@ const db = {
   getUserPushSubs,
   getAllPushSubs,
   deletePushSub,
+  findUserAuthById,
+  updateUserProfile,
+  updateUserPassword,
+  addEnglishAttempt,
+  getEnglishAttempts,
+  getSuccessfulEnglishByLevel,
+  getDailyFlashcards,
+  addDailyFlashcard,
   createUserWithSchedule,
 };
 

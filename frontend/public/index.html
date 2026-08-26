@@ -62,6 +62,7 @@
 
       <!-- Boutons header -->
       <div class="header-actions">
+        <a href="/flashcards.html" class="header-icon-btn" title="Flashcards" aria-label="Flashcards du jour" style="font-size:16px;text-decoration:none">🧠</a>
         <a
           href="/parametres.html"
           class="header-icon-btn"
@@ -91,6 +92,16 @@
         <div class="j-date" id="live-date">--</div>
       </div>
     </header>
+    <nav class="j-module-nav" aria-label="Navigation principale">
+      <a href="/" class="module-tab active">🏠 Accueil</a>
+      <a href="/planner.html" class="module-tab">📅 Planning</a>
+      <a href="/veille.html" class="module-tab">🛰 Veille</a>
+      <a href="/anglais.html" class="module-tab">🇬🇧 Anglais</a>
+      <a href="/defis.html" class="module-tab">⚡ Code</a>
+      <a href="/flashcards.html" class="module-tab flash-tab">🧠 Flashcards</a>
+      <a href="/parametres.html" class="module-tab">⚙️ Paramètres</a>
+    </nav>
+
 
     <!-- ═══ BARRE SYSTÈME ═══════════════════════════════════ -->
     <div class="j-statusbar">
@@ -257,6 +268,16 @@
             Lancer le défi →
           </a>
         </div>
+      </section>
+
+      <!-- ▓ WIDGET 5 — FLASHCARDS DU JOUR ▓ -->
+      <section class="j-widget w-flashcards" id="widget-flashcards">
+        <div class="widget-header">
+          <div class="wh-left"><span class="wh-icon">🧠</span><div><h2 class="wh-title">Flashcards du jour</h2><p class="wh-sub">Développement web · Business English · IA</p></div></div>
+          <a href="/flashcards.html" class="wh-link">Ouvrir <span class="link-arrow">›</span></a>
+        </div>
+        <div class="flashcards-grid" id="daily-flashcards"><div class="skeleton-item tall"></div></div>
+        <p class="flashcards-note">6 nouvelles cartes sont générées par Gemini une fois par jour et conservées pour la journée. <a href="/flashcards.html" style="color:var(--j-cyan)">Ouvrir l’onglet Flashcards →</a></p>
       </section>
     </main>
 

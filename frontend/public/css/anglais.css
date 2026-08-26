@@ -1,5 +1,5 @@
 /* ============================================================
-   JARVIS — anglais.css   |   Module Défis Anglais
+   JAMES — anglais.css   |   Module Défis Anglais
    ============================================================ */
 
 /* ─── VARIABLES LOCALES ──────────────────────────────────── */
@@ -577,3 +577,9 @@
 .cta-ia:disabled { opacity: .5; cursor: not-allowed; }
 .ia-note { font-size:.75rem; margin-top:8px; color:#f85149; text-align:center; }
 .ia-note a { color:#f85149; }
+
+/* Progression CECRL */
+.progression-card{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:12px 16px;padding:12px 14px;border:1px solid rgba(0,212,255,.2);background:rgba(0,212,255,.06);border-radius:10px;font-size:.8rem}
+.progression-card span{color:#8b949e}.progression-card a{color:#00d4ff;text-decoration:none;white-space:nowrap}.chip.locked{opacity:.45;cursor:not-allowed;filter:grayscale(.5)}
+
+.catalog-item.locked{opacity:.5;cursor:not-allowed;filter:grayscale(.35)}

@@ -121,6 +121,29 @@ const ANGLAIS_SCHEMA = {
   ],
 };
 
+
+// =====================================================
+// SCHÉMA JSON — FLASHCARDS QUOTIDIENNES
+// =====================================================
+const FLASHCARDS_SCHEMA = {
+  type: "object",
+  properties: {
+    cards: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          category: { type: "string" },
+          question: { type: "string" },
+          answer: { type: "string" },
+        },
+        required: ["category", "question", "answer"],
+      },
+    },
+  },
+  required: ["cards"],
+};
+
 // =====================================================
 // APPEL GEMINI
 // =====================================================
@@ -340,7 +363,7 @@ const TOPICS_ANGLAIS = [
   "Test-Driven Development",
 ];
 const NIVEAUX = ["Facile", "Moyen", "Difficile"];
-const DIFFICULTIES = ["A2", "B1", "B2", "C1"];
+const DIFFICULTIES = ["A1", "A2", "B1", "B2", "C1", "C2"];
 
 // =====================================================
 //  CODE LANGUAGE
@@ -439,12 +462,14 @@ async function generateAnglais(topic, difficulty) {
   //  CACHE
   //  -------------------------------------------------------
 
+  // Réutiliser uniquement un exercice déjà généré avec le même niveau.
+  // Cela garantit qu'un choix A1/A2/B1/B2/C1 produit bien le niveau demandé.
   const cached = nosql.find(
-    { type: "anglais" },
+    { type: "anglais", niveau: d },
     { maxAgeHours: 24, limit: 10 },
   );
   if (cached.length >= 3) {
-    console.log("[Generator] Cache NoSQL — anglais");
+    console.log("[Generator] Cache NoSQL — anglais", d);
     return cached[Math.floor(Math.random() * cached.length)].content;
   }
 
@@ -456,7 +481,7 @@ async function generateAnglais(topic, difficulty) {
   const prompt = ` Tu es un professeur d'anglais technique spécialisé dans le développement web. 
   Crée un exercice d'anglais technique sur : Sujet : ${t} Niveau : ${d} 
   L'exercice doit être adapté à un développeur en formation. 
-  Le texte anglais doit faire environ 160 mots. La consigne "intro" doit être en français. 
+  Adapte strictement le vocabulaire, la longueur des phrases et la difficulté au niveau CECRL demandé. Pour A1 vise 70 à 90 mots, A2 90 à 120 mots, B1 120 à 150 mots, B2 150 à 180 mots, C1 180 à 210 mots et C2 210 à 240 mots. La consigne "intro" doit être en français. 
   Crée exactement 3 questions de compréhension en anglais. Chaque réponse modèle doit contenir 4 à 5 phrases. 
   Crée exactement 6 entrées dans le lexique.
    Les champs "code" et "language" doivent être des chaînes 
@@ -465,6 +490,7 @@ async function generateAnglais(topic, difficulty) {
    Ne mets aucun texte en dehors du JSON. `;
   const raw = await callGemini(prompt, ANGLAIS_SCHEMA);
   const exercise = extractJSON(raw);
+  exercise.difficulty = d;
 
   // -------------------------------------------------------
   //  NORMALISATION
@@ -500,6 +526,22 @@ async function generateAnglais(topic, difficulty) {
   return exercise;
 }
 
+
+async function generateDailyFlashcards() {
+  const prompt = `Tu es un formateur pour le Titre Professionnel Développeur Web et Web Mobile.
+Crée exactement 6 flashcards courtes pour la révision quotidienne :
+- 3 flashcards sur le développement web / codage (HTML, CSS, JavaScript, React, Node.js, Express, SQL, Git ou sécurité web) ;
+- 3 flashcards d'anglais des affaires utile à un développeur (réunion, ticket, délai, client, documentation, équipe).
+Pour chaque carte, category doit valoir exactement "Développement web" ou "Business English".
+La question doit être concise et la réponse pédagogique, en 1 à 3 phrases.
+Pour Business English, écris la question en anglais et donne une réponse en anglais suivie d'une courte aide française entre parenthèses.
+Évite les doublons évidents et respecte strictement le JSON demandé.`;
+  const raw = await callGemini(prompt, FLASHCARDS_SCHEMA);
+  const parsed = extractJSON(raw);
+  if (!Array.isArray(parsed.cards) || parsed.cards.length < 6) throw new Error("Flashcards Gemini incomplètes");
+  return parsed.cards.slice(0, 6);
+}
+
 // =====================================================
 //  NETTOYAGE CACHE
 // =====================================================
@@ -515,6 +557,7 @@ function cleanCache() {
 module.exports = {
   generateDefi,
   generateAnglais,
+  generateDailyFlashcards,
   cleanCache,
   TECHNOS_DEV,
   isConfigured,

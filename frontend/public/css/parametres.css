@@ -25,10 +25,6 @@
 .server-label { color:#8b949e; }
 .server-url   { color:#00d4ff; font-family:monospace; font-size:.75rem; word-break:break-all; }
 .server-status { font-weight:600; }
-.url-result { font-size:.8rem; margin-top:8px; padding:8px 10px; border-radius:6px; }
-.url-result.ok    { background:rgba(63,185,80,.1); color:#3fb950; }
-.url-result.error { background:rgba(248,81,73,.1); color:#f85149; }
-
 .field-group { margin-bottom:12px; }
 .field-group label { display:block; font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:#8b949e; margin-bottom:5px; }
 .field-group input[type="text"],.field-group input[type="email"],.field-group input[type="url"],.field-group input[type="time"],.field-group input[type="password"] {
@@ -83,72 +79,6 @@
 .notif-note   { margin-top:12px; font-size:.75rem; color:#8b949e; line-height:1.6; }
 .notif-note p + p { margin-top:6px; }
 
-.api-status { font-size:.82rem; color:#8b949e; margin-bottom:10px; }
-.api-hint   { font-size:.75rem; color:#484f58; margin-top:8px; line-height:1.5; }
-.api-hint a { color:#00d4ff; }
-.api-hint code { background:rgba(0,212,255,.1); padding:1px 5px; border-radius:4px; font-size:.72rem; }
-
-/* ─── Étapes Groq ──────────────────────────────────────── */
-.groq-steps { margin-top: 12px; }
-.step { display:flex; align-items:flex-start; gap:10px; font-size:.82rem; color:#c9d1d9; line-height:1.6; margin-bottom:10px; }
-.step-num { flex-shrink:0; width:22px; height:22px; background:#00d4ff; color:#040810; border-radius:50%; font-size:.7rem; font-weight:700; display:flex; align-items:center; justify-content:center; margin-top:1px; }
-.step a { color:#00d4ff; }
-.step code { background:rgba(0,212,255,.1); color:#00d4ff; padding:1px 6px; border-radius:4px; font-size:.76rem; word-break:break-all; }
-
-/* ─── Provider cards ──────────────────────────────────── */
-.provider-list { display:flex; flex-direction:column; gap:10px; margin-top:12px; }
-
-.provider-card {
-  background:rgba(0,20,40,.5);
-  border:1px solid rgba(0,212,255,.12);
-  border-radius:12px;
-  overflow:hidden;
-  transition:border-color .2s;
-}
-.provider-card.active-provider {
-  border-color:#00d4ff;
-  box-shadow:0 0 0 1px rgba(0,212,255,.2);
-}
-
-.prov-header {
-  display:flex; align-items:center; gap:10px;
-  padding:12px 14px;
-  cursor:pointer;
-}
-.prov-icon { font-size:1.5rem; flex-shrink:0; }
-.prov-name { font-size:.88rem; font-weight:700; display:flex; align-items:center; gap:6px; margin-bottom:2px; }
-.prov-sub  { font-size:.72rem; color:#8b949e; }
-.prov-tag  { margin-left:auto; font-size:.6rem; font-weight:700; padding:3px 8px; border-radius:20px; flex-shrink:0; white-space:nowrap; }
-.prov-tag.local { background:rgba(188,140,255,.12); color:#bc8cff; border:1px solid rgba(188,140,255,.3); }
-.prov-tag.cloud { background:rgba(0,212,255,.1);    color:#00d4ff; border:1px solid rgba(0,212,255,.25); }
-
-.prov-badge {
-  font-size:.58rem; font-weight:700; padding:2px 7px; border-radius:20px;
-  background:rgba(63,185,80,.12); color:#3fb950; border:1px solid rgba(63,185,80,.25);
-}
-
-.prov-steps {
-  padding:0 14px 14px;
-  font-size:.78rem; color:#c9d1d9; line-height:1.7;
-}
-.prov-steps p { margin-bottom:2px; }
-.prov-steps a { color:#00d4ff; }
-.prov-steps strong { color:#e0f4ff; }
-.prov-code {
-  background:rgba(0,0,0,.4); border:1px solid rgba(0,212,255,.15);
-  border-radius:6px; padding:8px 10px; margin-top:4px;
-  font-family:monospace; font-size:.75rem; color:#00d4ff;
-  white-space:pre; overflow-x:auto; line-height:1.6;
-}
-
-.prov-restart {
-  margin-top:12px; font-size:.75rem; color:#d29922;
-  background:rgba(210,153,34,.08); border:1px solid rgba(210,153,34,.2);
-  border-radius:8px; padding:8px 12px;
-}
-.prov-restart code { color:#d29922; }
-
-/* Statut box IA */
 .api-status-box {
   display:flex; align-items:center; gap:10px;
   padding:10px 14px; border-radius:8px;
@@ -170,3 +100,6 @@
 .status-dot.ok    { background:#3fb950; box-shadow:0 0 6px #3fb950; }
 .status-dot.warn  { background:#d29922; box-shadow:0 0 6px #d29922; }
 .status-dot.error { background:#f85149; box-shadow:0 0 6px #f85149; }
+
+/* Profil & évolution */
+.progress-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.stat-card{background:rgba(0,20,40,.5);border:1px solid rgba(0,212,255,.15);border-radius:10px;padding:12px;text-align:center}.stat-card strong{display:block;font-size:1.15rem;color:#00d4ff}.stat-card span{font-size:.68rem;color:#8b949e}.level-track{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 14px}.level-pill{padding:5px 9px;border-radius:20px;font-size:.72rem;border:1px solid rgba(0,212,255,.25)}.level-pill.unlocked{color:#3fb950;border-color:rgba(63,185,80,.35);background:rgba(63,185,80,.08)}.level-pill.locked{color:#6e7681;opacity:.7}.history-list{display:flex;flex-direction:column;gap:7px}.history-row{display:flex;justify-content:space-between;align-items:center;gap:8px;background:rgba(0,20,40,.45);border:1px solid rgba(0,212,255,.1);border-radius:8px;padding:9px 11px}.history-row div{min-width:0}.history-row strong{display:block;font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.history-row span{font-size:.68rem;color:#8b949e}.history-score{font-size:1rem!important;font-weight:800}.history-score.score-2{color:#3fb950}.history-score.score-1{color:#d29922}.history-score.score-0{color:#f85149}@media(max-width:520px){.progress-stats{grid-template-columns:1fr 1fr 1fr}.stat-card{padding:9px 5px}}

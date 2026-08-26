@@ -1,5 +1,5 @@
 // ============================================================
-//  JARVIS — planner.js
+//  JAMES — planner.js
 //  Rôle : Cerveau frontend du Daily Planner
 //         - Enregistrement & communication Service Worker
 //         - Minuterie de garde (filet de secours iOS)
@@ -213,10 +213,10 @@ function showFallbackNotification(endedTask, nextTask) {
   // Éviter le doublon si le SW a déjà tiré la notif
   // On utilise un délai de 2 s : si le SW répond sous 2 s, cette notif n'est pas envoyée
   const timer = setTimeout(() => {
-    new Notification('🤖 Ordre de Jarvis', {
+    new Notification('🤖 Ordre de JAMES', {
       body: `Arrêtez "${endedTask}" — commencez "${nextTask}"`,
       icon: '/icons/icon-192x192.png',
-      tag : 'jarvis-fallback'
+      tag : 'james-fallback'
     });
   }, 2000);
 

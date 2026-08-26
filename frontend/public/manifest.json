@@ -1,6 +1,6 @@
 {
-  "name": "Jarvis - Assistant Personnel",
-  "short_name": "Jarvis",
+  "name": "JAMES - Assistant Personnel",
+  "short_name": "JAMES",
   "description": "Application personnelle d'automatisation : Daily Planner, Veille Techno, Défis Anglais & Dev",
   "start_url": "/index.html",
   "scope": "/",

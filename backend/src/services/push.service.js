@@ -4,7 +4,7 @@ const db      = require('../db/database');
 
 const PUB  = process.env.VAPID_PUBLIC_KEY  || '';
 const PRIV = process.env.VAPID_PRIVATE_KEY || '';
-const EMAIL= process.env.VAPID_EMAIL       || 'mailto:admin@jarvis.local';
+const EMAIL= process.env.VAPID_EMAIL       || 'mailto:admin@james.local';
 
 if (PUB && PRIV) { webpush.setVapidDetails(EMAIL, PUB, PRIV); console.log('[Push] ✅ VAPID OK'); }
 else              { console.warn('[Push] ⚠️  VAPID manquant — lancer npm run setup'); }
@@ -36,7 +36,7 @@ async function checkAndNotify() {
     if (!ending) continue;
     const next = schedule.filter(s=>toMin(s.start_time)>=toMin(ending.end_time)).sort((a,b)=>toMin(a.start_time)-toMin(b.start_time))[0];
     const body = next ? `Arrêtez "${ending.icon} ${ending.label}" → commencez "${next.icon} ${next.label}"` : `${ending.icon} ${ending.label} est terminé.`;
-    await sendToUser(uid,{title:'⏰ JARVIS',body,icon:'/icons/icon-192x192.png',url:'/planner.html',vibrate:[400,150,400,150,600]});
+    await sendToUser(uid,{title:'⏰ JAMES',body,icon:'/icons/icon-192x192.png',url:'/planner.html',vibrate:[400,150,400,150,600]});
   }
 }
 

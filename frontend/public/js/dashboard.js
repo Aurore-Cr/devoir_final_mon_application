@@ -1,7 +1,7 @@
 'use strict';
 
 // ============================================================
-//  JARVIS — dashboard.js   v6.0 (multi-utilisateurs)
+//  JAMES — dashboard.js   v6.0 (multi-utilisateurs)
 //
 //  Nouveautés v6 :
 //    ✅ Charge le planning depuis /api/user/schedule (par user)
@@ -25,7 +25,7 @@ const SCHEDULE = [
   { start: '12:00', end: '13:00', label: 'Repas midi',           icon: '🍽️' },
   { start: '13:00', end: '14:00', label: 'Pause & Récupération', icon: '😴' },
   { start: '14:00', end: '17:00', label: 'Révision & Projets',   icon: '💻' },
-  { start: '17:00', end: '18:00', label: 'Jarvis — Défis',       icon: '🤖' },
+  { start: '17:00', end: '18:00', label: 'JAMES — Défis',       icon: '🤖' },
   { start: '18:00', end: '19:00', label: 'Sport / Détente',      icon: '🏃' },
   { start: '19:00', end: '20:00', label: 'Dîner',                icon: '🍴' },
   { start: '20:00', end: '22:00', label: 'Révision soirée',      icon: '📖' },
@@ -49,7 +49,7 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/service-worker.js')
       .then(reg => {
-        console.log('[Jarvis] ✅ Service Worker enregistré — scope :', reg.scope);
+        console.log('[JAMES] ✅ Service Worker enregistré — scope :', reg.scope);
         // Keepalive SW toutes les 20s (empêche Safari de le tuer en arrière-plan)
         setInterval(() => {
           if (navigator.serviceWorker.controller) {
@@ -60,7 +60,7 @@ if ('serviceWorker' in navigator) {
           }
         }, 20_000);
       })
-      .catch(err => console.warn('[Jarvis] ⚠️ SW :', err.message));
+      .catch(err => console.warn('[JAMES] ⚠️ SW :', err.message));
   });
 }
 
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!AUTH.isLoggedIn()) { window.location.href = '/login.html'; return; }
     const user = AUTH.getUser();
     const nameEl = document.getElementById('user-name');
-    if (nameEl && user) nameEl.textContent = user.username || 'Jarvis';
+    if (nameEl && user) nameEl.textContent = user.username || 'JAMES';
     await loadUserSchedule();
   }
 
@@ -324,7 +324,7 @@ function initStatusBar() {
     .then(d => {
       setStatus('sbar-server', 'ok', `Serveur v${d.version || '?'}`);
       const fs = $('footer-status');
-      if (fs) { fs.textContent = `⬤ Jarvis opérationnel`; fs.className = 'ok'; }
+      if (fs) { fs.textContent = `⬤ JAMES opérationnel`; fs.className = 'ok'; }
     })
     .catch(() => {
       setStatus('sbar-server', 'error', 'Serveur hors ligne');
@@ -374,7 +374,7 @@ function wireNotifBtn() {
     btn.style.display = 'none';
     if (perm === 'granted') {
       setStatus('sbar-notif', 'ok', 'Alertes ON');
-      new Notification('JARVIS 🤖', {
+      new Notification('JAMES 🤖', {
         body: 'Les alertes du planning sont activées.',
         icon: '/icons/icon-192x192.png',
       });
@@ -433,3 +433,22 @@ function escAttr(url) {
   try { const u = new URL(url); return ['http:','https:'].includes(u.protocol) ? url.replace(/"/g,'%22') : ''; }
   catch { return ''; }
 }
+
+
+// ── FLASHCARDS QUOTIDIENNES IA ────────────────────────────
+async function loadDailyFlashcards() {
+  const box = document.getElementById('daily-flashcards');
+  if (!box || !window.AUTH?.isLoggedIn()) return;
+  try {
+    const res = await window.AUTH.apiFetch('/api/user/daily-flashcards');
+    if (!res) return;
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error);
+    box.innerHTML = data.cards.map((c,i) => `<button class="flashcard" type="button" aria-expanded="false"><span class="fc-num">${i+1}</span><span class="fc-category">${escapeFlash(c.category)}</span><strong>${escapeFlash(c.question)}</strong><span class="fc-answer">${escapeFlash(c.answer)}</span><small>Cliquer pour retourner</small></button>`).join('');
+    box.querySelectorAll('.flashcard').forEach(card => card.addEventListener('click', () => { card.classList.toggle('revealed'); card.setAttribute('aria-expanded', card.classList.contains('revealed') ? 'true' : 'false'); }));
+  } catch (e) {
+    box.innerHTML = `<div class="flashcard-error">⚠️ Flashcards indisponibles pour le moment. Les autres fonctions de JAMES restent accessibles.</div>`;
+  }
+}
+function escapeFlash(v){return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+document.addEventListener('DOMContentLoaded', loadDailyFlashcards);

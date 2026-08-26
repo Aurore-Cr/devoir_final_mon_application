@@ -36,7 +36,7 @@ if (!env.JWT_SECRET || env.JWT_SECRET.length < 32) {
 fs.writeFileSync(
   ENV,
   [
-    "# JARVIS .env — NE PAS COMMITTER",
+    "# JAMES .env — NE PAS COMMITTER",
     "NODE_ENV=" + (env.NODE_ENV || "production"),
     "PORT=" + (env.PORT || "3005"),
     "",
@@ -46,7 +46,7 @@ fs.writeFileSync(
     "# Notifications push iOS",
     "VAPID_PUBLIC_KEY=" + env.VAPID_PUBLIC_KEY,
     "VAPID_PRIVATE_KEY=" + env.VAPID_PRIVATE_KEY,
-    "VAPID_EMAIL=" + (env.VAPID_EMAIL || "mailto:admin@jarvis.local"),
+    "VAPID_EMAIL=" + (env.VAPID_EMAIL || "mailto:admin@james.local"),
     "",
     "# Google Gemini — https://aistudio.google.com",
     "AI_PROVIDER=gemini",

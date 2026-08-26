@@ -1,7 +1,7 @@
 'use strict';
 
 // ============================================================
-//  JARVIS — anglais.js
+//  JAMES — anglais.js
 //
 //  États (vues) :
 //    landing   → catalogue + filtres + bouton aléatoire
@@ -76,14 +76,31 @@ const session = {
   activeCategory: '',
   activeDifficulty: '',
   allExercises  : [],         // méta pour le catalogue
+  unlockedLevels: ['A1'],
+  generatedCurrent: false,
 };
 
 // ─── POINT D'ENTRÉE ───────────────────────────────────────
 document.addEventListener('DOMContentLoaded', init);
 
 async function init() {
+  if (!window.AUTH?.requireLogin()) return;
+  await loadProgress();
   await loadCatalog();
   wireButtons();
+}
+
+async function loadProgress() {
+  try {
+    const res = await window.AUTH.apiFetch('/api/user/progress');
+    if (!res) return;
+    const data = await res.json();
+    if (data.success) {
+      session.unlockedLevels = data.progress.unlockedLevels || ['A1'];
+      const el = $('english-progress-text');
+      if (el) el.textContent = `Niveau actuel : ${data.progress.currentLevel} · ${data.progress.totalCompleted} exercice(s) terminé(s)`;
+    }
+  } catch (e) { console.warn('[Anglais] progression:', e.message); }
 }
 
 // ════════════════════════════════════════════════════════════
@@ -132,12 +149,22 @@ function renderCategoryChips(categories) {
 }
 
 function renderDifficultyChips(difficulties) {
-  // Les chips B2/C1 sont déjà dans le HTML ; on s'assure que seules
-  // les difficultés présentes dans la base sont affichées
-  elDifficultyChips.querySelectorAll('[data-difficulty]').forEach(chip => {
-    const d = chip.dataset.difficulty;
-    if (d && !difficulties.includes(d)) chip.style.display = 'none';
-  });
+  // Construire les niveaux à partir de l'API pour rester synchronisé
+  // avec le catalogue (A1, A2, B1, B2, C1...).
+  elDifficultyChips.querySelectorAll('[data-difficulty]:not([data-difficulty=""])').forEach(chip => chip.remove());
+  const order = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+  [...difficulties]
+    .sort((a, b) => order.indexOf(a) - order.indexOf(b))
+    .forEach(level => {
+      const btn = document.createElement('button');
+      const unlocked = session.unlockedLevels.includes(level);
+      btn.className = 'chip' + (unlocked ? '' : ' locked');
+      btn.dataset.difficulty = level;
+      btn.dataset.locked = unlocked ? '0' : '1';
+      btn.textContent = unlocked ? level : `${level} 🔒`;
+      btn.title = unlocked ? `Niveau ${level}` : 'Réussis le niveau précédent pour le débloquer';
+      elDifficultyChips.appendChild(btn);
+    });
 }
 
 function renderCatalog(exercises) {
@@ -153,21 +180,26 @@ function renderCatalog(exercises) {
   elCatalogCount.textContent =
     `${filtered.length} exercice${filtered.length > 1 ? 's' : ''} disponible${filtered.length > 1 ? 's' : ''}`;
 
-  elCatalogList.innerHTML = filtered.map(e => `
-    <li class="catalog-item ${session.seenIds.has(e.id) ? 'seen' : ''}"
-        data-id="${e.id}">
+  elCatalogList.innerHTML = filtered.map(e => {
+    const locked = !session.unlockedLevels.includes(e.difficulty);
+    return `
+    <li class="catalog-item ${session.seenIds.has(e.id) ? 'seen' : ''} ${locked ? 'locked' : ''}"
+        data-id="${e.id}" data-locked="${locked ? '1' : '0'}">
       <div class="catalog-item-meta">
         <span class="meta-difficulty badge ${e.difficulty.toLowerCase()}">${e.difficulty}</span>
         <span class="catalog-category">${escHtml(e.category)}</span>
         ${session.seenIds.has(e.id) ? '<span class="seen-badge">✓ Fait</span>' : ''}
       </div>
-      <p class="catalog-title">${escHtml(e.title)}</p>
+      <p class="catalog-title">${escHtml(e.title)} ${locked ? '🔒' : ''}</p>
     </li>
-  `).join('');
+  `}).join('');
 
   // Clic sur un exercice spécifique du catalogue
   elCatalogList.querySelectorAll('.catalog-item').forEach(item => {
-    item.addEventListener('click', () => loadExerciseById(item.dataset.id));
+    item.addEventListener('click', () => {
+      if (item.dataset.locked === '1') { alert('Niveau verrouillé : valide le niveau précédent avec « Bien compris ».'); return; }
+      loadExerciseById(item.dataset.id);
+    });
   });
 }
 
@@ -211,6 +243,7 @@ function wireButtons() {
   elDifficultyChips.addEventListener('click', e => {
     const chip = e.target.closest('.chip');
     if (!chip) return;
+    if (chip.dataset.locked === '1') { alert('Ce niveau est verrouillé. Valide le niveau précédent avec « Bien compris » pour le débloquer.'); return; }
     elDifficultyChips.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
     chip.classList.add('active');
     session.activeDifficulty = chip.dataset.difficulty || '';
@@ -242,6 +275,7 @@ function wireButtons() {
 
     // Marquer l'exercice comme vu
     if (session.currentEx) session.seenIds.add(session.currentEx.id);
+    saveAttempt(score).catch(err => console.error('[Anglais] historique:', err));
     renderCatalog(session.allExercises);
   });
 }
@@ -259,7 +293,8 @@ async function loadRandomExercise() {
     const params = new URLSearchParams();
 
     if (session.activeCategory)   params.set('category',   session.activeCategory);
-    if (session.activeDifficulty) params.set('difficulty', session.activeDifficulty);
+    const targetLevel = session.activeDifficulty || session.unlockedLevels[session.unlockedLevels.length - 1] || 'A1';
+    params.set('difficulty', targetLevel);
 
     // Anti-répétition : envoyer les IDs déjà vus
     if (session.seenIds.size > 0) {
@@ -271,6 +306,7 @@ async function loadRandomExercise() {
     const data = await res.json();
     if (!data.success) throw new Error(data.error);
 
+    session.generatedCurrent = false;
     renderExercise(data.exercise);
     showView('exercise');
 
@@ -291,6 +327,7 @@ async function loadExerciseById(id) {
     const data = await res.json();
     if (!data.success) throw new Error(data.error);
 
+    session.generatedCurrent = false;
     renderExercise(data.exercise);
     showView('exercise');
 
@@ -494,7 +531,10 @@ async function generateWithIA() {
     const res = await fetch('/api/generate/anglais', {
       method  : 'POST',
       headers : { 'Content-Type': 'application/json' },
-      body    : JSON.stringify({}),
+      body    : JSON.stringify({
+        topic: session.activeCategory || null,
+        difficulty: session.activeDifficulty || session.unlockedLevels[session.unlockedLevels.length - 1] || 'A1',
+      }),
     });
 
     const data = await res.json();
@@ -506,6 +546,7 @@ async function generateWithIA() {
     }
     if (!data.success) throw new Error(data.error || 'Erreur Gemini');
 
+    session.generatedCurrent = true;
     renderExercise(data.exercise);
     showView('exercise');
     if (elBtnNewRandom) elBtnNewRandom.style.display = '';
@@ -517,6 +558,28 @@ async function generateWithIA() {
   } finally {
     if (btnIA) { btnIA.disabled = false; btnIA.textContent = origTxt; }
     showLoader(false);
+  }
+}
+
+async function saveAttempt(score) {
+  if (!session.currentEx) return;
+  const res = await window.AUTH.apiFetch('/api/user/english-attempt', {
+    method:'POST',
+    body:JSON.stringify({
+      exerciseId: session.currentEx.id,
+      title: session.currentEx.title,
+      difficulty: session.currentEx.difficulty,
+      score,
+      source: session.generatedCurrent ? 'ia' : 'catalogue',
+    }),
+  });
+  if (!res) return;
+  const data = await res.json();
+  if (data.success) {
+    session.unlockedLevels = data.progress.unlockedLevels || session.unlockedLevels;
+    const el = $('english-progress-text');
+    if (el) el.textContent = `Niveau actuel : ${data.progress.currentLevel} · ${data.progress.totalCompleted} exercice(s) terminé(s)`;
+    renderDifficultyChips(['A1','A2','B1','B2','C1','C2']);
   }
 }
 

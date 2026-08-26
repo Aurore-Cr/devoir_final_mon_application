@@ -1,10 +1,10 @@
 'use strict';
 // ── Gestion du token JWT côté client ──────────────────────
 const AUTH = {
-  getToken:   () => localStorage.getItem('jarvis_token'),
-  getUser:    () => { try { return JSON.parse(localStorage.getItem('jarvis_user')||'null'); } catch { return null; }},
-  setSession: (token, user) => { localStorage.setItem('jarvis_token', token); localStorage.setItem('jarvis_user', JSON.stringify(user)); },
-  clear:      () => { localStorage.removeItem('jarvis_token'); localStorage.removeItem('jarvis_user'); },
+  getToken:   () => localStorage.getItem('james_token'),
+  getUser:    () => { try { return JSON.parse(localStorage.getItem('james_user')||'null'); } catch { return null; }},
+  setSession: (token, user) => { localStorage.setItem('james_token', token); localStorage.setItem('james_user', JSON.stringify(user)); },
+  clear:      () => { localStorage.removeItem('james_token'); localStorage.removeItem('james_user'); },
   headers:    () => ({ 'Content-Type':'application/json', 'Authorization':'Bearer ' + AUTH.getToken() }),
   isLoggedIn: () => !!AUTH.getToken(),
   logout:     () => { AUTH.clear(); window.location.href = '/login.html'; },

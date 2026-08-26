@@ -1,5 +1,5 @@
 /* ============================================================
-   JARVIS — dashboard.css
+   JAMES — dashboard.css
    Thème : "James" — sombre / cyan / lueur bleue
    Mobile-first, safe-area iPhone 15, 0 framework
    ============================================================ */
@@ -14,7 +14,7 @@
   --border     : rgba(0, 212, 255, 0.12);
   --border-hi  : rgba(0, 212, 255, 0.30);
 
-  /* Couleurs Jarvis */
+  /* Couleurs JAMES */
   --j-cyan     : #00d4ff;
   --j-blue     : #0a84ff;
   --j-glow     : rgba(0, 212, 255, 0.18);
@@ -800,3 +800,14 @@ body {
   transition:background .2s;
 }
 .header-icon-btn:active { background:rgba(0,212,255,.15); }
+
+/* Flashcards quotidiennes */
+.w-flashcards{grid-column:1/-1}.flashcards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;padding:0 14px 12px}.flashcard{position:relative;min-height:125px;padding:14px 12px;border-radius:10px;border:1px solid rgba(0,212,255,.18);background:rgba(0,20,40,.55);color:var(--tx-primary);text-align:left;cursor:pointer}.flashcard strong{display:block;font-size:.78rem;line-height:1.45;margin-top:8px}.fc-num{position:absolute;right:9px;top:8px;font-size:.6rem;color:var(--tx-secondary)}.fc-category{font-size:.62rem;color:var(--j-cyan);text-transform:uppercase;letter-spacing:.06em}.fc-answer{display:none;font-size:.75rem;line-height:1.5;color:#c9d1d9;margin-top:9px}.flashcard small{display:block;font-size:.58rem;color:#6e7681;margin-top:10px}.flashcard.revealed strong{display:none}.flashcard.revealed .fc-answer{display:block}.flashcard-error,.flashcards-note{font-size:.72rem;color:#8b949e;padding:0 14px 12px}.flashcards-note{padding-top:0}@media(max-width:760px){.flashcards-grid{grid-template-columns:1fr 1fr}}@media(max-width:480px){.flashcards-grid{grid-template-columns:1fr}}
+
+/* Navigation modules JAMES */
+.j-module-nav{display:flex;gap:7px;overflow-x:auto;padding:10px 14px 4px;scrollbar-width:thin;position:relative;z-index:5}
+.module-tab{flex:0 0 auto;text-decoration:none;color:var(--tx-secondary);background:rgba(0,20,40,.55);border:1px solid rgba(0,212,255,.14);border-radius:999px;padding:7px 11px;font-size:.7rem;font-weight:650;transition:.18s ease}
+.module-tab:hover,.module-tab:focus-visible{color:var(--j-cyan);border-color:rgba(0,212,255,.42);outline:none}
+.module-tab.active{color:#040810;background:var(--j-cyan);border-color:var(--j-cyan)}
+.module-tab.flash-tab{color:#c7a6ff;border-color:rgba(199,166,255,.35)}
+.module-tab.flash-tab:hover,.module-tab.flash-tab:focus-visible{color:#e2d4ff;border-color:#c7a6ff}

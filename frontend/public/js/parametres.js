@@ -5,22 +5,46 @@ let schedule = []; // planning en mémoire locale
 let editingIdx = null; // index du créneau en cours d'édition
 
 document.addEventListener('DOMContentLoaded', async () => {
-  loadProfile();
+  await loadProfile();
+  await loadProgress();
   detectServerUrl();
   await loadSchedule();
   initNotifications();
-  checkApiStatus();
   wireButtons();
 });
 
 // ── PROFIL ─────────────────────────────────────────────────
 async function loadProfile() {
-  const user = window.AUTH.getUser();
+  let user = window.AUTH.getUser();
+  try {
+    const res = await window.AUTH.apiFetch('/api/user/profile');
+    if (res) { const data = await res.json(); if (data.success) user = data.user; }
+  } catch {}
   if (user) {
     document.getElementById('profile-avatar').textContent = user.avatar || '🤖';
     document.getElementById('profile-name').textContent   = user.username || '—';
-    document.getElementById('profile-email').textContent  = user.email    || '—';
+    document.getElementById('profile-email').textContent  = user.email || '—';
+    const u = document.getElementById('profile-username'); if (u) u.value = user.username || '';
+    const e = document.getElementById('profile-email-input'); if (e) e.value = user.email || '';
+    const a = document.getElementById('profile-avatar-input'); if (a) a.value = user.avatar || '🤖';
+    localStorage.setItem('james_user', JSON.stringify(user));
   }
+}
+
+async function loadProgress() {
+  const stats = document.getElementById('progress-stats');
+  const track = document.getElementById('level-track');
+  const history = document.getElementById('history-list');
+  if (!stats || !track || !history) return;
+  try {
+    const res = await window.AUTH.apiFetch('/api/user/progress');
+    if (!res) return;
+    const data = await res.json();
+    const p = data.progress;
+    stats.innerHTML = `<div class="stat-card"><strong>${p.currentLevel}</strong><span>Niveau actuel</span></div><div class="stat-card"><strong>${p.totalCompleted}</strong><span>Exercices</span></div><div class="stat-card"><strong>${p.successRate}%</strong><span>Bien compris</span></div>`;
+    track.innerHTML = p.levels.map(l => `<span class="level-pill ${p.unlockedLevels.includes(l)?'unlocked':'locked'}">${l}${p.unlockedLevels.includes(l)?'':' 🔒'}</span>`).join('');
+    history.innerHTML = p.history.length ? p.history.map(h => `<div class="history-row"><div><strong>${escHtml(h.title)}</strong><span>${h.difficulty} · ${h.source === 'ia' ? 'IA' : 'Catalogue'}</span></div><span class="history-score score-${h.score}">${Number(h.score)===2?'✓':Number(h.score)===1?'~':'×'}</span></div>`).join('') : '<p class="section-desc">Aucun exercice terminé pour le moment.</p>';
+  } catch (e) { stats.innerHTML = '<p class="section-desc">Progression indisponible.</p>'; }
 }
 
 // ── DÉTECTION URL SERVEUR ──────────────────────────────────
@@ -116,7 +140,7 @@ async function initNotifications() {
     btnEnable.style.display = 'none';
     btnTest.style.display = '';
   } else if (perm === 'denied') {
-    statusEl.innerHTML = '🚫 Bloquées — autorise dans Réglages → Notifications → JARVIS';
+    statusEl.innerHTML = '🚫 Bloquées — autorise dans Réglages → Notifications → JAMES';
     btnEnable.style.display = 'none';
   } else {
     statusEl.innerHTML = '⚠️ Alertes non activées';
@@ -158,56 +182,38 @@ async function enableNotifications() {
 }
 
 async function testNotification() {
-  new Notification('⏰ JARVIS — Test', {
-    body: 'Ordre de Jarvis : Arrêtez "Sport" → commencez "Cours / Travail"',
+  new Notification('⏰ JAMES — Test', {
+    body: 'Ordre de JAMES : Arrêtez "Sport" → commencez "Cours / Travail"',
     icon: '/icons/icon-192x192.png',
   });
 }
 
 // ── STATUT API ─────────────────────────────────────────────
-async function checkApiStatus() {
-  const box = document.getElementById('api-status');
-  try {
-    const res  = await fetch('/api/generate/status');
-    const data = await res.json();
-
-    if (data.configured) {
-      box.innerHTML = `
-        <span class="status-dot ok"></span>
-        <span>✅ <strong>${data.provider}</strong> connecté et opérationnel</span>`;
-      box.className = 'api-status-box ok';
-      // Mettre en valeur la carte du provider actif
-      const active = data.env_var?.toLowerCase();
-      document.querySelectorAll('.provider-card').forEach(card => {
-        card.classList.toggle('active-provider', card.dataset.provider === active);
-      });
-    } else {
-      box.innerHTML = `
-        <span class="status-dot warn"></span>
-        <span>⚠️ Aucun provider configuré — choisis une option ci-dessous</span>`;
-      box.className = 'api-status-box warn';
-    }
-  } catch {
-    box.innerHTML = `<span class="status-dot error"></span><span>❌ Serveur inaccessible</span>`;
-    box.className = 'api-status-box error';
-  }
-}
 
 // ── CÂBLAGE ÉVÉNEMENTS ────────────────────────────────────
 function wireButtons() {
+  const saveProfile = document.getElementById('btn-save-profile');
+  if (saveProfile) saveProfile.addEventListener('click', async () => {
+    const status = document.getElementById('profile-save-status');
+    const payload = { username:document.getElementById('profile-username').value.trim(), email:document.getElementById('profile-email-input').value.trim(), avatar:document.getElementById('profile-avatar-input').value.trim() || '🤖' };
+    const res = await window.AUTH.apiFetch('/api/user/profile', {method:'PUT', body:JSON.stringify(payload)});
+    if (!res) return; const data = await res.json();
+    status.textContent = data.success ? '✅ Profil mis à jour' : '❌ ' + data.error; status.className='save-status '+(data.success?'ok':'error');
+    if (data.success) { localStorage.setItem('james_user', JSON.stringify(data.user)); await loadProfile(); }
+  });
+
+  const changePw = document.getElementById('btn-change-password');
+  if (changePw) changePw.addEventListener('click', async () => {
+    const status = document.getElementById('password-status');
+    const res = await window.AUTH.apiFetch('/api/user/password', {method:'PUT', body:JSON.stringify({currentPassword:document.getElementById('current-password').value, newPassword:document.getElementById('new-password').value})});
+    if (!res) return; const data = await res.json();
+    status.textContent = data.success ? '✅ Mot de passe modifié' : '❌ ' + data.error; status.className='save-status '+(data.success?'ok':'error');
+    if (data.success) { document.getElementById('current-password').value=''; document.getElementById('new-password').value=''; }
+  });
+
   // Logout
   [document.getElementById('btn-logout'), document.getElementById('btn-logout-bottom')].forEach(btn => {
     if (btn) btn.addEventListener('click', () => { if (confirm('Se déconnecter ?')) window.AUTH.logout(); });
-  });
-
-  // Test URL
-  document.getElementById('btn-test-url').addEventListener('click', async () => {
-    const url    = document.getElementById('custom-url').value.trim() || window.location.origin;
-    const result = document.getElementById('url-result');
-    result.textContent = 'Test en cours…';
-    const ok = await testUrl(url, null);
-    result.textContent = ok ? `✅ ${url} est accessible` : `❌ ${url} inaccessible — vérifier l'URL et que le serveur est démarré`;
-    result.className = 'url-result ' + (ok ? 'ok' : 'error');
   });
 
   // Planning

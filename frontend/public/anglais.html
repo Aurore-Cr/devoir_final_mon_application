@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
-  <title>Jarvis — Défis Anglais</title>
+  <title>JAMES — Défis Anglais</title>
 
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#0d1117">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Jarvis">
+  <meta name="apple-mobile-web-app-title" content="JAMES">
   <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
 
   <!-- Prism.js — coloration syntaxique (JS, CSS, aucun build requis) -->
@@ -63,6 +63,11 @@
       </p>
     </div>
 
+    <div class="progression-card" id="english-progress-card">
+      <div><strong>Progression CECRL</strong><br><span id="english-progress-text">Chargement…</span></div>
+      <a href="/parametres.html#evolution">Voir l'évolution</a>
+    </div>
+
     <!-- Filtres -->
     <div class="filter-section">
       <p class="filter-label">Catégorie</p>
@@ -76,8 +81,7 @@
       <p class="filter-label">Niveau</p>
       <div class="filter-chips" id="difficulty-chips">
         <button class="chip active" data-difficulty="">Tous</button>
-        <button class="chip" data-difficulty="B2">B2</button>
-        <button class="chip" data-difficulty="C1">C1</button>
+        <!-- niveaux injectés dynamiquement depuis l'API -->
       </div>
     </div>
 
@@ -97,7 +101,7 @@
         🤖 Générer un nouvel exercice par IA
       </button>
       <p class="ia-note" id="ia-note" style="display:none">
-        ⚠️ Clé API Anthropic requise — voir <a href="/parametres.html">Paramètres</a>
+        ⚠️ Génération IA indisponible — vérifie la configuration Gemini dans <a href="/parametres.html">Paramètres</a>
       </p>
     </div>
 

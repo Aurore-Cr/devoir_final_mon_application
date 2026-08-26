@@ -1,17 +1,28 @@
 // ============================================================
-//  JARVIS — Service Worker v2
+//  JAMES — Service Worker v4
 //  Rôle : Cache offline + Moteur de notifications planifiées
 // ============================================================
 
-const CACHE_NAME = 'jarvis-cache-v2';
+const CACHE_NAME = 'james-cache-v4';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/planner.html',
+  '/veille.html',
+  '/anglais.html',
+  '/defis.html',
+  '/flashcards.html',
+  '/parametres.html',
   '/css/style.css',
+  '/css/dashboard.css',
   '/css/planner.css',
-  '/js/app.js',
+  '/css/flashcards.css',
+  '/css/parametres.css',
+  '/js/auth.js',
+  '/js/dashboard.js',
   '/js/planner.js',
+  '/js/flashcards.js',
+  '/js/parametres.js',
   '/manifest.json'
 ];
 
@@ -22,7 +33,7 @@ let tickerHandle = null;    // Handle du setInterval interne
 
 // ─── INSTALL ───────────────────────────────────────────────
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installation v2');
+  console.log('[SW] Installation v4');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(ASSETS_TO_CACHE))
@@ -51,18 +62,34 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
-  // Les appels /api/ passent toujours par le réseau
+  // Les appels API passent toujours par le réseau.
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(fetch(event.request));
     return;
   }
 
-  // Stratégie cache-first pour les assets statiques
+  // Les navigations HTML sont network-first pour éviter d'afficher une ancienne
+  // version de JAMES après un déploiement ou une mise à jour du Service Worker.
+  if (event.request.mode === 'navigate' || event.request.destination === 'document') {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          if (response.ok) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          }
+          return response;
+        })
+        .catch(() => caches.match(event.request).then(cached => cached || caches.match('/index.html')))
+    );
+    return;
+  }
+
+  // Assets : cache-first, puis réseau et mise à jour du cache.
   event.respondWith(
     caches.match(event.request)
       .then(cached => cached || fetch(event.request)
         .then(response => {
-          // Mettre en cache la nouvelle ressource à la volée
           if (response.ok) {
             const clone = response.clone();
             caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
@@ -159,7 +186,7 @@ function checkSchedule() {
 
 // ─── NOTIFICATION PUSH NATIVE ──────────────────────────────
 function fireNotification(endedTask, nextTask) {
-  const title = '🤖 Ordre de Jarvis';
+  const title = '🤖 Ordre de JAMES';
   const body  = `Arrêtez "${endedTask}" — commencez "${nextTask}"`;
 
   return self.registration.showNotification(title, {
@@ -170,8 +197,8 @@ function fireNotification(endedTask, nextTask) {
     vibrate     : [400, 150, 400, 150, 600],
     // La notif reste visible jusqu'à interaction explicite
     requireInteraction: true,
-    // Tag unique : une seule notif Jarvis à la fois (remplace la précédente)
-    tag         : 'jarvis-transition',
+    // Tag unique : une seule notif JAMES à la fois (remplace la précédente)
+    tag         : 'james-transition',
     renotify    : true,
     data        : { endedTask, nextTask, url: '/planner.html' }
   });
@@ -212,11 +239,11 @@ self.addEventListener('push', (event) => {
   if (!event.data) return;
   const data = event.data.json();
   event.waitUntil(
-    self.registration.showNotification(data.title || '🤖 Jarvis', {
+    self.registration.showNotification(data.title || '🤖 JAMES', {
       body   : data.body || '',
       icon   : '/icons/icon-192x192.png',
       badge  : '/icons/icon-192x192.png',
-      tag    : 'jarvis-push'
+      tag    : 'james-push'
     })
   );
 });
