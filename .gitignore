@@ -1,5 +1,12 @@
 node_modules/
 .env
-backend/.env
-*.log
-.DS_Store
+.env.*
+!.env.example
+backend/data/
+!backend/data/
+backend/data/*
+!backend/data/.gitkeep
+backups/
+*.tmp
+*.bak
+james_jarvis.json

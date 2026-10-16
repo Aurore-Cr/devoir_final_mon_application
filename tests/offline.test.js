@@ -1,0 +1,11 @@
+'use strict';
+const assert=require('node:assert/strict'),Store=require('../frontend/public/js/shopping-offline');
+const data={},storage={getItem:k=>data[k],setItem:(k,v)=>data[k]=v};
+const a=new Store(storage,'account-a'),b=new Store(storage,'account-b');
+a.remember([{id:1,title:'Skyr',status:'todo',version:3},{id:2,title:'Lait',status:'todo',version:2}]);
+a.queue(a.view()[0],'done');assert.equal(a.view()[0].done,true);assert.equal(b.view().length,0);
+const reopened=new Store(storage,'account-a');assert.equal(reopened.pending().length,1);assert.equal(reopened.view()[0].status,'done');
+reopened.queue(reopened.view()[0],'todo');assert.equal(reopened.pending()[0].version,3);assert.equal(reopened.pending().length,1);
+reopened.remember([{id:1,title:'Skyr',status:'doing',version:4}]);assert.equal(reopened.view()[0].status,'todo');
+reopened.acknowledge(1);assert.equal(reopened.pending().length,0);assert.equal(reopened.view()[0].version,4);
+console.log('OK courses hors ligne : comptes séparés, coches persistantes, requêtes regroupées, attente après actualisation et acquittement.');
