@@ -11,7 +11,7 @@ const initSqlJs = require("sql.js");
 const path = require("path");
 const fs = require("fs");
 
-const DATA_DIR = path.join(__dirname, "../../data");
+const DATA_DIR = process.env.JAMES_DATA_DIR || path.join(__dirname, "../../data");
 const DB_PATH = path.join(DATA_DIR, "james.db");
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
@@ -19,7 +19,9 @@ let _db = null;
 
 function save() {
   if (!_db) return;
-  fs.writeFileSync(DB_PATH, Buffer.from(_db.export()));
+  const temp = DB_PATH + '.tmp';
+  fs.writeFileSync(temp, Buffer.from(_db.export()));
+  fs.renameSync(temp, DB_PATH);
 }
 
 // Exécuter sans résultat (INSERT / UPDATE / DELETE)
@@ -112,11 +114,16 @@ const DEFAULT_SCHEDULE = [
 
 async function initDatabase() {
   const SQL = await initSqlJs();
+  if (fs.existsSync(DB_PATH)) {
+    const backup = DB_PATH + '.before-kanban-v1.bak';
+    if (!fs.existsSync(backup)) fs.copyFileSync(DB_PATH, backup);
+  }
   _db = fs.existsSync(DB_PATH)
     ? new SQL.Database(fs.readFileSync(DB_PATH))
     : new SQL.Database();
 
   _db.run("PRAGMA foreign_keys = ON");
+  require('./organizer-schema').init(_db);
 
   _db.run(`CREATE TABLE IF NOT EXISTS users (
     id            INTEGER  PRIMARY KEY AUTOINCREMENT,
@@ -420,4 +427,4 @@ const db = {
   createUserWithSchedule,
 };
 
-module.exports = { initDatabase, DEFAULT_SCHEDULE, ...db };
+module.exports = { initDatabase, DEFAULT_SCHEDULE, ...db, run, get, all };

@@ -3,11 +3,15 @@
 //  Rôle : Cache offline + Moteur de notifications planifiées
 // ============================================================
 
-const CACHE_NAME = 'james-cache-v4';
+const CACHE_NAME = 'james-cache-v5-kanban';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/planner.html',
+  '/kanban.html',
+  '/css/kanban.css',
+  '/js/kanban.js',
+  '/js/shopping-offline.js',
   '/veille.html',
   '/anglais.html',
   '/defis.html',
@@ -226,8 +230,8 @@ self.addEventListener('notificationclick', (event) => {
     self.clients.matchAll({ type: 'window', includeUncontrolled: true })
       .then(clients => {
         // Si un onglet est déjà ouvert → focus
-        const existing = clients.find(c => c.url.includes('/planner'));
-        if (existing) return existing.focus();
+        const existing = clients.find(c => new URL(c.url).pathname === new URL(targetUrl,self.location.origin).pathname);
+        if (existing) { existing.navigate(targetUrl); return existing.focus(); }
         // Sinon → ouvrir le planner
         return self.clients.openWindow(targetUrl);
       })
@@ -243,7 +247,8 @@ self.addEventListener('push', (event) => {
       body   : data.body || '',
       icon   : '/icons/icon-192x192.png',
       badge  : '/icons/icon-192x192.png',
-      tag    : 'james-push'
+      tag    : data.tag || 'james-push',
+      data   : {url: data.url || '/planner.html'}
     })
   );
 });

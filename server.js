@@ -28,6 +28,7 @@ app.use(express.static(path.join(__dirname, "frontend", "public")));
 app.use("/api", require("./backend/src/routes/api"));
 app.use("/api/auth", require("./backend/src/routes/auth"));
 app.use("/api/user", require("./backend/src/routes/user"));
+app.use("/api/organizer", require("./backend/src/routes/organizer"));
 app.use("/api/veille", require("./backend/src/routes/veille"));
 app.use("/api/anglais", require("./backend/src/routes/anglais"));
 app.use("/api/defis", require("./backend/src/routes/defis"));
@@ -84,6 +85,7 @@ cron.schedule(
 cron.schedule("* * * * *", async () => {
   try {
     await require("./backend/src/services/push.service").checkAndNotify();
+    await require("./backend/src/services/organizer-reminders").checkAndNotify();
   } catch {}
 });
 
